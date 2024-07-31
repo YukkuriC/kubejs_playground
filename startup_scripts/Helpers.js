@@ -1,7 +1,5 @@
 // chain block breaking
 const MAX_CHAIN = 4096
-const EVENT_BUS = ForgeEvents.eventBus()
-const $BreakEvent = Java.loadClass('net.minecraftforge.event.level.BlockEvent$BreakEvent')
 
 /**
  * general helper
@@ -46,6 +44,3 @@ function BreakBlock(level, block, player) {
     EVENT_BUS.post(new $BreakEvent(level, block.pos, block.blockState, player))
     level.destroyBlock(block.pos, true, player)
 }
-
-global.FloodFillBlocks = FloodFillBlocks
-global.BreakBlock = BreakBlock

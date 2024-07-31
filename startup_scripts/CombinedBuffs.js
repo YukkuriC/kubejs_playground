@@ -1,6 +1,4 @@
-const $Player = Java.loadClass('net.minecraft.world.entity.player.Player')
-const $MobEffectInstance = Java.loadClass('net.minecraft.world.effect.MobEffectInstance')
-
+/** @type [Special.MobEffect, number][] */
 const buffsToAdd = [
     ['minecraft:luck', 5],
     // ['cold_sweat:grace', 5],

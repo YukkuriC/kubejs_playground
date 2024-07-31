@@ -1,5 +1,3 @@
-const $EvokerFangs = Java.loadClass('net.minecraft.world.entity.projectile.EvokerFangs')
-const $MobEffectInstance = Java.loadClass('net.minecraft.world.effect.MobEffectInstance')
 ItemEvents.rightClicked('yc:sword', e => {
     const { level, player } = e
     const { x, y, z } = player
