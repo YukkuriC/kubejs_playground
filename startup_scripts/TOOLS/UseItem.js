@@ -9,12 +9,47 @@ ForgeEvents.onEvent('net.minecraftforge.event.entity.player.PlayerInteractEvent$
     const player = e.getEntity()
     switch (itemStack.id) {
         case 'yc:hoe':
-            if (!block) return
-            const data = block.entityData
-            level.tell(`id: ${block}; data: ${data}`)
-            if (!data) return
-            const manaMax = data.manaCap
-            if (manaMax) level.runCommandSilent(`data merge block ${x} ${y} ${z} {mana: ${manaMax}}`)
+            if (player.isShiftKeyDown()) {
+                let msg = `block: ${block}`
+                if (block?.entityData) msg += `\ndata: ${block?.entityData}`
+                level.tell(msg)
+            }
+            for (let i = x - 2; i <= x + 2; i++)
+                for (let j = y - 1; j <= y + 1; j++)
+                    for (let k = z - 2; k <= z + 2; k++) {
+                        let newPos = new BlockPos(i, j, k)
+                        let bb = level.getBlock(newPos)
+                        if (!bb) continue
+
+                        let simpleIsTillable =
+                            bb.id == 'minecraft:dirt' ||
+                            bb.id == 'minecraft:dirt_path' ||
+                            bb.id == 'minecraft:grass_block' ||
+                            bb.id == 'minecraft:mycelium' ||
+                            bb.id == 'minecraft:podzol'
+
+                        // grow crops
+                        /** @type Internal.BonemealableBlock */
+                        let bbb = bb.blockState.block
+                        if (bbb.isValidBonemealTarget && (!simpleIsTillable || !player.isShiftKeyDown())) {
+                            if (bbb.isValidBonemealTarget(level, newPos, bb.blockState, false)) {
+                                bbb.performBonemeal(level, level.random, newPos, bb.blockState)
+                            }
+                        }
+
+                        // till dirt
+                        if ((!bb.up || !level.getBlockState(bb.up.pos).solid) && simpleIsTillable) {
+                            level.destroyBlock(newPos, false)
+                            level.runCommandSilent(`setblock ${newPos.x} ${newPos.y} ${newPos.z} minecraft:farmland[moisture=7]`)
+                        }
+
+                        // nbt
+                        let data = bb.entityData
+                        if (data) {
+                            let manaMax = data.manaCap
+                            if (manaMax) level.runCommandSilent(`data merge block ${newPos.x} ${newPos.y} ${newPos.z} {mana: ${manaMax}}`)
+                        }
+                    }
             return
 
         case 'yc:pickaxe':
