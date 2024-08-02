@@ -17,7 +17,15 @@ EntityEvents.hurt(e => {
     const { player } = source
     if (player?.mainHandItem?.id != 'yc:sword') return
     const before = entity.maxHealth
-    entity.setMaxHealth(Math.ceil(entity.maxHealth / 2))
-    player.heal(before - entity.maxHealth)
+    let after = Math.ceil(entity.maxHealth / 2)
+    let target = after
+    for (let i = 0; i < 100; i++) {
+        entity.setMaxHealth(after)
+        if (entity.maxHealth <= target) break
+        after = Math.ceil(after / 2)
+    }
+    const delta = Math.abs(before - entity.maxHealth)
+    player.heal(delta)
+    player.modifyAttribute('minecraft:generic.max_health', 'yc:sword_vampire', delta, 'addition')
     if (player.shiftKeyDown) e.cancel()
 })
