@@ -38,9 +38,31 @@ function FloodFillBlocks(level, blockPos, predicate, callback) {
  * @param { Internal.Level } level
  * @param { Internal.BlockContainerJS } block
  * @param { Internal.Player } player
+ * @param { boolean } drop
  */
-function BreakBlock(level, block, player) {
+function BreakBlock(level, block, player, noDrop) {
     if (!block) return
+    let res = null
+    if (noDrop) res = block.getDrops()
     global.EVENT_BUS.post(new $BreakEvent(level, block.pos, block.blockState, player))
-    level.destroyBlock(block.pos, true, player)
+    level.destroyBlock(block.pos, !noDrop, player)
+    return res
+}
+/**
+ * check crop age
+ * @param { Internal.CropBlock } block
+ * @param { Internal.BlockState } state
+ */
+function CanHarvest(block, state, level) {
+    if (block.isMaxAge && block.isMaxAge(state)) return true
+    for (const prop of state.getProperties()) {
+        if (!prop instanceof $IntegerProperty) continue
+        if (prop.getName() != 'age') continue
+        /** @type { Internal.IntegerProperty }*/
+        let intProp = prop
+        let age = state.getValue(intProp)
+        let maxAge = intProp.getPossibleValues().size() - 1
+        if (age == maxAge) return true
+    }
+    return false
 }

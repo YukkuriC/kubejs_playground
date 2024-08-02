@@ -11,9 +11,13 @@ function OnUseTools(e) {
     const { x, y, z } = e.pos
     /** @type Internal.Player */
     const player = e.getEntity()
+    const isShift = player.isShiftKeyDown()
+    /** @type Internal.BlockContainerJS[] */
+    const blockTargets = []
+
     switch (itemStack.id) {
         case 'yc:hoe':
-            if (player.isShiftKeyDown()) {
+            if (isShift) {
                 let msg = `block: ${block}`
                 if (block?.entityData) msg += `\ndata: ${block?.entityData}`
                 level.tell(msg)
@@ -24,6 +28,7 @@ function OnUseTools(e) {
                         let newPos = new BlockPos(i, j, k)
                         let bb = level.getBlock(newPos)
                         if (!bb) continue
+                        let state = bb.blockState
 
                         let simpleIsTillable =
                             bb.id == 'minecraft:dirt' ||
@@ -33,16 +38,33 @@ function OnUseTools(e) {
                             bb.id == 'minecraft:podzol'
 
                         // grow crops
-                        /** @type Internal.BonemealableBlock */
-                        let bbb = bb.blockState.block
-                        if (bbb.isValidBonemealTarget && (!simpleIsTillable || !player.isShiftKeyDown())) {
-                            if (bbb.isValidBonemealTarget(level, newPos, bb.blockState, false)) {
-                                bbb.performBonemeal(level, level.random, newPos, bb.blockState)
+                        /** @type Internal.CropBlock */
+                        let bbb = state.block
+                        if (!isShift) {
+                            if (bbb.isValidBonemealTarget) {
+                                if (bbb.isValidBonemealTarget(level, newPos, state, false)) {
+                                    bbb.performBonemeal(level, level.random, newPos, state)
+                                }
+                            }
+                            if (
+                                (state.getCollisionShape(level, newPos).isEmpty() || bbb instanceof $CocoaBlock) &&
+                                CanHarvest(bbb, state, level)
+                            ) {
+                                let res = BreakBlock(level, bb, player, true)
+                                if (res) {
+                                    for (const i of res) {
+                                        block.up.popItem(i)
+                                    }
+                                }
                             }
                         }
 
                         // till dirt
-                        if ((!bb.up || !level.getBlockState(bb.up.pos).solid) && simpleIsTillable) {
+                        if (
+                            isShift &&
+                            (!bb.up || level.getBlockState(newPos.above()).getCollisionShape(level, newPos.above()).isEmpty()) &&
+                            simpleIsTillable
+                        ) {
                             level.destroyBlock(newPos, false)
                             level.runCommandSilent(`setblock ${newPos.x} ${newPos.y} ${newPos.z} minecraft:farmland[moisture=7]`)
                         }
@@ -73,7 +95,6 @@ function OnUseTools(e) {
         case 'yc:axe':
             if (!block) return
             /** @type Internal.BlockContainerJS[] */
-            let blockTargets = []
             let hasLeaves = false
             FloodFillBlocks(
                 level,
@@ -90,7 +111,6 @@ function OnUseTools(e) {
             return
 
         case 'yc:shovel':
-            blockTargets = []
             for (let i = x - 1; i <= x + 1; i++)
                 for (let j = y - 1; j <= y + 1; j++)
                     for (let k = z - 1; k <= z + 1; k++) {
