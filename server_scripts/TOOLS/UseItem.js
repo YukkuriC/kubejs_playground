@@ -72,6 +72,7 @@ function OnUseTools(e) {
 
         case 'yc:axe':
             if (!block) return
+            /** @type Internal.BlockContainerJS[] */
             let blockTargets = []
             let hasLeaves = false
             FloodFillBlocks(
@@ -89,12 +90,19 @@ function OnUseTools(e) {
             return
 
         case 'yc:shovel':
+            blockTargets = []
             for (let i = x - 1; i <= x + 1; i++)
                 for (let j = y - 1; j <= y + 1; j++)
                     for (let k = z - 1; k <= z + 1; k++) {
                         let bb = level.getBlock(i, j, k)
-                        BreakBlock(level, bb, player)
+                        if (bb.entityData || bb.inventory) {
+                            level.tell(`danger at ${bb.pos}`)
+                            return
+                        }
+                        blockTargets.push(bb)
                     }
+            for (const bb of blockTargets) BreakBlock(level, bb, player)
+
             return
     }
 }
