@@ -41,6 +41,6 @@ function FloodFillBlocks(level, blockPos, predicate, callback) {
  */
 function BreakBlock(level, block, player) {
     if (!block) return
-    EVENT_BUS.post(new $BreakEvent(level, block.pos, block.blockState, player))
+    global.EVENT_BUS.post(new $BreakEvent(level, block.pos, block.blockState, player))
     level.destroyBlock(block.pos, true, player)
 }

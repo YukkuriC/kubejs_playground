@@ -1,6 +1,10 @@
 const TARGETS = new Set(['yc:hoe', 'yc:pickaxe', 'yc:axe', 'yc:shovel'])
 
-ForgeEvents.onEvent('net.minecraftforge.event.entity.player.PlayerInteractEvent$RightClickBlock', e => {
+/**
+ * @param { Internal.PlayerInteractEvent$RightClickBlock } e
+ * @returns
+ */
+function OnUseTools(e) {
     const { level, itemStack } = e
     if (level.clientSide || !TARGETS.has(String(itemStack.id))) return
     const block = level.getBlock(e.pos)
@@ -93,4 +97,6 @@ ForgeEvents.onEvent('net.minecraftforge.event.entity.player.PlayerInteractEvent$
                     }
             return
     }
-})
+}
+
+global.OnUseTools = OnUseTools
