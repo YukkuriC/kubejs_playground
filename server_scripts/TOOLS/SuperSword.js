@@ -11,3 +11,13 @@ ItemEvents.rightClicked('yc:sword', e => {
         }
     }
 })
+
+EntityEvents.hurt(e => {
+    const { entity, source } = e
+    const { player } = source
+    if (player?.mainHandItem?.id != 'yc:sword') return
+    const before = entity.maxHealth
+    entity.setMaxHealth(Math.ceil(entity.maxHealth / 2))
+    player.heal(before - entity.maxHealth)
+    if (player.shiftKeyDown) e.cancel()
+})
