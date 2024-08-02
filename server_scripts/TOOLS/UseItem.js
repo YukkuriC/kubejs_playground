@@ -66,7 +66,7 @@ function OnUseTools(e) {
                         if (!shouldKeep) continue
                         for (const d of bb.getDrops() ?? []) block.popItem(d)
                         if (bb.inventory) for (const i of bb.inventory.allItems) block.popItem(i)
-                        EVENT_BUS.post(new $BreakEvent(level, bb.pos, bb.blockState, player))
+                        global.EVENT_BUS.post(new $BreakEvent(level, bb.pos, bb.blockState, player))
                     }
             return
 
