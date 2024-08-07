@@ -21,4 +21,6 @@ StartupEvents.registry('item', e => {
             })
             .displayName(`YC's ${item}`),
     )
+    // tool stick
+    e.create(`yc:stick`, 'basic').rarity('epic').glow(true).texture(`minecraft:item/stick`).displayName(`YC's Stick`)
 })

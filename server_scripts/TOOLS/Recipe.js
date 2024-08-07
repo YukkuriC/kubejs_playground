@@ -137,6 +137,8 @@ ServerEvents.recipes(e => {
             A: '#minecraft:logs',
         },
     )
+    // else
+    e.shapeless('yc:stick', ['minecraft:stick'])
 })
 
 ItemEvents.crafted(e => {
