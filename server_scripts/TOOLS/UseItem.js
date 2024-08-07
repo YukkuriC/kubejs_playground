@@ -84,11 +84,11 @@ function OnUseTools(e) {
                 for (let j = -64; j <= 256; j++)
                     for (let k = z - 2; k <= z + 2; k++) {
                         let bb = level.getBlock(i, j, k)
+                        if (bb) global.EVENT_BUS.post(new $BreakEvent(level, bb.pos, bb.blockState, player))
                         let shouldKeep = bb && (bb.hasTag('forge:ores') /* || bb.inventory */ || (isShift && Math.random() < 0.1))
                         if (!shouldKeep) continue
                         for (const d of bb.getDrops() ?? []) block.popItem(d)
                         // if (bb.inventory) for (const i of bb.inventory.allItems) block.popItem(i)
-                        global.EVENT_BUS.post(new $BreakEvent(level, bb.pos, bb.blockState, player))
                     }
             return
 
