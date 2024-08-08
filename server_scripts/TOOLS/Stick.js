@@ -19,9 +19,9 @@ ItemEvents.firstLeftClicked('yc:stick', e => {
 ItemEvents.firstRightClicked('yc:stick', e => {
     const { level, item } = e
     let mode = GetYCStickState(item)
+    let { block } = e.getTarget()
     switch (mode) {
         case 'SortChest':
-            let { block } = e.getTarget()
             if (block?.inventory) {
                 /**@type {Internal.BlockContainerJS[]}*/
                 let chests = []
