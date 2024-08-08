@@ -51,8 +51,8 @@ ItemEvents.firstRightClicked('yc:stick', e => {
                     let cumCount = 0
                     for (let i = 1; i < lst.length; i++) {
                         let sub = lst[i]
-                        sub.count -= i
-                        cumCount += i
+                        cumCount += sub.count
+                        sub.count = 0
                     }
                     head.count += cumCount
                 }
