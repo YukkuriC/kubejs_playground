@@ -1,5 +1,5 @@
 /** @type string[] */
-const YC_StickModes = ['None', 'SortChest']
+const YC_StickModes = ['None', 'SortChest', 'MergeTumor', 'ChainBreak']
 
 function GetYCStickState(/**@type Internal.Item */ item) {
     let tag = item.getOrCreateTag()
@@ -17,7 +17,7 @@ ItemEvents.firstLeftClicked('yc:stick', e => {
     tag.display = { Name: `{"text":"YC's Stick (${newMode})"}` }
 })
 ItemEvents.firstRightClicked('yc:stick', e => {
-    const { level, item } = e
+    const { level, item, player } = e
     let mode = GetYCStickState(item)
     let { block } = e.getTarget()
     switch (mode) {
@@ -57,6 +57,60 @@ ItemEvents.firstRightClicked('yc:stick', e => {
                     head.count += cumCount
                 }
             }
+            break
+
+        case 'MergeTumor':
+            let tumors = []
+            let tumorDataMax = {}
+            for (let ii of block.inventory.getAllItems()) {
+                if (ii.id != 'kubejs:random_tumor') continue
+                tumors.push(ii)
+            }
+            for (let ii of tumors) {
+                let tag = ii.getOrCreateTag().organData
+                for (let pair of Object.entries(tag)) {
+                    let [k, v] = pair
+                    if (!tumorDataMax[k]) tumorDataMax[k] = 0
+                    tumorDataMax[k] = Math.max(tumorDataMax[k], v)
+                }
+            }
+            for (let ii of tumors) {
+                let tag = ii.getOrCreateTag()
+                let tData = tag.organData
+                for (let pair of Object.entries(tData)) {
+                    let [k, v] = pair
+                    if (tData[k] || tData[k] == 0) tData[k] = Math.max(tumorDataMax[k], v)
+                }
+                let sortedKey = Object.keys(tData).sort()
+                let newData = {}
+                for (let k of sortedKey) newData[k] = tData[k]
+                tag.organData = newData
+            }
+            for (let ii of tumors) {
+                let data = ii.getOrCreateTag().organData
+                if (Object.keys(data).length < 5) ii.count = 0
+            }
+            break
+
+        case 'ChainBreak':
+            if (block) {
+                let targets = []
+                let cnt = 0
+                FloodFillBlocks(
+                    level,
+                    block.pos,
+                    b => cnt < 500 && b.id == block.id,
+                    b => {
+                        targets.push(b)
+                        cnt++
+                    },
+                )
+                if (targets.length > 400) return player.tell('R U SURE?')
+                for (let b of targets) {
+                    BreakBlock(level, b, player)
+                }
+            }
+
             break
     }
 })
