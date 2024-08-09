@@ -79,8 +79,9 @@ ItemEvents.firstRightClicked('yc:stick', e => {
                 continue
             }
             let sortedKey = Object.keys(data).sort()
-            data = tag.organData = {}
+            data = {}
             for (let k of sortedKey) data[k] = tumorDataMax[k]
+            tag.organData = data
         }
     } else if (mode == 'ChainBreak') {
         if (block) {
