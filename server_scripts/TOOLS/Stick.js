@@ -7,10 +7,12 @@ function GetYCStickState(/**@type Internal.Item */ item) {
 }
 
 ItemEvents.firstLeftClicked('yc:stick', e => {
-    const { item } = e
+    const { item, player } = e
     let mode = GetYCStickState(item)
     let idx = YC_StickModes.indexOf(mode)
-    idx = (idx + 1) % YC_StickModes.length
+    if (player.isShiftKeyDown()) idx = idx - 1 + YC_StickModes.length
+    else idx = idx + 1
+    idx %= YC_StickModes.length
     let newMode = YC_StickModes[idx]
     let tag = item.getOrCreateTag()
     tag.mode = newMode
