@@ -53,7 +53,7 @@ function BreakBlock(level, block, player, noDrop) {
  * @param { Internal.CropBlock } block
  * @param { Internal.BlockState } state
  */
-function CanHarvest(block, state, level) {
+function CanHarvest(block, state) {
     if (block.isMaxAge && block.isMaxAge(state)) return true
     for (const prop of state.getProperties()) {
         if (!prop instanceof $IntegerProperty) continue
