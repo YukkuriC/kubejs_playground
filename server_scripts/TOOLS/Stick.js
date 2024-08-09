@@ -76,19 +76,14 @@ ItemEvents.firstRightClicked('yc:stick', e => {
             }
             for (let ii of tumors) {
                 let tag = ii.getOrCreateTag()
-                let tData = tag.organData
-                for (let pair of Object.entries(tData)) {
-                    let [k, v] = pair
-                    if (tData[k] || tData[k] == 0) tData[k] = Math.max(tumorDataMax[k], v)
+                let data = tag.organData
+                if (Object.keys(data).length < 5) {
+                    ii.count = 0
+                    continue
                 }
-                let sortedKey = Object.keys(tData).sort()
-                let newData = {}
-                for (let k of sortedKey) newData[k] = tData[k]
-                tag.organData = newData
-            }
-            for (let ii of tumors) {
-                let data = ii.getOrCreateTag().organData
-                if (Object.keys(data).length < 5) ii.count = 0
+                let sortedKey = Object.keys(data).sort()
+                data = tag.organData = {}
+                for (let k of sortedKey) data[k] = tumorDataMax[k]
             }
             break
 
