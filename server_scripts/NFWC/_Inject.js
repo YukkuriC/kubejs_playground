@@ -12,7 +12,7 @@ function InjectFunc(container, key, append) {
 const INJECTORS = {
     DAMAGE: {
         THIRD_EYE: (event, organ, data) => {
-            organPlayerDamageOnlyStrategies['kubejs:lost_paradise'](event, organ, data)
+            // organPlayerDamageOnlyStrategies['kubejs:lost_paradise'](event, organ, data)
             let player = event.source.player
             updateWarpCount(player, player.persistentData.getInt(warpCount) + 5)
         },
