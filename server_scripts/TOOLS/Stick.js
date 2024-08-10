@@ -1,5 +1,5 @@
 /** @type string[] */
-const YC_StickModes = ['None', 'SortChest', 'MergeTumor', 'ChainBreak']
+const YC_StickModes = ['None', 'SortChest', 'MergeTumor', 'SpawnTumor', 'ChainBreak']
 
 function GetYCStickState(/**@type Internal.Item */ item) {
     let tag = item.getOrCreateTag()
@@ -85,6 +85,16 @@ ItemEvents.firstRightClicked('yc:stick', e => {
             for (let k of sortedKey) data[k] = tumorDataMax[k]
             tag.organData = data
         }
+    } else if (mode == 'SpawnTumor') {
+        let outputItems = []
+        let fakeLootEvent = {
+            player: player,
+            addLoot: i => outputItems.push(i),
+        }
+        for (let i = 0; i < 10; i++) {
+            chestLootOnlyStrategies['kubejs:d8'](fakeLootEvent)
+        }
+        for (let item of outputItems) player.give(item)
     } else if (mode == 'ChainBreak') {
         if (block) {
             let targets = []
