@@ -8,7 +8,7 @@ ItemEvents.modification(e => {
                 food.effect('minecraft:regeneration', 20 * 45, 0, 1)
                 food.effect('minecraft:resistance', 20 * 45, 0, 1)
             }
-            item.getItemBuilder().tag('kubejs:food')
+            item.getItemBuilder().tag('kubejs:food').tag('kubejs:warp')
         })
     }
     e.modify('kubejs:the_third_eye', item => {
