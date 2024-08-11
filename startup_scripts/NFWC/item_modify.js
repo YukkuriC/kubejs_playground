@@ -11,4 +11,7 @@ ItemEvents.modification(e => {
             item.getItemBuilder().tag('kubejs:food')
         })
     }
+    e.modify('kubejs:the_third_eye', item => {
+        item.getItemBuilder().tag('kubejs:player_tick_only')
+    })
 })

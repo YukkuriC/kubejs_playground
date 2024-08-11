@@ -2,6 +2,7 @@ ServerEvents.lowPriorityData(e => {
     InjectFunc(organPlayerDamageOnlyStrategies, 'kubejs:the_third_eye', INJECTORS.DAMAGE.THIRD_EYE)
     organPlayerEnchantOnlyStrategies['kubejs:pandora_active'] = organPlayerEnchantOnlyStrategies['kubejs:pandora_inactive'] =
         INJECTORS.ENCHANT.PANDORA
+    organPlayerTickOnlyStrategies['kubejs:the_third_eye'] = INJECTORS.TICK.THIRD_EYE
 })
 
 function InjectFunc(container, key, append) {
@@ -43,6 +44,11 @@ const INJECTORS = {
                 let count = event.player.persistentData.getInt(warpCount) ?? 0
                 updateWarpCount(event.player, count + 1)
             }
+        },
+    },
+    TICK: {
+        THIRD_EYE: (event, organ) => {
+            event.player.potionEffects.add('minecraft:glowing', 20 * 3, 4)
         },
     },
 }
