@@ -21,4 +21,8 @@ namespace Events {
         fire3(arg0, arg1, arg2): void
     }
     declare type EventClass = ClassType<Event>
+
+    declare class PlayerTickEvents {
+        every(n: number): Event<(event: Internal.SimplePlayerEventJS) => void>
+    }
 }
