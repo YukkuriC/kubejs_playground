@@ -23,14 +23,26 @@ ServerEvents.commandRegistry(e => {
 
         // 附魔操作
         {
+            let enchantKeys = ['Enchantments', 'StoredEnchantments']
+
             let doEnchant = ctx => {
                 let item = GetPlayerItem(ctx)
                 if (!item) return 0
 
                 let type = arg.STRING.getResult(ctx, 'type')
+                if (type.indexOf(':') < 0) type = 'minecraft:' + type
                 let level = TryGetArg(ctx, arg.INTEGER, 'level') || 1
                 Client.player.tell(`Enchanting ${type} Lv.${level}`)
-                return item.enchantStack(type, level), 1
+                if (item.id == 'minecraft:enchanted_book') item.getOrCreateTag().StoredEnchantments.push({ id: type, lvl: level })
+                else item.enchantStack(type, level)
+                return 1
+            }
+            let getEnchantPool = item => {
+                if (!item) return
+                let tag = item.getOrCreateTag()
+                for (let key of enchantKeys) {
+                    if (tag[key] && tag[key].length > 0) return tag[key]
+                }
             }
             F.then(
                 cmd.literal('enchant').then(
@@ -43,26 +55,66 @@ ServerEvents.commandRegistry(e => {
                 cmd
                     .literal('enchant_remove')
                     .executes(ctx => {
-                        let item = GetPlayerItem(ctx)
-                        if (!item) return 0
-                        let tag = item.getOrCreateTag()
-                        if (!tag.Enchantments) return 0
-                        tag.remove('Enchantments')
-                        Client.player.tell(`Removing enchantments`)
+                        let pool = getEnchantPool(GetPlayerItem(ctx))
+                        if (!pool) return 0
+                        Client.player.tell(`Removing ${pool.length} enchantments`)
+                        pool.clear()
                         return 1
                     })
                     .then(
                         cmd.argument('type', arg.STRING.create(e)).executes(ctx => {
-                            let item = GetPlayerItem(ctx)
-                            if (!item) return 0
+                            let pool = getEnchantPool(GetPlayerItem(ctx))
+                            if (!pool) return 0
                             let type = arg.STRING.getResult(ctx, 'type')
-                            let tag = item.getOrCreateTag()
-                            if (!tag.Enchantments) return 0
-                            tag.Enchantments = tag.Enchantments.filter(x => x.id != type && x.id != `minecraft:${type}`)
                             Client.player.tell(`Removing ${type} enchantments`)
+                            pool = pool.filter(x => x.id != type && x.id != `minecraft:${type}`)
                             return 1
                         }),
                     ),
+            )
+            F.then(
+                cmd.literal('enchant_dump').executes(ctx => {
+                    let player = GetPlayer(ctx)
+                    if (!player) return 0
+                    let pool = getEnchantPool(player.getMainHandItem())
+                    if (!pool) return 0
+                    Client.player.tell(`Dumping ${pool.length} enchantment(s)`)
+                    let book = Item.of('enchanted_book')
+                    book.getOrCreateTag().merge({ StoredEnchantments: pool })
+                    player.give(book)
+                    return 1
+                }),
+            ).then(
+                cmd.literal('enchant_merge').executes(ctx => {
+                    let player = GetPlayer(ctx)
+                    if (!player) return 0
+                    let pool = getEnchantPool(player.getMainHandItem()),
+                        poolOffhand = getEnchantPool(player.getOffhandItem())
+                    if (!poolOffhand) return Client.player.tell('No enchantments in offhand'), 0
+                    if (!pool) {
+                        let item = player.getMainHandItem()
+                        let key = item.id == 'minecraft:enchanted_book' ? 'StoredEnchantments' : 'Enchantments'
+                        let tag = item.getOrCreateTag()
+                        tag[key] = []
+                        pool = tag[key]
+                    }
+                    Client.player.tell(`Merging ${poolOffhand.length} enchantment(s)`)
+
+                    let mapType = {}
+                    for (let e of pool) {
+                        if (mapType[e.id]) continue
+                        mapType[e.id] = e
+                    }
+                    for (let e of poolOffhand) {
+                        let { id, lvl } = e
+                        if (!mapType[id]) {
+                            pool.push(e)
+                            continue
+                        } else if (lvl == mapType[id].lvl) lvl++
+                        mapType[id].lvl = Math.max(mapType[id].lvl, lvl)
+                    }
+                    return 1
+                }),
             )
         }
 
