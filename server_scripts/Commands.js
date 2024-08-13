@@ -32,40 +32,40 @@ ServerEvents.commandRegistry(e => {
                 Client.player.tell(`Enchanting ${type} Lv.${level}`)
                 return item.enchantStack(type, level), 1
             }
-            e.register(
-                F.then(
-                    cmd.literal('enchant').then(
-                        cmd
-                            .argument('type', arg.STRING.create(e))
-                            .executes(doEnchant)
-                            .then(cmd.argument('level', arg.INTEGER.create(e)).executes(doEnchant)),
-                    ),
-                ).then(
+            F.then(
+                cmd.literal('enchant').then(
                     cmd
-                        .literal('enchant_remove')
-                        .executes(ctx => {
+                        .argument('type', arg.STRING.create(e))
+                        .executes(doEnchant)
+                        .then(cmd.argument('level', arg.INTEGER.create(e)).executes(doEnchant)),
+                ),
+            ).then(
+                cmd
+                    .literal('enchant_remove')
+                    .executes(ctx => {
+                        let item = GetPlayerItem(ctx)
+                        if (!item) return 0
+                        let tag = item.getOrCreateTag()
+                        if (!tag.Enchantments) return 0
+                        tag.remove('Enchantments')
+                        Client.player.tell(`Removing enchantments`)
+                        return 1
+                    })
+                    .then(
+                        cmd.argument('type', arg.STRING.create(e)).executes(ctx => {
                             let item = GetPlayerItem(ctx)
                             if (!item) return 0
+                            let type = arg.STRING.getResult(ctx, 'type')
                             let tag = item.getOrCreateTag()
                             if (!tag.Enchantments) return 0
-                            tag.remove('Enchantments')
-                            Client.player.tell(`Removing enchantments`)
+                            tag.Enchantments = tag.Enchantments.filter(x => x.id != type && x.id != `minecraft:${type}`)
+                            Client.player.tell(`Removing ${type} enchantments`)
                             return 1
-                        })
-                        .then(
-                            cmd.argument('type', arg.STRING.create(e)).executes(ctx => {
-                                let item = GetPlayerItem(ctx)
-                                if (!item) return 0
-                                let type = arg.STRING.getResult(ctx, 'type')
-                                let tag = item.getOrCreateTag()
-                                if (!tag.Enchantments) return 0
-                                tag.Enchantments = tag.Enchantments.filter(x => x.id != type && x.id != `minecraft:${type}`)
-                                Client.player.tell(`Removing ${type} enchantments`)
-                                return 1
-                            }),
-                        ),
-                ),
+                        }),
+                    ),
             )
         }
+
+        e.register(F)
     }
 })
