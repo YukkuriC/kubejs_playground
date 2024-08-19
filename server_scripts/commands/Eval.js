@@ -11,8 +11,11 @@ let DoEval
         Client.player.tell(Text.gold('Code:').append(Text.white(code)).clickCopy(code))
         let ns = GetNamespace(player)
         try {
-            let tmp = eval(code)
-            Client.player.tell(Text.green('Result:').append(Text.white(tmp)).clickCopy(tmp))
+            let tmp
+            with (global) {
+                tmp = eval(code)
+                Client.player.tell(Text.green('Result:').append(Text.white(tmp)).clickCopy(tmp))
+            }
             ns.res = tmp
         } catch (e) {
             Client.player.tell(Text.red('Error:').append(Text.white(e)).clickCopy(e))
@@ -25,6 +28,6 @@ PlayerEvents.chat(e => {
     let code = String(e.message)
     if (!code.startsWith('e@')) return
     code = code.substring(2)
-    DoEval(code, e.player)
+    Utils.server.scheduleInTicks(0, () => DoEval(code, e.player))
     e.cancel()
 })
