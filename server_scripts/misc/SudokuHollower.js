@@ -113,6 +113,7 @@ function GenSudoku(seed, harder) {
     if (!harder) return [pool, hollowed]
 
     // 4. T2 hollow
+    /**@type {(number|null)[][]}*/
     let hollowedHarder = JSON.parse(JSON.stringify(hollowed))
     function appearedIn(r, c, val) {
         for (let i = 0; i < 9; i++) {
