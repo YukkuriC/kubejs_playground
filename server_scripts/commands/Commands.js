@@ -37,11 +37,11 @@ ServerEvents.commandRegistry(e => {
                 else item.enchantStack(type, level)
                 return 1
             }
-            let getEnchantPool = item => {
+            let getEnchantPool = (item, returnKey) => {
                 if (!item) return
                 let tag = item.getOrCreateTag()
                 for (let key of enchantKeys) {
-                    if (tag[key] && tag[key].length > 0) return tag[key]
+                    if (tag[key] && tag[key].length > 0) return returnKey ? key : tag[key]
                 }
             }
             F.then(
@@ -63,11 +63,15 @@ ServerEvents.commandRegistry(e => {
                     })
                     .then(
                         cmd.argument('type', arg.STRING.create(e)).executes(ctx => {
-                            let pool = getEnchantPool(GetPlayerItem(ctx))
+                            let item = GetPlayerItem(ctx)
+                            let tag = item.getOrCreateTag()
+                            let key = getEnchantPool(item, true)
+                            let pool = tag[key]
                             if (!pool) return 0
                             let type = arg.STRING.getResult(ctx, 'type')
                             Client.player.tell(`Removing ${type} enchantments`)
                             pool = pool.filter(x => x.id != type && x.id != `minecraft:${type}`)
+                            tag[key] = pool
                             return 1
                         }),
                     ),
