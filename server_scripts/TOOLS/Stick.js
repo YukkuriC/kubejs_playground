@@ -1,5 +1,5 @@
 /** @type string[] */
-const YC_StickModes = ['None', 'SortChest', 'ChainBreak']
+const YC_StickModes = ['None', 'SortChest', 'ChainBreak', 'Sample']
 
 function GetYCStickState(/**@type Internal.Item */ item) {
     let tag = item.getOrCreateTag()
@@ -95,5 +95,11 @@ ItemEvents.firstRightClicked('yc:stick', e => {
         } else {
             return cancelBy('Cancelled for no block')
         }
+    } else if (mode == 'Sample') {
+        if (!block) return
+        for (let i of block.getDrops()) {
+            if (i.id === block.id) return player.give(i)
+        }
+        player.give(block.item)
     }
 })
