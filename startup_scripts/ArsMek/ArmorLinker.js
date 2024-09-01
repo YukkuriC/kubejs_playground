@@ -1,5 +1,6 @@
 {
     let Arrays = Java.loadClass('java.util.Arrays')
+    let ResourceLocation = Java.loadClass('net.minecraft.resources.ResourceLocation')
 
     let ARS = {
         SUIT_BASE: () => [
@@ -10,6 +11,7 @@
         ],
     }
     for (let cls of [
+        'com.hollingsworth.arsnouveau.ArsNouveau',
         'com.hollingsworth.arsnouveau.api.perk.ArmorPerkHolder',
         'com.hollingsworth.arsnouveau.api.registry.PerkRegistry',
         'com.hollingsworth.arsnouveau.setup.registry.ItemsRegistry',
@@ -32,6 +34,7 @@
     }
     global.MEK = MEK
 
+    let PS4 = new ARS.PerkSlot(new ResourceLocation(ARS.ArsNouveau.MODID, 'four'), 4)
     StartupEvents.postInit(e => {
         for (let item of MEK.SUIT_BASE()) {
             ARS.PerkRegistry.registerPerkProvider(
@@ -42,7 +45,7 @@
                         Arrays.asList(
                             Arrays.asList(ARS.PerkSlot.ONE),
                             Arrays.asList(ARS.PerkSlot.ONE, ARS.PerkSlot.TWO),
-                            Arrays.asList(ARS.PerkSlot.ONE, ARS.PerkSlot.TWO, ARS.PerkSlot.THREE),
+                            Arrays.asList(ARS.PerkSlot.TWO, ARS.PerkSlot.THREE, PS4),
                         ),
                     ),
             )
@@ -50,8 +53,8 @@
     })
 
     // backup update
-    // ForgeEvents.onEvent('net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent', e => {
-    //     const { slot, from, to } = e
-    //     if (slot.armor && from.id != to.id && to.id.startsWith('mekanism:mekasuit_')) global.InjectMekasuit(to, slot)
-    // })
+    ForgeEvents.onEvent('net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent', e => {
+        const { slot, from, to } = e
+        if (slot.armor && from.id != to.id && to.id.startsWith('mekanism:mekasuit_')) global.InjectMekasuit(to, slot)
+    })
 }
