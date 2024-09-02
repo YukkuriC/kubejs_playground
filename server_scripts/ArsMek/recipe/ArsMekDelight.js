@@ -29,6 +29,32 @@ ServerEvents.recipes(e => {
             magicWoodRecipes.push(recipe)
         }
     }
+    for (let type of ['', '_log']) {
+        let recipe = e
+            .custom({
+                type: 'farmersdelight:cutting',
+                ingredients: [
+                    {
+                        item: `ars_elemental:yellow_archwood${type}`,
+                    },
+                ],
+                result: [
+                    {
+                        item: `ars_elemental:stripped_yellow_archwood${type}`,
+                    },
+                    {
+                        item: 'farmersdelight:tree_bark',
+                    },
+                ],
+                sound: 'minecraft:item.axe.strip',
+                tool: {
+                    type: 'farmersdelight:tool_action',
+                    action: 'axe_strip',
+                },
+            })
+            .id(`kubejs:cutting_magic_yellow${type || '_wood'}`)
+        magicWoodRecipes.push(recipe)
+    }
     // 自动案板
     let autoConvert = r => {
         let raw = JSON.parse(String(r.json))
