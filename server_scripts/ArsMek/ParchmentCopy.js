@@ -1,4 +1,4 @@
-ItemEvents.rightClicked('ars_novaeau:blank_parchment', e => {
+ItemEvents.rightClicked('ars_nouveau:blank_parchment', e => {
     if (e.level.isClientSide()) return
     let { player, item } = e
     let block = e.target.block
