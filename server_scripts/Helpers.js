@@ -66,3 +66,12 @@ function CanHarvest(block, state) {
     }
     return false
 }
+
+global.dump = obj => {
+    let lines = ['{']
+    for (let pair of Object.entries(obj)) {
+        lines.push(`    ${pair[0]}: ${pair[1]},`)
+    }
+    lines.push('}')
+    return lines.join('\n')
+}
