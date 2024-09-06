@@ -27,7 +27,7 @@ function ShuffleArray(arr, rng) {
     }
 }
 
-function GenSudoku(seed, harder, keepPredicate) {
+function GenSudoku(seed, keepPredicate) {
     let rng = GetSeededRandom(seed)
     /**@type {number[][]}*/
     let pool = Array(9)
@@ -119,67 +119,6 @@ function GenSudoku(seed, harder, keepPredicate) {
         let [r, c] = pair
         if (determinedAt(r, c)) hollowed[r][c] = null
     }
-    if (!harder) return [pool, hollowed]
 
-    // 4. T2 hollow
-    /**@type {(number|null)[][]}*/
-    let hollowedHarder = JSON.parse(JSON.stringify(hollowed))
-    function appearedIn(r, c, val) {
-        for (let i = 0; i < 9; i++) {
-            if (i !== r && hollowedHarder[i][c] === val) return true
-            if (i !== c && hollowedHarder[r][i] === val) return true
-        }
-        let rg = Math.floor(r / 3) * 3,
-            cg = Math.floor(c / 3) * 3
-        for (let i = 0; i < 3; i++) {
-            let rr = rg + i
-            if (rr === r) continue
-            for (let j = 0; j < 3; j++) {
-                let cc = cg + j
-                if (cc === c) continue
-                if (hollowedHarder[rr][cc] === val) return true
-            }
-        }
-        return false
-    }
-    function SureInRow(r, c, self) {
-        for (let i = 0; i < 9; i++) {
-            if (i !== c && !appearedIn(r, i, self)) return false
-        }
-        return true
-    }
-    function SureInCol(r, c, self) {
-        for (let i = 0; i < 9; i++) {
-            if (i !== r && !appearedIn(i, c, self)) return false
-        }
-        return true
-    }
-    function SureInGroup(r, c, self) {
-        let rg = Math.floor(r / 3) * 3,
-            cg = Math.floor(c / 3) * 3
-        for (let i = 0; i < 3; i++) {
-            let rr = rg + i
-            if (rr === r) continue
-            for (let j = 0; j < 3; j++) {
-                let cc = cg + j
-                if (cc === c) continue
-                if (!appearedIn(rr, cc, self)) return false
-            }
-        }
-        return true
-    }
-    ShuffleArray(fillSeq, rng)
-    for (let pair of fillSeq) {
-        let [r, c] = pair
-        let self = hollowedHarder[r][c]
-        if (self == null) continue
-        hollowedHarder[r][c] = null
-        if (SureInRow(r, c, self) || SureInCol(r, c, self) || SureInGroup(r, c, self)) {
-            // console.log('dropping', r, c)
-        } else {
-            hollowedHarder[r][c] = self
-        }
-    }
-
-    return [pool, hollowed, hollowedHarder]
+    return [pool, hollowed]
 }
