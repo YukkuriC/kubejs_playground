@@ -27,7 +27,7 @@ function ShuffleArray(arr, rng) {
     }
 }
 
-function GenSudoku(seed, harder) {
+function GenSudoku(seed, harder, keepPredicate) {
     let rng = GetSeededRandom(seed)
     /**@type {number[][]}*/
     let pool = Array(9)
@@ -104,6 +104,15 @@ function GenSudoku(seed, harder) {
         }
         checker.delete(null)
         return checker.size == 8
+    }
+    if (keepPredicate) {
+        fillSeq.length = 0
+        for (let i = 0; i < 81; i++) {
+            let r = Math.floor(i / 9),
+                c = i % 9
+            if (keepPredicate(r, c)) continue
+            fillSeq.push([r, c])
+        }
     }
     ShuffleArray(fillSeq, rng)
     for (let pair of fillSeq) {
