@@ -75,3 +75,27 @@ global.dump = obj => {
     lines.push('}')
     return lines.join('\n')
 }
+
+global.dumpDeep = (obj, deltaIndent) => {
+    let noNewLine = deltaIndent < 0
+    if (!noNewLine) deltaIndent = deltaIndent || 2
+    let used = new Set()
+    let inner = (obj, indent) => {
+        try {
+            if (used.has(obj)) return '{...}'
+            used.add(obj)
+            let lines = ['{']
+            for (let pair of Object.entries(obj)) {
+                let [k, v] = pair
+                let vStr = v && typeof v === 'object' ? inner(v, indent + deltaIndent) : String(v)
+                lines.push(' '.repeat(indent + deltaIndent) + `${k}:${vStr},`)
+            }
+            lines.push(' '.repeat(indent) + '}')
+            used.delete(obj)
+            return lines.join(noNewLine ? '' : '\n')
+        } catch (e) {
+            return ' '.repeat(indent) + `[Error: ${e}]`
+        }
+    }
+    return inner(obj, noNewLine ? NaN : 0)
+}
