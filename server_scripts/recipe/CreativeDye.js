@@ -22,4 +22,5 @@ ServerEvents.recipes(e => {
     helper('createaddition:alternator', 'createaddition:creative_energy')
     helper('ae2:fluid_cell_housing', 'ae2:creative_fluid_cell')
     helper('ae2:item_cell_housing', 'ae2:creative_item_cell')
+    helper('functionalstorage:void_upgrade', 'functionalstorage:creative_vending_upgrade')
 })
