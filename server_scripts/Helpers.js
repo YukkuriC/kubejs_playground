@@ -1,36 +1,39 @@
 // chain block breaking
 const MAX_CHAIN = 4096
+const DELTA_DIRS = []
+for (let d of [-1, 1]) {
+    DELTA_DIRS.push([d, 0, 0], [0, d, 0], [0, 0, d])
+}
 
 /**
  * general helper
  * @param { Internal.Level } level
- * @param { {x:number; y:number; z:number} } blockPos
+ * @param { BlockPos } blockPos
  * @param { (block:Internal.BlockContainerJS) => boolean } predicate
  * @param { (block:Internal.BlockContainerJS) => void } callback
  */
 function FloodFillBlocks(level, blockPos, predicate, callback) {
-    const blockQueue = [blockPos]
-    const visited = new Set()
-    visited.add(`${blockPos.x},${blockPos.y},${blockPos.z}`)
+    let blockQueue = [blockPos]
+    let visited = new Set()
+    visited.add(blockPos.hashCode())
     for (let _ = 0; _ < MAX_CHAIN && blockQueue.length > 0; ) {
-        let { x, y, z } = blockQueue.pop()
-        let bb = level.getBlock(x, y, z)
+        let pos = blockQueue.shift()
+        let { x, y, z } = pos
+        let bb = level.getBlock(pos)
         if (!predicate(bb)) continue
         callback(bb)
         _++
 
         // dfs
-        for (let i = -1; i <= 1; i++)
-            for (let j = -1; j <= 1; j++)
-                for (let k = -1; k <= 1; k++) {
-                    if (!i && !j && !k) continue
-                    let newPos = { x: x + i, y: y + j, z: z + k }
-                    let newKey = `${newPos.x},${newPos.y},${newPos.z}`
-                    if (!visited.has(newKey)) {
-                        visited.add(newKey)
-                        blockQueue.push(newPos)
-                    }
-                }
+        for (let delta of DELTA_DIRS) {
+            let [i, j, k] = delta
+            let newPos = new BlockPos(x + i, y + j, z + k)
+            let newKey = newPos.hashCode()
+            if (!visited.has(newKey)) {
+                visited.add(newKey)
+                blockQueue.push(newPos)
+            }
+        }
     }
 }
 /**

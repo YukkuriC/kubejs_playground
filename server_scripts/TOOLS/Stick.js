@@ -79,17 +79,17 @@ ItemEvents.firstRightClicked('yc:stick', e => {
             }
 
             let targets = []
-            let cnt = 0
+            // let cnt = 0
             FloodFillBlocks(
                 level,
                 block.pos,
-                b => cnt < 1001 && b.id == block.id,
+                b => /*cnt < 1001 &&*/ b.id == block.id,
                 b => {
                     targets.push(b)
-                    cnt++
+                    // cnt++
                 },
             )
-            if (targets.length > 1000) return cancelBy('R U SURE?')
+            // if (targets.length > 1000) return cancelBy('R U SURE?')
             StickBreakCache[player.stringUuid] = [block, targets]
             return Client.player.tell(`Selected ${targets.length} blocks`)
         } else {
