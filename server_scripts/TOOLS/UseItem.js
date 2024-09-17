@@ -8,8 +8,8 @@ function OnUseTools(e) {
     const { level, itemStack } = e
     if (level.clientSide || !TARGETS.has(String(itemStack.id))) return
     const block = level.getBlock(e.pos)
-    const { x, y, z } = e.pos
-    /** @type Internal.Player */
+    let { x, y, z } = e.pos
+    /** @type Player */
     const player = e.getEntity()
     const isShift = player.isShiftKeyDown()
     /** @type Internal.BlockContainerJS[] */
@@ -49,12 +49,7 @@ function OnUseTools(e) {
                             (state.getCollisionShape(level, newPos).isEmpty() || bbb instanceof $CocoaBlock) &&
                             CanHarvest(bbb, state, level)
                         ) {
-                            let res = BreakBlock(level, bb, player, true)
-                            if (res) {
-                                for (const i of res) {
-                                    block.up.popItem(i)
-                                }
-                            }
+                            BreakBlock(level, bb, player)
                         }
                     }
 
@@ -76,33 +71,40 @@ function OnUseTools(e) {
                     }
                 }
     } else if (itemStack.id == 'yc:pickaxe') {
-        if (!block?.popItem) return
+        if (!block) {
+            x = Math.round(player.x)
+            y = Math.round(player.y)
+            z = Math.round(player.z)
+        }
         for (let i = x - 2; i <= x + 2; i++)
             for (let j = -64; j <= 256; j++)
                 for (let k = z - 2; k <= z + 2; k++) {
                     let bb = level.getBlock(i, j, k)
-                    if (bb) global.EVENT_BUS.post(new $BreakEvent(level, bb.pos, bb.blockState, player))
+                    // if (bb) global.EVENT_BUS.post(new $BreakEvent(level, bb.pos, bb.blockState, player)) // only for NFWC ore lung
                     let shouldKeep = bb && (bb.hasTag('forge:ores') /* || bb.inventory */ || (isShift && Math.random() < 0.1))
                     if (!shouldKeep) continue
-                    for (const d of bb.getDrops() ?? []) block.popItem(d)
+                    for (const d of bb.getDrops() ?? []) player.give(d)
                     // if (bb.inventory) for (const i of bb.inventory.allItems) block.popItem(i)
                 }
     } else if (itemStack.id == 'yc:axe') {
         if (!block) return
-        /** @type Internal.BlockContainerJS[] */
         let hasLeaves = false
+        let hasLogs = false
         FloodFillBlocks(
             level,
             block.pos,
             bb => {
                 if (!bb) return false
-                if (!(bb.hasTag('minecraft:logs') || bb.hasTag('minecraft:leaves'))) return false
-                if (bb.hasTag('minecraft:leaves')) hasLeaves = true
+                let hasLogsThis = bb.hasTag('minecraft:logs'),
+                    hasLeavesThis = bb.hasTag('minecraft:leaves')
+                if (!(hasLogsThis || hasLeavesThis)) return false
+                hasLeaves ||= hasLeavesThis
+                hasLogs ||= hasLogsThis
                 return true
             },
             bb => blockTargets.push(bb),
         )
-        if (blockTargets.length > 1 && hasLeaves) for (const bb of blockTargets) BreakBlock(level, bb, player)
+        if (hasLogs && hasLeaves) for (const bb of blockTargets) BreakBlock(level, bb, player)
     } else if (itemStack.id == 'yc:shovel') {
         for (let i = x - 1; i <= x + 1; i++)
             for (let j = y - 1; j <= y + 1; j++)

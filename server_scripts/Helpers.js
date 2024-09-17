@@ -40,16 +40,16 @@ function FloodFillBlocks(level, blockPos, predicate, callback) {
  * helper general break block
  * @param { Internal.Level } level
  * @param { Internal.BlockContainerJS } block
- * @param { Internal.Player } player
+ * @param { Player } player
  * @param { boolean } drop
  */
 function BreakBlock(level, block, player, noDrop) {
     if (!block) return
-    let res = null
-    if (noDrop) res = block.getDrops()
+    if (!noDrop) {
+        for (let item of block.getDrops()) player.give(item)
+    }
     global.EVENT_BUS.post(new $BreakEvent(level, block.pos, block.blockState, player))
-    level.destroyBlock(block.pos, !noDrop, player)
-    return res
+    level.destroyBlock(block.pos, false, player)
 }
 /**
  * check crop age

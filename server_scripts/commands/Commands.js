@@ -7,12 +7,12 @@ ServerEvents.commandRegistry(e => {
         } catch (e) {}
     }
     const GetPlayer = ctx => {
-        /**@type {Internal.Player}*/
+        /**@type {Player}*/
         let player = ctx.source.entity
         if (player && player.isPlayer()) return player
     }
     const GetPlayerItem = ctx => {
-        /**@type {Internal.Player}*/
+        /**@type {Player}*/
         let player = GetPlayer(ctx)
         if (player) return player.getMainHandItem()
     }
