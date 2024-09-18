@@ -98,8 +98,8 @@ function OnUseTools(e) {
                 let hasLogsThis = bb.hasTag('minecraft:logs'),
                     hasLeavesThis = bb.hasTag('minecraft:leaves')
                 if (!(hasLogsThis || hasLeavesThis)) return false
-                hasLeaves ||= hasLeavesThis
-                hasLogs ||= hasLogsThis
+                hasLeaves |= hasLeavesThis
+                hasLogs |= hasLogsThis
                 return true
             },
             bb => blockTargets.push(bb),
