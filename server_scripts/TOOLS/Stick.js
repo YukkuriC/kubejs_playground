@@ -72,9 +72,21 @@ ItemEvents.firstRightClicked('yc:stick', e => {
                 if (!block.pos.equals(selected.pos)) {
                     return cancelBy('Cancelled for different block')
                 }
+                let breakCounter = {}
                 for (let b of blocks) {
-                    BreakBlock(level, b, player)
+                    let drops = b.getDrops()
+                    if (!drops || drops.length <= 0) drops = [b.item]
+                    for (let d of drops) {
+                        let key = String(d.id) + String(d.nbt)
+                        if (breakCounter[key]) breakCounter[key].count += d.count
+                        else breakCounter[key] = d
+                    }
+                    BreakBlock(level, b, player, true)
                 }
+                for (let k in breakCounter) {
+                    player.give(breakCounter[k])
+                }
+
                 return cancelBy(`${blocks.length} blocks broken`)
             }
 
