@@ -63,7 +63,7 @@ ItemEvents.firstRightClicked('yc:stick', e => {
     } else if (mode == 'ChainBreak') {
         let cancelBy = function (reason) {
             delete StickBreakCache[player.stringUuid]
-            Client.player.tell(reason)
+            Utils.server.tell(reason)
         }
 
         if (block) {
@@ -91,7 +91,7 @@ ItemEvents.firstRightClicked('yc:stick', e => {
             )
             // if (targets.length > 1000) return cancelBy('R U SURE?')
             StickBreakCache[player.stringUuid] = [block, targets]
-            return Client.player.tell(`Selected ${targets.length} blocks`)
+            return Utils.server.tell(`Selected ${targets.length} blocks`)
         } else {
             return cancelBy('Cancelled for no block')
         }
