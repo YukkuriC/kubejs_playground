@@ -63,7 +63,7 @@ ItemEvents.firstRightClicked('yc:stick', e => {
     } else if (mode == 'ChainBreak') {
         let cancelBy = function (reason) {
             delete StickBreakCache[player.stringUuid]
-            Client.player.tell(reason)
+            Utils.server.tell(reason)
         }
 
         if (block) {
@@ -72,26 +72,38 @@ ItemEvents.firstRightClicked('yc:stick', e => {
                 if (!block.pos.equals(selected.pos)) {
                     return cancelBy('Cancelled for different block')
                 }
+                let breakCounter = {}
                 for (let b of blocks) {
-                    BreakBlock(level, b, player)
+                    let drops = b.getDrops()
+                    if (!drops || drops.length <= 0) drops = [b.item]
+                    for (let d of drops) {
+                        let key = String(d.id) + String(d.nbt)
+                        if (breakCounter[key]) breakCounter[key].count += d.count
+                        else breakCounter[key] = d
+                    }
+                    BreakBlock(level, b, player, true)
                 }
+                for (let k in breakCounter) {
+                    player.give(breakCounter[k])
+                }
+
                 return cancelBy(`${blocks.length} blocks broken`)
             }
 
             let targets = []
-            let cnt = 0
+            // let cnt = 0
             FloodFillBlocks(
                 level,
                 block.pos,
-                b => cnt < 1001 && b.id == block.id,
+                b => /*cnt < 1001 &&*/ b.id == block.id,
                 b => {
                     targets.push(b)
-                    cnt++
+                    // cnt++
                 },
             )
-            if (targets.length > 1000) return cancelBy('R U SURE?')
+            // if (targets.length > 1000) return cancelBy('R U SURE?')
             StickBreakCache[player.stringUuid] = [block, targets]
-            return Client.player.tell(`Selected ${targets.length} blocks`)
+            return Utils.server.tell(`Selected ${targets.length} blocks`)
         } else {
             return cancelBy('Cancelled for no block')
         }
