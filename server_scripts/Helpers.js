@@ -3,6 +3,9 @@ const MAX_CHAIN = 4096
 const DELTA_DIRS = []
 for (let d of [-1, 1]) {
     DELTA_DIRS.push([d, 0, 0], [0, d, 0], [0, 0, d])
+    for (let d2 of [-1, 1]) {
+        DELTA_DIRS.push([d, d2, 0], [0, d, d2], [d2, 0, d])
+    }
 }
 
 /**
