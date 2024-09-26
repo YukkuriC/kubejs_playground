@@ -5,11 +5,16 @@ StartupEvents.registry('block', e => {
         })
         .displayName('DE Reactor Controller')
 })
+BlockEvents.modification(e => {
+    e.modify('kubejs:de_reactor_ctrl', b => {
+        b.explosionResistance = 114514
+    })
+})
 
 /**@type {Internal.BlockEntityCallback}*/
 global.tickPID = be => {
     let nbt = be.data
-    nbt.TARGET = nbt.TARGET || 8000.5
+    nbt.TARGET = nbt.TARGET || 3000.5
     nbt.P = nbt.P || 3000
     nbt.I = nbt.I || 600
     nbt.D = nbt.D || 2000
@@ -35,6 +40,13 @@ global.tickPID = be => {
     // get target data
     let pos = nbt.cachedPos.core
     let coreData = be.level.getBlock(pos[0], pos[1], pos[2])?.entityData
+    if (coreData?.bc_managed_data?.reactor_state?.value != 3) {
+        if (coreData?.bc_managed_data?.reactor_state?.value > 3) {
+            // force stop
+            be.level.runCommandSilent(`data modify block ${pos[0]} ${pos[1]} ${pos[2]} bc_managed_data.reactor_state.value set value 1`)
+        }
+        return
+    }
     pos = nbt.cachedPos.valve
     let valveData = be.level.getBlock(pos[0], pos[1], pos[2])?.entityData
     if (!coreData || !valveData) {
@@ -61,4 +73,22 @@ global.tickPID = be => {
 
     // update old error
     nbt.old_error = error
+
+    // auto increase target
+    if (Y >= nbt.TARGET - 5 && nbt.TARGET < 8000) {
+        switch (true) {
+            case nbt.TARGET > 7000:
+                nbt.TARGET += 20
+                break
+            case nbt.TARGET > 6000:
+                nbt.TARGET += 100
+                break
+            case nbt.TARGET > 4000:
+                nbt.TARGET += 500
+                break
+            default:
+                nbt.TARGET += 1000
+                break
+        }
+    }
 }
