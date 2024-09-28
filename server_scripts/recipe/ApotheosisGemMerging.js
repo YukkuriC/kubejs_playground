@@ -4,13 +4,14 @@ ServerEvents.recipes(e => {
 
     for (let i = 1; i < rarity.length; i++) {
         let old_rarity = `apotheosis:${rarity[i - 1]}`
+        let old_gem = Item.of('apotheosis:gem', 1, { affix_data: { rarity: `apotheosis:${rarity[i - 1]}` } }).weakNBT()
         let new_gem = {
             item: 'apotheosis:gem',
             nbt: { affix_data: { rarity: `apotheosis:${rarity[i]}` } },
         }
 
         e.shaped(new_gem, [' X ', 'GGG', ' Y '], {
-            G: 'apotheosis:gem',
+            G: old_gem,
             X: 'apotheosis:gem_dust',
             Y: materials[i],
         })
