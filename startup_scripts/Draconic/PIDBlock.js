@@ -1,5 +1,5 @@
 StartupEvents.registry('block', e => {
-    e.create('de_reactor_ctrl')
+    e.create('yc:de_reactor_ctrl')
         .blockEntity(be => {
             be.serverTick(20, 0, x => global.tickPID(x))
         })
