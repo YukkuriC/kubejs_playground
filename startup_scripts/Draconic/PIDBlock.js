@@ -3,12 +3,8 @@ StartupEvents.registry('block', e => {
         .blockEntity(be => {
             be.serverTick(20, 0, x => global.tickPID(x))
         })
+        .resistance(114514)
         .displayName('DE Reactor Controller')
-})
-BlockEvents.modification(e => {
-    e.modify('kubejs:de_reactor_ctrl', b => {
-        b.explosionResistance = 114514
-    })
 })
 
 /**@type {Internal.BlockEntityCallback}*/
