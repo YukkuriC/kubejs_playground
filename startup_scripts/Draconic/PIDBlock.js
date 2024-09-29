@@ -10,10 +10,18 @@ StartupEvents.registry('block', e => {
 /**@type {Internal.BlockEntityCallback}*/
 global.tickPID = be => {
     let nbt = be.data
-    nbt.TARGET = nbt.TARGET || 3000.5
-    nbt.P = nbt.P || 3000
-    nbt.I = nbt.I || 600
-    nbt.D = nbt.D || 2000
+    if (!nbt.INIT) {
+        nbt.TARGET = 3000.5
+        nbt.P = 3000
+        nbt.I = 600
+        nbt.D = 2000
+        nbt.INIT = true
+    }
+
+    let doReset = () => {
+        nbt.cum_error = 0
+        nbt.TARGET = 3000.5
+    }
 
     // get target pos
     if (!nbt.cachedPos) {
@@ -29,7 +37,7 @@ global.tickPID = be => {
             nbt.cachedPos = _cached
         } catch (e) {
             Utils.server.tell(e)
-            return
+            return doReset()
         }
     }
 
@@ -41,19 +49,19 @@ global.tickPID = be => {
             // force stop
             be.level.runCommandSilent(`data modify block ${pos[0]} ${pos[1]} ${pos[2]} bc_managed_data.reactor_state.value set value 1`)
         }
-        return
+        return doReset()
     }
     pos = nbt.cachedPos.valve
     let valveData = be.level.getBlock(pos[0], pos[1], pos[2])?.entityData
     if (!coreData || !valveData) {
         delete nbt.cachedPos
-        return
+        return doReset()
     }
     let X = valveData?.bc_managed_data?.min_flow
     let Y = coreData?.bc_managed_data?.temperature
     if (!(X || X === 0) || !(Y || Y === 0)) {
         delete nbt.cachedPos
-        return
+        return doReset()
     }
 
     // run control
@@ -71,7 +79,7 @@ global.tickPID = be => {
     nbt.old_error = error
 
     // auto increase target
-    if (Y >= nbt.TARGET - 5 && nbt.TARGET < 8000) {
+    while (Y >= nbt.TARGET - 5 && nbt.TARGET < 8000) {
         switch (true) {
             case nbt.TARGET > 7000:
                 nbt.TARGET += 20
