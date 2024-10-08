@@ -4,4 +4,4 @@ const $EvokerFangs = Java.loadClass('net.minecraft.world.entity.projectile.Evoke
 const $IntegerProperty = Java.loadClass('net.minecraft.world.level.block.state.properties.IntegerProperty')
 
 global.SERVER_SCOPE = this
-global.unlockScriptManager(Java)
+global.unlockClassFilter(Java)
