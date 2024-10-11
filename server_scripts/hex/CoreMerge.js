@@ -1,6 +1,7 @@
 const HEX_API = Java.loadClass('at.petrak.hexcasting.xplat.IXplatAbstractions')
 
 ServerEvents.recipes(e => {
+    e.shapeless('2x hexcasting:focus', ['hexcasting:focus', 'hexcasting:focus'])
     e.shapeless('hexcasting:focus', ['hexcasting:focus']).modifyResult((grid, item) => {
         let { player, width, height } = grid
 
@@ -18,7 +19,7 @@ ServerEvents.recipes(e => {
             if (src_item.id == 'hexcasting:focus') break
         }
 
-        item.orCreateTag.data = src_item.orCreateTag.data
+        item.orCreateTag.data = src_item.orCreateTag.data ?? {}
         if (player) {
             let offItem = player.offHandItem
             if (offItem.nbt?.data && offItem.nbt.data['hexcasting:type']) {
