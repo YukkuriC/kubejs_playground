@@ -122,6 +122,22 @@ ServerEvents.commandRegistry(e => {
             )
         }
 
+        // 重命名
+        {
+            F.then(
+                cmd.literal('rename').then(
+                    cmd.argument('name', arg.STRING.create(e)).executes(ctx => {
+                        let item = GetPlayerItem(ctx)
+                        if (!item || item.id == 'minecraft:air') return 0
+                        let newName = arg.STRING.getResult(ctx, 'name')
+                        newName = newName.replace('\\', '\\\\').replace('"', '\\"') // 这是Java String，不是js string
+                        item.orCreateTag.display = { Name: `{"text":"${newName}"}` }
+                        return 1
+                    }),
+                ),
+            )
+        }
+
         e.register(F)
     }
 })
