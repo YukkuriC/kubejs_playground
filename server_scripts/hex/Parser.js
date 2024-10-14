@@ -2,6 +2,7 @@
     let PatternRegistryPath = 'at.petrak.hexcasting.api.PatternRegistry'
     let PRClass = Java.loadClass(PatternRegistryPath)
     let PRRaw = global.loadRawClass(PatternRegistryPath)
+    let Double = Java.loadClass('java.lang.Double')
 
     let mapStartDir = {}
     let mapLineDir = {}
@@ -54,13 +55,16 @@
         }
         const toList = lst => `{"hexcasting:data":[${lst.join(',')}],"hexcasting:type":"hexcasting:list"}`
         const toNum = num => `{"hexcasting:data":${num}d,"hexcasting:type":"hexcasting:double"}`
+        const toVec = nums =>
+            `{"hexcasting:data":[L;${nums
+                .map(x => Double.doubleToRawLongBits(x).toString() + 'L')
+                .join(',')}],"hexcasting:type":"hexcasting:vec3"}`
 
         e.register(
             cmd.literal('hexParse').then(
                 cmd.argument('code', arg.STRING.create(e)).executes(ctx => {
                     let code = []
                     String(arg.STRING.getResult(ctx, 'code')).replace(/\\|\(|\)|\[|\]|[\w\.\/]+/g, match => (code.push(match), ''))
-                    Utils.server.tell(code.join(','))
 
                     let stack = [[]]
                     for (let kw of code) {
@@ -83,12 +87,18 @@
                             stack[0].push(toNum(num))
                         }
                         // num literal
-                        else if (kw.match(/[0-9\.\-]+(e[0-9\.\-]+)?/)) {
+                        else if (kw.match(/^[0-9\.\-]+(e[0-9\.\-]+)?$/)) {
                             let num = Number(kw) || 0
                             stack[0].push(toNum(num))
                         }
 
-                        // TODO vec literals
+                        // vec literals
+                        else if (kw.startsWith('vec_')) {
+                            let raw = kw.split('_')
+                            let nums = [1, 2, 3].map(x => Number(raw[x]) || 0)
+                            // TODO use builtin consts
+                            stack[0].push(toVec(nums))
+                        }
 
                         // else
                         else {
