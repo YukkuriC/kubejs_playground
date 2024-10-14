@@ -4,6 +4,7 @@ global.getDeclaredField = (obj, name, isStatic, superCount) => {
     superCount = superCount || 0
     let cls = obj
     if (!isStatic) cls = obj.getClass()
+    else cls = global.toRawClass(obj)
     for (let i = 0; i < superCount; i++) cls = cls.getSuperclass()
     let field = cls.getDeclaredField(name)
     field.setAccessible(true)
