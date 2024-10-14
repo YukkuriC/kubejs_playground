@@ -19,6 +19,7 @@
     let onLoad = (/**@type {Internal.CommandEventJS}*/ e) => {
         mapPatterns = global.mapPatterns = {
             escape: toPattern('qqqaw', 'WEST'),
+            pop: toPattern('a', 'SOUTH_WEST'),
             '(': toPattern('qqq', 'WEST'),
             ')': toPattern('eee', 'EAST'),
         }
@@ -64,7 +65,7 @@
             cmd.literal('hexParse').then(
                 cmd.argument('code', arg.STRING.create(e)).executes(ctx => {
                     let code = []
-                    String(arg.STRING.getResult(ctx, 'code')).replace(/\\|\(|\)|\[|\]|[\w\.\/]+/g, match => (code.push(match), ''))
+                    String(arg.STRING.getResult(ctx, 'code')).replace(/\\|\(|\)|\[|\]|[\w\.\/\-]+/g, match => (code.push(match), ''))
 
                     let stack = [[]]
                     for (let kw of code) {
