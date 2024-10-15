@@ -63,7 +63,7 @@
 
         let codeParser = ctx => {
             let code = []
-            String(arg.STRING.getResult(ctx, 'code')).replace(/\\|\(|\)|\[|\]|[\w\.\/\-]+/g, match => (code.push(match), ''))
+            String(arg.STRING.getResult(ctx, 'code')).replace(/\\|\(|\)|\[|\]|[\w\.\/\-\:]+/g, match => (code.push(match), ''))
             let rename = null
             try {
                 rename = arg.STRING.getResult(ctx, 'rename')
