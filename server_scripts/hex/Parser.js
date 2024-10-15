@@ -49,10 +49,12 @@
 
     ServerEvents.commandRegistry(e => {
         const { commands: cmd, arguments: arg } = e
-        const GetPlayer = ctx => {
+        const GetContainer = ctx => {
             /**@type {Player}*/
             let player = ctx.source.entity
-            if (player && player.isPlayer()) return player
+            if (!player || !player.isPlayer()) return
+            if (player.mainHandItem.id == 'hexcasting:focus') return player.mainHandItem
+            else if (player.offhandItem.id == 'hexcasting:focus') return player.offhandItem
         }
         const toList = lst => `{"hexcasting:data":[${lst.join(',')}],"hexcasting:type":"hexcasting:list"}`
         const toNum = num => `{"hexcasting:data":${num}d,"hexcasting:type":"hexcasting:double"}`
@@ -96,11 +98,16 @@
                 }
 
                 // vec literals
-                else if (kw.startsWith('vec_')) {
+                else if (kw.startsWith('vec')) {
                     let raw = kw.split('_')
                     let nums = [1, 2, 3].map(x => Number(raw[x]) || 0)
                     // TODO use builtin consts
                     stack[0].push(toVec(nums))
+                }
+
+                // custom pattern
+                else if (kw.match(/_[wedsaq]*/)) {
+                    stack[0].push(toPattern(kw.substring(1), 'EAST'))
                 }
 
                 // else
@@ -110,10 +117,7 @@
             }
 
             // parse to item
-            let player = GetPlayer(ctx)
-            let target = null
-            if (player.mainHandItem.id == 'hexcasting:focus') target = player.mainHandItem
-            else if (player.offhandItem.id == 'hexcasting:focus') target = player.offhandItem
+            let target = GetContainer(ctx)
             if (target) {
                 let fooItem = Item.of('hexcasting:focus', `{data:${toList(stack[0])}}`)
                 target.orCreateTag.data = fooItem.nbt.data
@@ -126,12 +130,47 @@
         }
 
         e.register(
-            cmd.literal('hexParse').then(
-                cmd
-                    .argument('code', arg.STRING.create(e))
-                    .executes(codeParser)
-                    .then(cmd.argument('rename', arg.STRING.create(e)).executes(codeParser)),
-            ),
+            cmd
+                .literal('hexParse')
+                .then(
+                    cmd.literal('read').executes(ctx => {
+                        let target = GetContainer(ctx)
+                        if (!target) return 0
+                        let iotaRoot = target.item.readIota(target, ctx.source.level)
+
+                        let iota2str = i => {
+                            if (i.list) {
+                                let inner = i.list.list.map(iota2str)
+                                return `[${inner.join(',')}]`
+                            } else if (i.pattern) {
+                                // TODO pattern match
+                                return `_${i.pattern.anglesSignature()}`
+                            } else if (i.double !== undefined) {
+                                return String(i.double)
+                            } else if (i.vec3) {
+                                let axes = []
+                                for (let sub of 'xyz') {
+                                    axes.push(Math.round(i.vec3[sub]() * 1000) / 1000)
+                                }
+                                while (axes.length > 0 && axes[axes.length - 1] == 0) axes.pop()
+                                return 'vec' + axes.map(x => `_${x}`).join('')
+                            }
+
+                            return 'UNKNOWN'
+                        }
+
+                        let toStr = iota2str(iotaRoot)
+                        ctx.source.entity.tell(Text.gold('Result: ').append(Text.white(toStr)).clickCopy(toStr))
+
+                        return 1919810
+                    }),
+                )
+                .then(
+                    cmd
+                        .argument('code', arg.STRING.create(e))
+                        .executes(codeParser)
+                        .then(cmd.argument('rename', arg.STRING.create(e)).executes(codeParser)),
+                ),
         )
     })
 }
