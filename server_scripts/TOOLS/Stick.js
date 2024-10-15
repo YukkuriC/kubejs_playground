@@ -28,7 +28,7 @@ ItemEvents.firstRightClicked('yc:stick', e => {
         if (block?.inventory) {
             /**@type {Internal.BlockContainerJS[]}*/
             let chests = []
-            FloodFillBlocks(
+            global.FloodFillBlocks(
                 level,
                 block.pos,
                 b => b.inventory,
@@ -81,7 +81,7 @@ ItemEvents.firstRightClicked('yc:stick', e => {
                         if (breakCounter[key]) breakCounter[key].count += d.count
                         else breakCounter[key] = d
                     }
-                    BreakBlock(level, b, player, true)
+                    global.BreakBlock(level, b, player, true)
                 }
                 for (let k in breakCounter) {
                     player.give(breakCounter[k])
@@ -92,7 +92,7 @@ ItemEvents.firstRightClicked('yc:stick', e => {
 
             let targets = []
             // let cnt = 0
-            FloodFillBlocks(
+            global.FloodFillBlocks(
                 level,
                 block.pos,
                 b => /*cnt < 1001 &&*/ b.id == block.id,
