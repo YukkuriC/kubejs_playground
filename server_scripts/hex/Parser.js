@@ -15,6 +15,11 @@
     let toPattern = (seq, startDir) =>
         `{"hexcasting:data":{angles:[B;${seq2bytes(seq)}],start_dir:${mapStartDir[startDir]}},"hexcasting:type":"hexcasting:pattern"}`
 
+    let specialPatternSeq = {
+        qqqaw: '\\\\',
+        qqq: '(',
+        eee: ')',
+    }
     let mapPatterns = global.mapPatterns || {}
     let onLoad = (/**@type {Internal.CommandEventJS}*/ e) => {
         mapPatterns = global.mapPatterns = {
@@ -63,6 +68,7 @@
                 .map(x => Double.doubleToRawLongBits(x).toString() + 'L')
                 .join(',')}],"hexcasting:type":"hexcasting:vec3"}`
 
+        // 把正反解析函数挪一块
         let codeParser = ctx => {
             let code = []
             String(arg.STRING.getResult(ctx, 'code')).replace(/\\|\(|\)|\[|\]|[\w\.\/\-\:]+/g, match => (code.push(match), ''))
@@ -128,6 +134,33 @@
             }
             return 114514
         }
+        let iota2str = (i, level) => {
+            if (i.list) {
+                let inner = i.list.list.map(x => iota2str(x, level))
+                return `[${inner.join(',')}]`
+            } else if (i.pattern) {
+                let angleSeq = i.pattern.anglesSignature()
+                try {
+                    if (angleSeq in specialPatternSeq) return specialPatternSeq[angleSeq]
+                    let resKey = PRClass.matchPatternAndID(i.pattern, level).second
+                    if (!(resKey in mapPatterns)) throw null // for special registers
+                    if (resKey.namespace === 'hexcasting') return resKey.path
+                    else return String(resKey)
+                } catch (e) {}
+                return `_${i.pattern.anglesSignature()}`
+            } else if (i.double !== undefined) {
+                return String(i.double)
+            } else if (i.vec3) {
+                let axes = []
+                for (let sub of 'xyz') {
+                    axes.push(Math.round(i.vec3[sub]() * 1000) / 1000)
+                }
+                while (axes.length > 0 && axes[axes.length - 1] == 0) axes.pop()
+                return 'vec' + axes.map(x => `_${x}`).join('')
+            }
+
+            return 'UNKNOWN'
+        }
 
         e.register(
             cmd
@@ -137,29 +170,7 @@
                         let target = GetContainer(ctx)
                         if (!target) return 0
                         let iotaRoot = target.item.readIota(target, ctx.source.level)
-
-                        let iota2str = i => {
-                            if (i.list) {
-                                let inner = i.list.list.map(iota2str)
-                                return `[${inner.join(',')}]`
-                            } else if (i.pattern) {
-                                // TODO pattern match
-                                return `_${i.pattern.anglesSignature()}`
-                            } else if (i.double !== undefined) {
-                                return String(i.double)
-                            } else if (i.vec3) {
-                                let axes = []
-                                for (let sub of 'xyz') {
-                                    axes.push(Math.round(i.vec3[sub]() * 1000) / 1000)
-                                }
-                                while (axes.length > 0 && axes[axes.length - 1] == 0) axes.pop()
-                                return 'vec' + axes.map(x => `_${x}`).join('')
-                            }
-
-                            return 'UNKNOWN'
-                        }
-
-                        let toStr = iota2str(iotaRoot)
+                        let toStr = iota2str(iotaRoot, ctx.source.level)
                         ctx.source.entity.tell(Text.gold('Result: ').append(Text.white(toStr)).clickCopy(toStr))
 
                         return 1919810
