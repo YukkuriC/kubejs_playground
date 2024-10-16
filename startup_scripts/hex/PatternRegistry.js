@@ -61,14 +61,17 @@ ActionJS.prototype = {
     causesBlindDiversion: () => true,
 }
 
-StartupEvents.postInit(e => {
+global.loadCustomPatterns = () => {
+    let actionLookup = global.getField(PatternRegistry, 'actionLookup', 1)
     function registerPatternWrap(seq, dir, id, isGreat) {
         isGreat = !!isGreat
         if (!id in global.PatternOperateMap) throw new Error('missing operate: ' + id)
         let resourceKey = ResourceLocation('yc', id)
+        if (actionLookup.containsKey(resourceKey)) actionLookup.remove(resourceKey)
         PatternRegistry.mapPattern(HexPattern.fromAngles(seq, dir), resourceKey, new ActionJS(id, isGreat), isGreat)
     }
 
     registerPatternWrap('aaqawawaeadaadadadaadadadaada', HexDir.EAST, 'floodfill', 1)
     registerPatternWrap('wwaqqqqqedwdwwwaw', HexDir.EAST, 'charge_media', 1)
-})
+}
+StartupEvents.postInit(global.loadCustomPatterns)
