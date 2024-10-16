@@ -21,6 +21,7 @@
     }
     let _ = path => new _cls(path)
 
+    _('java.lang.Integer').build()
     _('at.petrak.hexcasting.api')
         .add([
             'PatternRegistry',

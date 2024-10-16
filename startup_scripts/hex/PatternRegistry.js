@@ -65,6 +65,9 @@ global.PatternOperateMap = {
 
         return OperationResult(continuation, stack, ravenmind, sideEffects)
     },
+    refresh_depth(c, s, r, ctx) {
+        global.setField(ctx, 'depth', Integer('-114514'))
+    },
 }
 
 function ActionJS(id, isGreat) {
@@ -105,5 +108,6 @@ global.loadCustomPatterns = () => {
     registerPatternWrap('aaqawawaeadaadadadaadadadaada', HexDir.EAST, 'floodfill', 1)
     registerPatternWrap('wwaqqqqqedwdwwwaw', HexDir.EAST, 'charge_media', 1)
     registerPatternWrap('aaddwdwdqdwd', HexDir.NORTH_WEST, 'punch_entity')
+    registerPatternWrap('wewewewewewweeqeeqeeqeeqeeqee', HexDir.WEST, 'refresh_depth', 1)
 }
 StartupEvents.postInit(global.loadCustomPatterns)
