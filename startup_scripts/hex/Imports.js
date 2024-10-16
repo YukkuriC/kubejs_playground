@@ -28,6 +28,7 @@
                 _('math').add(['HexDir', 'HexPattern']),
                 'Action',
                 'OperationResult',
+                'ParticleSpray',
                 _('casting').add([
                     //
                     'CastingContext',

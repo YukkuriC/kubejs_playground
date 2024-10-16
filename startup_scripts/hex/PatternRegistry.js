@@ -1,9 +1,25 @@
+function Args(stack, n, keep) {
+    if (stack.length < n) throw MishapNotEnoughArgs(n, stack.length)
+    this.data = stack[keep ? 'slice' : 'splice'](-n)
+}
+let _buildGetter = (key, keyMishap) => {
+    keyMishap = keyMishap || key
+    return function (i) {
+        let iota = this.data[i]
+        let res = iota[key]
+        if (res === undefined) throw MishapInvalidIota(iota, this.data.length - i - 1, keyMishap)
+        return res
+    }
+}
+Args.prototype = {}
+for (let pair of ['double', 'entity', 'list', 'pattern', 'vec3/vector', 'bool/boolean']) {
+    let [key, keyMishap] = pair.split('/')
+    Args.prototype[key] = _buildGetter(key, keyMishap)
+}
+
 global.PatternOperateMap = {
     floodfill(continuation, stack, ravenmind, ctx) {
-        if (stack.length < 1) throw MishapNotEnoughArgs(1, 0)
-        let iota = stack.pop()
-        if (!iota.getVec3) throw MishapInvalidIota(iota, 0, 'vector')
-        let pos = iota.getVec3()
+        let pos = new Args(stack, 1).vec3(0)
         ctx['assertVecInRange(net.minecraft.world.phys.Vec3)'](pos)
 
         let startBlock = ctx.world.getBlock(pos)
@@ -35,10 +51,25 @@ global.PatternOperateMap = {
             item.setMedia(stack, item.getMaxMedia(stack))
         }
     },
+    punch_entity(continuation, stack, ravenmind, ctx) {
+        let args = new Args(stack, 2)
+        let victim = args.entity(0)
+        let damage = args.double(1)
+
+        let sideEffects = [OperatorSideEffect.Particles(ParticleSpray.burst(victim.position(), damage / 20, damage * 2))]
+
+        if (victim.attack) {
+            let src = DamageSource.playerAttack(ctx.caster)
+            victim.attack(src, damage)
+        }
+
+        return OperationResult(continuation, stack, ravenmind, sideEffects)
+    },
 }
 
 function ActionJS(id, isGreat) {
     this.operate = (c, s, r, ct) => {
+        s = Array.from(s.toArray()) // for js methods
         try {
             return global.PatternOperateMap[id](c, s, r, ct) || OperationResult(c, s, r, [])
         } catch (e) {
@@ -73,5 +104,6 @@ global.loadCustomPatterns = () => {
 
     registerPatternWrap('aaqawawaeadaadadadaadadadaada', HexDir.EAST, 'floodfill', 1)
     registerPatternWrap('wwaqqqqqedwdwwwaw', HexDir.EAST, 'charge_media', 1)
+    registerPatternWrap('aaddwdwdqdwd', HexDir.NORTH_WEST, 'punch_entity')
 }
 StartupEvents.postInit(global.loadCustomPatterns)
