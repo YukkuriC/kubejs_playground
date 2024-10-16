@@ -112,7 +112,7 @@
                 }
 
                 // custom pattern
-                else if (kw.match(/_[wedsaq]*/)) {
+                else if (kw.match(/^_[wedsaq]*/)) {
                     stack[0].push(toPattern(kw.substring(1), 'EAST'))
                 }
 
