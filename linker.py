@@ -17,13 +17,13 @@ def linkFolder(link: str, src: str):
 
 SRC_ROOT = os.path.dirname(__file__)
 SRC_TARGETS = ['server_scripts', 'startup_scripts', 'client_scripts']
-SRC_TARGETS_SEP = ['assets/yc']
+SRC_TARGETS_SEP = ['data/hexcasting']
 TYPE_TARGETS = ['probe']
 MC_ROOT = r'C:/Minecraft/.minecraft/versions'
-BASE_DIR = sys.argv[1] if len(sys.argv) > 1 else 'playground'
-LINK_NAME = 'YkrC'
+BASE_DIR = sys.argv[1] if len(sys.argv) > 1 else 'Hex'
+LINK_NAME = 'HEX'
 
-for sub in os.listdir(MC_ROOT):
+for sub in ['Hex']:
     kjsPath = os.path.join(MC_ROOT, sub, 'kubejs')
     if not os.path.isdir(kjsPath):
         continue

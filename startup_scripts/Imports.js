@@ -21,6 +21,16 @@
     }
     let _ = path => new _cls(path)
 
+    _('net.minecraft.world')
+        .add([
+            // TODO villagers
+            _('level.block').add([
+                // legacy
+                'CocoaBlock',
+                'state.properties.IntegerProperty',
+            ]),
+        ])
+        .build()
     _('java.lang.Integer').build()
     _('at.petrak.hexcasting.api')
         .add([
@@ -50,3 +60,5 @@
         ])
         .build()
 }
+
+global.EVENT_BUS = ForgeEvents.eventBus()

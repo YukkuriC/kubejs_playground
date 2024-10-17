@@ -40,21 +40,6 @@ global.FloodFillBlocks = (level, blockPos, predicate, callback) => {
     }
 }
 /**
- * helper general break block
- * @param { Internal.Level } level
- * @param { Internal.BlockContainerJS } block
- * @param { Player } player
- * @param { boolean } drop
- */
-global.BreakBlock = (level, block, player, noDrop) => {
-    if (!block) return
-    if (!noDrop) {
-        for (let item of block.getDrops()) player.give(item)
-    }
-    global.EVENT_BUS.post(new $BreakEvent(level, block.pos, block.blockState, player))
-    level.destroyBlock(block.pos, false, player)
-}
-/**
  * check crop age
  * @param { Internal.CropBlock } block
  * @param { Internal.BlockState } state
@@ -62,7 +47,7 @@ global.BreakBlock = (level, block, player, noDrop) => {
 global.CanHarvest = (block, state) => {
     if (block.isMaxAge && block.isMaxAge(state)) return true
     for (const prop of state.getProperties()) {
-        if (!prop instanceof $IntegerProperty) continue
+        if (!prop instanceof IntegerProperty) continue
         if (prop.getName() != 'age') continue
         /** @type { Internal.IntegerProperty }*/
         let intProp = prop
@@ -71,41 +56,4 @@ global.CanHarvest = (block, state) => {
         if (age == maxAge) return true
     }
     return false
-}
-
-global.dump = obj => {
-    let lines = ['{']
-    let hasInner = false
-    for (let k of Object.keys(obj).sort()) {
-        lines.push(`    ${k}: ${obj[k]},`)
-        hasInner = true
-    }
-    lines.push(hasInner ? '}' : lines.pop() + '}')
-    return lines.join('\n')
-}
-
-global.dumpDeep = (obj, deltaIndent) => {
-    let noNewLine = deltaIndent < 0
-    if (!noNewLine) deltaIndent = deltaIndent || 2
-    let used = new Set()
-    let inner = (obj, indent) => {
-        try {
-            if (used.has(obj)) return '{...}'
-            used.add(obj)
-            let lines = ['{']
-            let hasInner = false
-            for (let k of Object.keys(obj).sort()) {
-                let v = obj[k]
-                let vStr = v && typeof v === 'object' ? inner(v, indent + deltaIndent) : String(v)
-                lines.push(' '.repeat(indent + deltaIndent) + `${k}:${vStr},`)
-                hasInner = true
-            }
-            lines.push(hasInner ? ' '.repeat(indent) + '}' : lines.pop() + '}')
-            used.delete(obj)
-            return lines.join(noNewLine ? '' : '\n')
-        } catch (e) {
-            return ' '.repeat(indent) + `[Error: ${e}]`
-        }
-    }
-    return inner(obj, noNewLine ? NaN : 0)
 }
