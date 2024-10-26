@@ -18,4 +18,20 @@ ServerEvents.recipes(e => {
         if (code == '114514' || code == '1919' || code == '810') return item
     }
     for (let i = 2; i <= 6; i++) e.shapeless('yc:duper', Array(i).fill('#minecraft:logs')).modifyResult(codeMatcher)
+
+    // dupe by recipe
+    e.shapeless('yc:duper', [Ingredient.all, 'yc:duper']).keepIngredient(Ingredient.all.subtract(Ingredient.of('yc:duper')))
+})
+
+ItemEvents.crafted('yc:duper', e => {
+    let inv = e.inventory
+    let cnt = inv.slots
+    let duperMult = 0
+    if (inv.find('yc:duper') >= 0) duperMult = 2
+    for (let i = 0; i < cnt; i++) {
+        let item = inv.getStackInSlot(i)
+        if (item.isEmpty() || item.id == 'yc:duper') continue
+        item.count *= duperMult
+    }
+    inv.setChanged()
 })
