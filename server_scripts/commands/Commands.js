@@ -138,6 +138,58 @@ ServerEvents.commandRegistry(e => {
             )
         }
 
+        // 获取LootTable
+        let version = Platform.getMcVersion()
+        if (version >= '1.20' && version < '1.21') {
+            let LootParams$Builder = Java.loadClass('net.minecraft.world.level.storage.loot.LootParams$Builder')
+            let LootContextParams = Java.loadClass('net.minecraft.world.level.storage.loot.parameters.LootContextParams')
+            let LootContextParamSets = Java.loadClass('net.minecraft.world.level.storage.loot.parameters.LootContextParamSets')
+            let lootData = Utils.server.lootData
+
+            let doLoot = (/**@type {Internal.CommandContext<Internal.CommandSourceStack>}*/ ctx) => {
+                let player = GetPlayer(ctx)
+                if (!player) throw 'no player'
+                let lootKey = arg.RESOURCE_LOCATION.getResult(ctx, 'loot')
+                let seed = null,
+                    luck = 0
+                try {
+                    luck = arg.FLOAT.getResult(ctx, 'luck')
+                } catch (e) {
+                    luck = player.luck
+                }
+                try {
+                    seed = arg.INTEGER.getResult(ctx, 'seed')
+                } catch (e) {}
+
+                let lootTable = lootData.getLootTable(lootKey)
+                let builder = new LootParams$Builder(player.level)
+                    .withParameter(LootContextParams.ORIGIN, player.position())
+                    .withParameter(LootContextParams.TOOL, player.mainHandItem)
+                    .withParameter(LootContextParams.THIS_ENTITY, player)
+                let params = builder.withLuck(luck).create(LootContextParamSets.FISHING)
+                let items = seed === undefined ? lootTable.getRandomItems(params, () => {}) : lootTable.getRandomItems(params, seed)
+                for (let i of items) {
+                    player.give(i)
+                }
+
+                return 114514
+            }
+
+            F.then(
+                cmd.literal('loot').then(
+                    cmd
+                        .argument('loot', arg.RESOURCE_LOCATION.create(e))
+                        .then(
+                            cmd
+                                .argument('luck', arg.FLOAT.create(e))
+                                .then(cmd.argument('seed', arg.INTEGER.create(e)).executes(doLoot))
+                                .executes(doLoot),
+                        )
+                        .executes(doLoot),
+                ),
+            )
+        }
+
         e.register(F)
     }
 })
