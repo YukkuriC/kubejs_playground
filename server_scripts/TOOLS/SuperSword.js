@@ -24,6 +24,7 @@ EntityEvents.hurt(e => {
         if (entity.maxHealth <= target) break
         after = Math.ceil(after / 2)
     }
+    entity.invulnerableTime = 0
     const delta = Math.abs(before - entity.maxHealth)
     player.heal(delta)
     player.modifyAttribute('minecraft:generic.max_health', 'yc:sword_vampire', delta, 'addition')
