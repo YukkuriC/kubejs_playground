@@ -13,14 +13,14 @@ ItemEvents.rightClicked('yc:sword', e => {
 })
 
 EntityEvents.hurt(e => {
-    const { entity, source } = e
+    const { entity, source, level } = e
     const { player } = source
     if (player?.mainHandItem?.id != 'yc:sword') return
     // drain max health
     const before = entity.getAttributeBaseValue('generic.max_health')
     entity.setAttributeBaseValue('generic.max_health', Math.ceil(before / 2))
     // less invulnerable
-    entity.invulnerableTime = Math.max(entity.invulnerableTime, 3)
+    entity.invulnerableTime = Math.min(entity.invulnerableTime, 3)
     // boost health
     const delta = before / 2
     let existBoost = player
@@ -29,6 +29,23 @@ EntityEvents.hurt(e => {
         .find(x => x.name == 'yc:sword_vampire')
     if (delta > (existBoost?.amount || 0)) player.modifyAttribute('minecraft:generic.max_health', 'yc:sword_vampire', delta, 'addition')
     player.heal(delta)
+    // fx
+    let headPos = entity.eyePosition
+    let posStr = `${headPos.x()} ${headPos.y()} ${headPos.z()}`
+    level.runCommandSilent(`particle sonic_boom ${posStr}`)
+    level.runCommandSilent(`particle sweep_attack ${posStr}`)
+
+    // chain nearby
+    if (e.damage > 5)
+        level.server.scheduleInTicks(Math.random() * 10 + 4, () => {
+            let cnt = 0
+            for (let sube of level.getEntitiesWithin(entity.boundingBox.inflate(10))) {
+                if (!sube.isLiving() || !sube.isAlive() || sube === entity || sube === player) continue
+                sube.attack(source, e.damage)
+                cnt++
+                if (cnt >= 3) break
+            }
+        })
 })
 
 PlayerTickEvents.every(40).on(e => {
