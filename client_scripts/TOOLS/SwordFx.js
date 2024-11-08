@@ -7,6 +7,12 @@ NetworkEvents.dataReceived('yc:sword_hit', e => {
     // blast
     for (let p of ['sonic_boom', 'sweep_attack']) level.spawnParticles(p, true, x, y, z, 0, 0, 0, 1, 0)
 })
+NetworkEvents.dataReceived('yc:sword_cast', e => {
+    let { data, level } = e
+    let [x, y, z] = data.pos
+    let [xl, yl, zl] = data.look
+    level.playLocalSound(x + xl * 5, y + yl * 5, z + zl * 5, 'entity.lightning_bolt.impact', 'players', 1, Math.random(), true)
+})
 
 {
     let pSingle = (level, type) => (x, y, z) => level.spawnParticles(type, true, x, y, z, 0, 0, 0, 1, 0)
@@ -28,6 +34,6 @@ NetworkEvents.dataReceived('yc:sword_hit', e => {
         let { data, level } = e
         let [x, y, z] = data.from
         let [x2, y2, z2] = data.to
-        pLine(pSingle(level, 'electric_spark'), x, y, z, x2, y2, z2)
+        pLine(pSingle(level, data.particle ?? 'electric_spark'), x, y, z, x2, y2, z2)
     })
 }

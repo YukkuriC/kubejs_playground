@@ -1,15 +1,35 @@
-ItemEvents.rightClicked('yc:sword', e => {
-    const { level, player } = e
-    const { x, y, z } = player
-    const rot = (player.yRotO + 90) * (3.14159 / 180)
-    for (let d = -2; d <= 2; d++) {
-        let rot1 = rot + d * 0.4
-        for (let i = 0; i < 15 - Math.abs(d * 5); i++) {
-            let r = 1.25 * (i + 1)
-            let obj = new $EvokerFangs(level, x + Math.cos(rot1) * r, y, z + Math.sin(rot1) * r, rot1, i + Math.abs(d * 2), player)
-            level.addFreshEntity(obj)
+ItemEvents.rightClicked('yc:sword', event => {
+    const { level, player, item, hand } = event
+    let posPlayer = player.eyePosition
+    let look = player.lookAngle
+    let posArr = [posPlayer.x(), posPlayer.y(), posPlayer.z()]
+    let lookArr = [look.x(), look.y(), look.z()]
+    for (let e of level.getEntitiesWithin(player.boundingBox.inflate(40))) {
+        if (e.isLiving() && e.isAlive() && e !== player) {
+            // check range
+            let pos = e.eyePosition
+            let dist = pos.distanceTo(posPlayer)
+            if (dist == 0 || dist > 40) continue
+            let dpos = pos.subtract(posPlayer).scale(1 / dist)
+            if (dpos.x() * lookArr[0] + dpos.y() * lookArr[1] + dpos.z() * lookArr[2] < 0.3) continue
+            // do attack
+            let source = e.damageSources().playerAttack(player)
+            e.attack(source, 15)
+            player.sendData('yc:sword_line', {
+                from: posArr,
+                to: [pos.x(), pos.y(), pos.z()],
+                particle: 'witch',
+            })
+        } else if (e.type == 'minecraft:item' || e.type == 'minecraft:experience_orb') {
+            e.teleportTo.apply(e, posArr)
         }
     }
+    player.swing(hand, true)
+    player.addItemCooldown(item, 20)
+    player.sendData('yc:sword_cast', {
+        pos: posArr,
+        look: lookArr,
+    })
 })
 
 EntityEvents.hurt(e => {
