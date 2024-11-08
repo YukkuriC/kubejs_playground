@@ -31,14 +31,9 @@ EntityEvents.hurt(e => {
     player.heal(delta)
     // fx
     let headPos = entity.eyePosition
-    let posStr = `${headPos.x()} ${headPos.y()} ${headPos.z()}`
-    level.runCommandSilent(`particle sonic_boom ${posStr}`)
-    level.runCommandSilent(`particle sweep_attack ${posStr}`)
-    level.runCommandSilent(
-        `playsound minecraft:entity.player.attack.${
-            ['crit', 'knockback', 'strong', 'sweep'][Math.floor(Math.random() * 4)]
-        } player @a ${posStr}`,
-    )
+    player.sendData('yc:sword_hit', {
+        pos: [headPos.x(), headPos.y(), headPos.z()],
+    })
 
     // chain nearby
     if (e.damage > 5)
