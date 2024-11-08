@@ -7,3 +7,27 @@ NetworkEvents.dataReceived('yc:sword_hit', e => {
     // blast
     for (let p of ['sonic_boom', 'sweep_attack']) level.spawnParticles(p, true, x, y, z, 0, 0, 0, 1, 0)
 })
+
+{
+    let pSingle = (level, type) => (x, y, z) => level.spawnParticles(type, true, x, y, z, 0, 0, 0, 1, 0)
+    let pLine = (spawner, x1, y1, z1, x2, y2, z2) => {
+        spawner(x1, y1, z1)
+        let dx = Math.abs(x1 - x2),
+            dy = Math.abs(y1 - y2),
+            dz = Math.abs(z1 - z2),
+            delta = (dx + dy + dz) / 3
+        if (Math.abs(x1 - x2) + Math.abs(y1 - y2) + Math.abs(z1 - z2) > 0.5) {
+            let nx = (x1 + x2) / 2 + (Math.random() - 0.5) * delta * 0.7,
+                ny = (y1 + y2) / 2 + (Math.random() - 0.5) * delta * 0.7,
+                nz = (z1 + z2) / 2 + (Math.random() - 0.5) * delta * 0.7
+            pLine(spawner, x1, y1, z1, nx, ny, nz)
+            pLine(spawner, nx, ny, nz, x2, y2, z2)
+        }
+    }
+    NetworkEvents.dataReceived('yc:sword_line', e => {
+        let { data, level } = e
+        let [x, y, z] = data.from
+        let [x2, y2, z2] = data.to
+        pLine(pSingle(level, 'electric_spark'), x, y, z, x2, y2, z2)
+    })
+}

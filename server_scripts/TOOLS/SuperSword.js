@@ -31,8 +31,9 @@ EntityEvents.hurt(e => {
     player.heal(delta)
     // fx
     let headPos = entity.eyePosition
+    let posArr = [headPos.x(), headPos.y(), headPos.z()]
     player.sendData('yc:sword_hit', {
-        pos: [headPos.x(), headPos.y(), headPos.z()],
+        pos: posArr,
     })
 
     // chain nearby
@@ -41,7 +42,12 @@ EntityEvents.hurt(e => {
             let cnt = 0
             for (let sube of level.getEntitiesWithin(entity.boundingBox.inflate(10))) {
                 if (!sube.isLiving() || !sube.isAlive() || sube === entity || sube === player) continue
+                let subPos = sube.eyePosition
                 sube.attack(source, e.damage)
+                player.sendData('yc:sword_line', {
+                    from: posArr,
+                    to: [subPos.x(), subPos.y(), subPos.z()],
+                })
                 cnt++
                 if (cnt >= 3) break
             }
