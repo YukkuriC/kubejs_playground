@@ -15,7 +15,7 @@ NetworkEvents.dataReceived('yc:sword_cast', e => {
 })
 
 {
-    let pSingle = (level, type) => (x, y, z) => level.spawnParticles(type, true, x, y, z, 0, 0, 0, 1, 0)
+    let pSingle = type => (x, y, z) => Client.particleEngine.createParticle(type, x, y, z, 0, 0, 0)
     let pLine = (spawner, x1, y1, z1, x2, y2, z2) => {
         spawner(x1, y1, z1)
         let dx = Math.abs(x1 - x2),
@@ -31,9 +31,9 @@ NetworkEvents.dataReceived('yc:sword_cast', e => {
         }
     }
     NetworkEvents.dataReceived('yc:sword_line', e => {
-        let { data, level } = e
+        let { data } = e
         let [x, y, z] = data.from
         let [x2, y2, z2] = data.to
-        pLine(pSingle(level, data.particle ?? 'electric_spark'), x, y, z, x2, y2, z2)
+        pLine(pSingle(data.particle ?? 'electric_spark'), x, y, z, x2, y2, z2)
     })
 }
