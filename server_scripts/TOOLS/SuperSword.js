@@ -11,7 +11,7 @@ ItemEvents.rightClicked('yc:sword', event => {
             let dist = pos.distanceTo(posPlayer)
             if (dist == 0 || dist > 40) continue
             let dpos = pos.subtract(posPlayer).scale(1 / dist)
-            if (dpos.x() * lookArr[0] + dpos.y() * lookArr[1] + dpos.z() * lookArr[2] < 0.3) continue
+            if (dpos.x() * lookArr[0] + dpos.y() * lookArr[1] + dpos.z() * lookArr[2] < 0.8) continue
             // do attack
             let source = e.damageSources().playerAttack(player)
             e.attack(source, 15)
