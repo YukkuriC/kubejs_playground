@@ -1,5 +1,5 @@
 ItemEvents.rightClicked('yc:sword', event => {
-    const { level, player, item, hand } = event
+    const { level, player, item, hand, server } = event
     let posPlayer = player.eyePosition
     let look = player.lookAngle
     let posArr = [posPlayer.x(), posPlayer.y(), posPlayer.z()]
@@ -21,7 +21,7 @@ ItemEvents.rightClicked('yc:sword', event => {
         if (isLiving) {
             if (!source) source = (Platform.getMcVersion() > '1.20' ? e.damageSources() : DamageSource).playerAttack(player)
             e.attack(source, 15)
-            player.sendData('yc:sword_line', {
+            server.sendData('yc:sword_line', {
                 from: posArr,
                 to: [pos.x(), pos.y(), pos.z()],
                 particle: 'witch',
@@ -34,7 +34,7 @@ ItemEvents.rightClicked('yc:sword', event => {
     }
     player.swing(hand, true)
     if (hit || pick) player.addItemCooldown(item, 20)
-    player.sendData('yc:sword_cast', {
+    server.sendData('yc:sword_cast', {
         pos: posArr,
         look: lookArr,
         hit: hit,
@@ -43,7 +43,7 @@ ItemEvents.rightClicked('yc:sword', event => {
 })
 
 EntityEvents.hurt(e => {
-    const { entity, source, level } = e
+    const { entity, source, level, server } = e
     const { player } = source
     if (player?.mainHandItem?.id != 'yc:sword') return
     // drain max health
@@ -62,7 +62,7 @@ EntityEvents.hurt(e => {
     // fx
     let headPos = entity.eyePosition
     let posArr = [headPos.x(), headPos.y(), headPos.z()]
-    player.sendData('yc:sword_hit', {
+    server.sendData('yc:sword_hit', {
         pos: posArr,
     })
 
@@ -74,7 +74,7 @@ EntityEvents.hurt(e => {
                 if (!sube.isLiving() || !sube.isAlive() || sube === entity || sube === player) continue
                 let subPos = sube.eyePosition
                 sube.attack(source, e.damage)
-                player.sendData('yc:sword_line', {
+                server.sendData('yc:sword_line', {
                     from: posArr,
                     to: [subPos.x(), subPos.y(), subPos.z()],
                 })
