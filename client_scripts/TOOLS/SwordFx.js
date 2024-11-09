@@ -22,7 +22,7 @@ NetworkEvents.dataReceived('yc:sword_cast', e => {
             dy = Math.abs(y1 - y2),
             dz = Math.abs(z1 - z2),
             delta = (dx + dy + dz) / 3
-        if (Math.abs(x1 - x2) + Math.abs(y1 - y2) + Math.abs(z1 - z2) > 0.5) {
+        if (delta > 0.15) {
             let nx = (x1 + x2) / 2 + (Math.random() - 0.5) * delta * 0.7,
                 ny = (y1 + y2) / 2 + (Math.random() - 0.5) * delta * 0.7,
                 nz = (z1 + z2) / 2 + (Math.random() - 0.5) * delta * 0.7
