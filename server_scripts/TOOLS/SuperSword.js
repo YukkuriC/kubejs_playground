@@ -53,12 +53,7 @@ EntityEvents.hurt(e => {
     entity.invulnerableTime = Math.min(entity.invulnerableTime, 3)
     // boost health
     const delta = before / 2
-    let existBoost = player
-        .getAttribute('generic.max_health')
-        .getModifiers()
-        .find(x => x.name == 'yc:sword_vampire')
-    if (delta > (existBoost?.amount || 0)) player.modifyAttribute('minecraft:generic.max_health', 'yc:sword_vampire', delta, 'addition')
-    player.heal(delta)
+    player.absorptionAmount = Math.min(1000, player.absorptionAmount + delta)
     // fx
     let headPos = entity.eyePosition
     let posArr = [headPos.x(), headPos.y(), headPos.z()]
@@ -86,17 +81,12 @@ EntityEvents.hurt(e => {
 
 PlayerTickEvents.every(40).on(e => {
     let { player } = e
-    let healthBoost = player
-        .getAttribute('generic.max_health')
-        .getModifiers()
-        .find(x => x.name == 'yc:sword_vampire')
-    if (healthBoost) {
-        let val = healthBoost.amount
-        if (val > 80) val -= 20
+    let val = player.absorptionAmount - 20
+    if (val > 0) {
+        if (val > 80) val /= 2
         else if (val > 40) val -= 10
         else if (val > 20) val -= 5
         else val = Math.max(0, val - 2)
-        player.modifyAttribute('minecraft:generic.max_health', 'yc:sword_vampire', val, 'addition')
-        player.heal(0.01)
+        player.setAbsorptionAmount(val + 20)
     }
 })
