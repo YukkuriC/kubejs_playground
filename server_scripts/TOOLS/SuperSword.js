@@ -4,23 +4,27 @@ ItemEvents.rightClicked('yc:sword', event => {
     let look = player.lookAngle
     let posArr = [posPlayer.x(), posPlayer.y(), posPlayer.z()]
     let lookArr = [look.x(), look.y(), look.z()]
+    let source = null
     for (let e of level.getEntitiesWithin(player.boundingBox.inflate(40))) {
-        if (e.isLiving() && e.isAlive() && e !== player) {
-            // check range
-            let pos = e.eyePosition
-            let dist = pos.distanceTo(posPlayer)
-            if (dist == 0 || dist > 40) continue
-            let dpos = pos.subtract(posPlayer).scale(1 / dist)
-            if (dpos.x() * lookArr[0] + dpos.y() * lookArr[1] + dpos.z() * lookArr[2] < 0.8) continue
-            // do attack
-            let source = e.damageSources().playerAttack(player)
+        let isLiving = e.isLiving() && e.isAlive() && e !== player,
+            isPickable = e.type == 'minecraft:item' || e.type == 'minecraft:experience_orb'
+        if (!isLiving && !isPickable) continue
+        // check range
+        let pos = e.eyePosition
+        let dist = pos.distanceTo(posPlayer)
+        if (dist == 0 || dist > 40) continue
+        let dpos = pos.subtract(posPlayer).scale(1 / dist)
+        if (dpos.x() * lookArr[0] + dpos.y() * lookArr[1] + dpos.z() * lookArr[2] < 0.8) continue
+        // do attack
+        if (isLiving) {
+            if (!source) source = (Platform.getMcVersion() > '1.20' ? e.damageSources() : DamageSource).playerAttack(player)
             e.attack(source, 15)
             player.sendData('yc:sword_line', {
                 from: posArr,
                 to: [pos.x(), pos.y(), pos.z()],
                 particle: 'witch',
             })
-        } else if (e.type == 'minecraft:item' || e.type == 'minecraft:experience_orb') {
+        } else {
             e.teleportTo.apply(e, posArr)
         }
     }
