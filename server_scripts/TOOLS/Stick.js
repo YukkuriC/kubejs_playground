@@ -1,10 +1,12 @@
 /** @type string[] */
-const YC_StickModes = ['None', 'SortChest', 'MergeTumor', 'SpawnTumor', 'ChainBreak']
+const YC_StickModes = ['None', 'SortChest', 'MergeTumor', 'SpawnTumor', 'ChainBreak', 'Sample']
 
 function GetYCStickState(/**@type Internal.Item */ item) {
     let tag = item.getOrCreateTag()
     return tag.mode ?? YC_StickModes[0]
 }
+
+const StickBreakCache = {}
 
 ItemEvents.firstLeftClicked('yc:stick', e => {
     const { item, player } = e
@@ -26,7 +28,7 @@ ItemEvents.firstRightClicked('yc:stick', e => {
         if (block?.inventory) {
             /**@type {Internal.BlockContainerJS[]}*/
             let chests = []
-            FloodFillBlocks(
+            global.FloodFillBlocks(
                 level,
                 block.pos,
                 b => b.inventory,
@@ -96,22 +98,57 @@ ItemEvents.firstRightClicked('yc:stick', e => {
         }
         for (let item of outputItems) player.give(item)
     } else if (mode == 'ChainBreak') {
+        let cancelBy = function (reason) {
+            delete StickBreakCache[player.stringUuid]
+            Utils.server.tell(reason)
+        }
+
         if (block) {
+            if (StickBreakCache[player.stringUuid]) {
+                let [selected, blocks] = StickBreakCache[player.stringUuid]
+                if (!block.pos.equals(selected.pos)) {
+                    return cancelBy('Cancelled for different block')
+                }
+                let breakCounter = {}
+                for (let b of blocks) {
+                    let drops = b.getDrops()
+                    if (!drops || drops.length <= 0) drops = [b.item]
+                    for (let d of drops) {
+                        let key = String(d.id) + String(d.nbt)
+                        if (breakCounter[key]) breakCounter[key].count += d.count
+                        else breakCounter[key] = d
+                    }
+                    global.BreakBlock(level, b, player, true)
+                }
+                for (let k in breakCounter) {
+                    player.give(breakCounter[k])
+                }
+
+                return cancelBy(`${blocks.length} blocks broken`)
+            }
+
             let targets = []
-            let cnt = 0
-            FloodFillBlocks(
+            // let cnt = 0
+            global.FloodFillBlocks(
                 level,
                 block.pos,
-                b => cnt < 500 && b.id == block.id,
+                b => /*cnt < 1001 &&*/ b.id == block.id,
                 b => {
                     targets.push(b)
-                    cnt++
+                    // cnt++
                 },
             )
-            if (targets.length > 400) return player.tell('R U SURE?')
-            for (let b of targets) {
-                BreakBlock(level, b, player)
-            }
+            // if (targets.length > 1000) return cancelBy('R U SURE?')
+            StickBreakCache[player.stringUuid] = [block, targets]
+            return Utils.server.tell(`Selected ${targets.length} blocks`)
+        } else {
+            return cancelBy('Cancelled for no block')
         }
+    } else if (mode == 'Sample') {
+        if (!block) return
+        for (let i of block.getDrops()) {
+            if (i.id === block.id) return player.give(i)
+        }
+        player.give(block.item)
     }
 })

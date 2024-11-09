@@ -21,6 +21,12 @@ StartupEvents.registry('item', e => {
             })
             .displayName(`YC's ${item}`),
     )
-    // tool stick
-    e.create(`yc:stick`, 'basic').rarity('epic').glow(true).texture(`minecraft:item/stick`).displayName(`YC's Stick`)
+    // misc
+    e.create(`yc:stick`, 'basic').maxStackSize(1).rarity('epic').glow(true).texture(`minecraft:item/stick`).displayName(`YC's Stick`)
+    e.create(`yc:duper`, 'basic')
+        // .texture(`yc:item/duper`)
+        .rarity('epic')
+        .maxStackSize(1)
+        .glow(true)
+        .displayName(`YC's Duper`)
 })
