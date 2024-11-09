@@ -90,7 +90,6 @@ PlayerTickEvents.every(40).on(e => {
         .getAttribute('generic.max_health')
         .getModifiers()
         .find(x => x.name == 'yc:sword_vampire')
-    global.test = healthBoost
     if (healthBoost) {
         let val = healthBoost.amount
         if (val > 80) val -= 20
