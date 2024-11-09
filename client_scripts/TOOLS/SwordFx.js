@@ -2,7 +2,7 @@ NetworkEvents.dataReceived('yc:sword_hit', e => {
     let { data, level } = e
     let [x, y, z] = data.pos
     // sound
-    let hitSound = `entity.player.attack.${['crit', 'knockback', 'strong', 'sweep'][Math.floor(Math.random() * 4)]}`
+    let hitSound = 'minecraft:block.glass.break'
     level.playLocalSound(x, y, z, hitSound, 'players', 1, 0, true)
     // blast
     for (let p of ['sonic_boom', 'sweep_attack']) level.spawnParticles(p, true, x, y, z, 0, 0, 0, 1, 0)
@@ -11,7 +11,23 @@ NetworkEvents.dataReceived('yc:sword_cast', e => {
     let { data, level } = e
     let [x, y, z] = data.pos
     let [xl, yl, zl] = data.look
-    level.playLocalSound(x + xl * 5, y + yl * 5, z + zl * 5, 'entity.lightning_bolt.impact', 'players', 1, Math.random(), true)
+    if (data.hit) {
+        data.hit = Math.min(1, data.hit)
+        level.playLocalSound(x + xl * 9, y + yl * 9, z + zl * 9, 'entity.lightning_bolt.impact', 'players', Math.min(1, data.hit), 0, true)
+        for (let i = 0; i < data.hit; i += 0.2)
+            level.playLocalSound(x + xl * 6, y + yl * 6, z + zl * 6, 'block.amethyst_block.break', 'players', 1, 0, true)
+    }
+    if (data.pick)
+        level.playLocalSound(
+            x + xl * 5,
+            y + yl * 5,
+            z + zl * 5,
+            'minecraft:block.dispenser.launch',
+            'players',
+            Math.min(1, data.pick),
+            0,
+            true,
+        )
 })
 
 {
