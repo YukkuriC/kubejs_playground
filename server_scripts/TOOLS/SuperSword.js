@@ -7,6 +7,7 @@ ItemEvents.rightClicked('yc:sword', event => {
     let source = null
     let hit = 0,
         pick = 0
+    let theOrb = null
     for (let e of level.getEntitiesWithin(player.boundingBox.inflate(50))) {
         let isLiving = e.isLiving() && e.isAlive() && e !== player,
             isPickable = e.type == 'minecraft:item' || e.type == 'minecraft:experience_orb'
@@ -30,6 +31,20 @@ ItemEvents.rightClicked('yc:sword', event => {
         } else {
             e.teleportTo.apply(e, posArr)
             pick += 0.05
+            // merge exp orb
+            if (e.type == 'minecraft:experience_orb') {
+                let { Count, Value } = e.nbt
+                if (theOrb) {
+                    theOrb.value += Count * Value
+                    e.discard()
+                } else {
+                    theOrb = e
+                    e.mergeNbt({
+                        Count: 1,
+                        Value: Count * Value,
+                    })
+                }
+            }
         }
     }
     player.swing(hand, true)
