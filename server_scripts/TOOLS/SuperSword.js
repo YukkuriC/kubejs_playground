@@ -29,7 +29,6 @@ ItemEvents.rightClicked('yc:sword', event => {
             })
             hit += 0.2
         } else {
-            e.teleportTo.apply(e, posArr)
             pick += 0.05
             // merge exp orb
             if (e.type == 'minecraft:experience_orb') {
@@ -37,6 +36,7 @@ ItemEvents.rightClicked('yc:sword', event => {
                 if (theOrb) {
                     theOrb.value += Count * Value
                     e.discard()
+                    continue
                 } else {
                     theOrb = e
                     e.mergeNbt({
@@ -45,6 +45,7 @@ ItemEvents.rightClicked('yc:sword', event => {
                     })
                 }
             }
+            e.teleportTo.apply(e, posArr)
         }
     }
     player.swing(hand, true)
