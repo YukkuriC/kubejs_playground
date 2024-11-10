@@ -45,13 +45,18 @@ NetworkEvents.dataReceived('yc:sword_cast', e => {
         )
         ly = Vec3d(xl, yl, zl).cross(lx)
     }
+    let circles = [[6, 2]]
     for (let ind_radius of [2, 3, 5, 7]) {
-        let ind_radius2 = ind_radius * Math.sqrt(1 - Math.pow(0.8, 2))
-        let ind_cnt = ind_radius * 10
+        circles.push([ind_radius, ind_radius * Math.sqrt(1 - Math.pow(0.8, 2))])
+    }
+    for (let pair of circles) {
+        let [ind_radius, ind_radius2] = pair
+        let ind_cnt = ind_radius2 * 15
         let ind_center = Vec3d(x + xl * ind_radius, y + yl * ind_radius, z + zl * ind_radius)
         // circle
+        let offset = Math.random()
         for (let i = 0; i < ind_cnt; i++) {
-            let angle = (3.141593 * 2 * i) / ind_cnt
+            let angle = (3.141593 * 2 * (i + offset)) / ind_cnt
             let target = ind_center.add(lx.scale(Math.cos(angle) * ind_radius2)).add(ly.scale(Math.sin(angle) * ind_radius2))
             Client.particleEngine.createParticle('dragon_breath', target.x(), target.y(), target.z(), 0, 0, 0)
         }

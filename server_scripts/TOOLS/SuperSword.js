@@ -22,8 +22,10 @@ ItemEvents.rightClicked('yc:sword', event => {
         if (isLiving) {
             if (!source) source = (Platform.getMcVersion() > '1.20' ? e.damageSources() : DamageSource).playerAttack(player)
             e.attack(source, 15)
+            let line = pos.subtract(posPlayer)
+            line = line.scale((Math.random() * 5 + 2) / line.length()).add(posPlayer)
             server.sendData('yc:sword_line', {
-                from: posArr,
+                from: [line.x(), line.y(), line.z()],
                 to: [pos.x(), pos.y(), pos.z()],
                 particle: 'witch',
             })
