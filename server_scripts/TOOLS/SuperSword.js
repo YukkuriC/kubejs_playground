@@ -84,7 +84,7 @@ EntityEvents.hurt(e => {
         level.server.scheduleInTicks(Math.random() * 10 + 4, () => {
             let cnt = 0
             for (let sube of level.getEntitiesWithin(entity.boundingBox.inflate(10))) {
-                if (!sube.isLiving() || !sube.isAlive() || sube === entity || sube === player) continue
+                if (!sube.isLiving() || !sube.isAlive() || sube === entity || sube === player || sube.invulnerableTime > 0) continue
                 let subPos = sube.eyePosition
                 sube.attack(source, e.damage)
                 server.sendData('yc:sword_line', {
