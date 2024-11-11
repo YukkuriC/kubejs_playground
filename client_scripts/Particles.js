@@ -13,9 +13,8 @@
             this.getAxes = function (x, y, z) {
                 let lx, ly
                 if (x == 0 && z == 0) {
-                    let sq2 = Math.sqrt(2) / 2
-                    lx = Vec3d(sq2, sq2 * y, 0)
-                    ly = Vec3d(0, sq2 * y, sq2)
+                    lx = Vec3d(y, 0, 0)
+                    ly = Vec3d(0, 0, y)
                 } else {
                     let len = Math.sqrt(x * x + z * z)
                     lx = Vec3d(
@@ -45,7 +44,7 @@
                 if (offset === undefined) offset = TwoPI * Math.random()
                 let [lx, ly] = axes
                 for (let i = 0; i < n; i++) {
-                    let angle = (TwoPI * (i + offset)) / n
+                    let angle = (TwoPI * i + offset) / n
                     let target = center.add(lx.scale(Math.cos(angle) * radius)).add(ly.scale(Math.sin(angle) * radius))
                     spawner(target.x(), target.y(), target.z())
                 }
