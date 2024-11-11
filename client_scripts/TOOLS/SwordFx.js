@@ -37,6 +37,7 @@ NetworkEvents.dataReceived('yc:sword_cast', e => {
         circles.push([ind_radius, ind_radius * Math.sqrt(1 - Math.pow(0.8, 2))])
     }
     let circleSpawner = global.Particles.getSpawner('dragon_breath')
+    let starSpawner = global.Particles.getSpawner('end_rod')
     for (let pair of circles) {
         let [ind_radius, ind_radius2] = pair
         let ind_cnt = ind_radius2 * 10
@@ -45,6 +46,19 @@ NetworkEvents.dataReceived('yc:sword_cast', e => {
         let ind_center = Vec3d(x + xl * ind_radius, y + yl * ind_radius, z + zl * ind_radius)
         // circle
         global.Particles.circle(circleSpawner, ind_center, axes, ind_radius2, ind_cnt)
+    }
+    // star
+    let offset = Math.random() * KMath.PI
+    if (data.pick) {
+        let ind_radius = 5
+        let ind_center = Vec3d(x + xl * ind_radius, y + yl * ind_radius, z + zl * ind_radius)
+        global.Particles.star(starSpawner, ind_center, axes, 2, 6, 2, offset, 20)
+    }
+    if (data.hit) {
+        let ind_radius = 8
+        let ind_center = Vec3d(x + xl * ind_radius, y + yl * ind_radius, z + zl * ind_radius)
+        global.Particles.star(starSpawner, ind_center, axes, 4, 6, 1, offset)
+        global.Particles.star(starSpawner, ind_center, axes, 4, 6, 2, offset)
     }
 })
 

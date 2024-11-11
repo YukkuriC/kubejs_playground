@@ -49,6 +49,30 @@
                     spawner(target.x(), target.y(), target.z())
                 }
             }
+
+            // star
+            this.star = function (spawner, center, axes, radius, n, nstep, offset, sep) {
+                spawner = this.wrapSpawner(spawner)
+                if (offset === undefined) offset = TwoPI * Math.random()
+                if (sep === undefined) sep = 30
+                nstep = Math.abs(nstep)
+                let [x, y] = axes
+
+                let nodes = []
+                for (let i = 0; i < n; i++) {
+                    let angle = (TwoPI * i + offset) / n
+                    nodes.push(center.add(x.scale(radius * Math.cos(angle))).add(y.scale(radius * Math.sin(angle))))
+                }
+                for (let i = 0; i < n; i++) {
+                    let p1 = nodes[i]
+                    let p2 = nodes[(i + nstep) % n]
+                    for (let j = 0; j < sep; j++) {
+                        let ratio = j / sep
+                        let pt = p1.scale(ratio).add(p2.scale(1 - ratio))
+                        spawner.apply(this, this.vec2list(pt))
+                    }
+                }
+            }
         }
 
         // line functions
