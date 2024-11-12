@@ -65,10 +65,6 @@ NetworkEvents.dataReceived('yc:sword_cast', e => {
 {
     NetworkEvents.dataReceived('yc:sword_line', e => {
         let { data } = e
-        try {
-            global.Particles.lightning(data.particle ?? 'electric_spark', data.from, data.to)
-        } catch (e) {
-            Client.player.tell(e)
-        }
+        global.Particles.lightning(data.particle ?? 'electric_spark', data.from, data.to)
     })
 }

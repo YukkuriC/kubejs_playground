@@ -2,6 +2,10 @@
     let PE = Client.particleEngine
     let TwoPI = KMath.PI * 2
 
+    ClientEvents.loggedIn(e => {
+        PE = Client.particleEngine
+    })
+
     let ParticlesCls = function () {
         // helpers
         {
