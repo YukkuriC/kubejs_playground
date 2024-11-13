@@ -69,3 +69,8 @@ function StartCoroutine(iter) {
     allCoroutines[wrap.id] = wrap
     return wrap
 }
+
+function StopCoroutine(obj) {
+    if (obj.id) obj = obj.id
+    delete allCoroutines[obj]
+}
