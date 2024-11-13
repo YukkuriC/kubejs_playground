@@ -26,7 +26,7 @@ function CoroutineWrap(iter) {
     this.done = false
     this.id = CoroutineWrap.id++
 }
-CoroutineWrap.id = 0
+CoroutineWrap.id = 1
 
 // coroutine runners
 const allCoroutines = {}
