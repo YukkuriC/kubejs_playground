@@ -1,3 +1,4 @@
+// priority:10
 // yield-ables
 function WaitTicks(ticks) {
     this.waiting = true

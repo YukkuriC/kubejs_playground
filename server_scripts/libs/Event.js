@@ -1,3 +1,4 @@
+// priority:11
 /**@type {typeof Events.Event}*/
 {
     /**@type {Events.Event}*/
@@ -55,6 +56,5 @@
     }`)
 
     Event.prototype = proto
-    global.setter.Event = Event
+    this.Event = global.setter.Event = Event
 }
-const Event = (() => {})()
