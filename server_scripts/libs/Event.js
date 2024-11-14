@@ -8,7 +8,7 @@
         this.__onceSet = new Set()
     }
 
-    let proto = {
+    Event.prototype = {
         setName(name) {
             this.name = name ?? ''
             return this
@@ -55,6 +55,5 @@
         return this.fireVar(argsHack)
     }`)
 
-    Event.prototype = proto
     this.Event = global.setter.Event = Event
 }
