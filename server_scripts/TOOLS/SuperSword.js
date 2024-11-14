@@ -6,7 +6,7 @@
     }
 
     ItemEvents.rightClicked('yc:sword', event => {
-        const { level, player, item, hand, server } = event
+        const { level, player, item, hand } = event
         let posPlayer = player.eyePosition
         let look = player.lookAngle
         let posArr = [posPlayer.x(), posPlayer.y(), posPlayer.z()]
@@ -71,7 +71,7 @@
     })
 
     EntityEvents.hurt(e => {
-        const { entity, source, level, server } = e
+        const { entity, source, level } = e
         const { player } = source
         if (player?.mainHandItem?.id != 'yc:sword') return
         // drain max health
