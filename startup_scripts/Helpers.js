@@ -51,7 +51,7 @@ global.BreakBlock = (level, block, player, noDrop) => {
     if (!noDrop) {
         for (let item of block.getDrops()) player.give(item)
     }
-    global.EVENT_BUS.post(new $BreakEvent(level, block.pos, block.blockState, player))
+    // global.EVENT_BUS.post(new $BreakEvent(level, block.pos, block.blockState, player))
     level.destroyBlock(block.pos, false, player)
 }
 /**

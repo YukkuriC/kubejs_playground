@@ -1,4 +1,12 @@
 const Integer = Java.loadClass('java.lang.Integer')
 
-global.SERVER_SCOPE = this
-global.unlockClassFilter(Java)
+global.setter.SERVER_SCOPE = this
+
+let server = null
+{
+    let setServer = e => {
+        server = global.setter.server = e.server
+    }
+    ServerEvents.loaded(setServer)
+    ServerEvents.command('reload', setServer)
+}

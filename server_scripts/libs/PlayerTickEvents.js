@@ -19,4 +19,4 @@ const PlayerTickEvents = (() => {
     }
 })()
 
-global.PlayerTickEvents = PlayerTickEvents
+global.setter.PlayerTickEvents = PlayerTickEvents

@@ -11,19 +11,16 @@ StartupEvents.registry('item', e => {
     const items_armor = ['helmet', 'chestplate', 'leggings', 'boots'].map(item =>
         e
             .create(`yc:${item}`, item)
-            .tier('yc')
+            // .tier('yc')
             .rarity('epic')
             .maxDamage(114514)
             .glow(true)
             .texture(`minecraft:item/golden_${item}`)
-            .modelJson({
-                parent: `minecraft:item/golden_${item}`,
-            })
             .displayName(`YC's ${item}`),
     )
     // misc
-    e.create(`yc:stick`, 'basic').maxStackSize(1).rarity('epic').glow(true).texture(`minecraft:item/stick`).displayName(`YC's Stick`)
-    e.create(`yc:duper`, 'basic')
+    e.create(`yc:stick`).maxStackSize(1).rarity('epic').glow(true).texture(`minecraft:item/stick`).displayName(`YC's Stick`)
+    e.create(`yc:duper`)
         // .texture(`yc:item/duper`)
         .rarity('epic')
         .maxStackSize(1)

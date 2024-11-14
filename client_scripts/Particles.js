@@ -103,5 +103,5 @@
         }
     }
 
-    global.Particles = new ParticlesCls()
+    global.setter.Particles = new ParticlesCls()
 }

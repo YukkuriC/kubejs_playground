@@ -20,7 +20,7 @@ ServerEvents.recipes(e => {
     for (let i = 2; i <= 6; i++) e.shapeless('yc:duper', Array(i).fill('#minecraft:logs')).modifyResult(codeMatcher)
 
     // dupe by recipe
-    e.shapeless('yc:duper', [Ingredient.all, 'yc:duper']).keepIngredient(Ingredient.all.subtract(Ingredient.of('yc:duper')))
+    e.shapeless('yc:duper', [Ingredient.all, 'yc:duper']).keepIngredient(Ingredient.all.except(Ingredient.of('yc:duper')))
 })
 
 ItemEvents.crafted('yc:duper', e => {

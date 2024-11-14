@@ -120,4 +120,4 @@ function OnUseTools(e) {
     }
 }
 
-global.OnUseTools = OnUseTools
+global.setter.OnUseTools = OnUseTools
