@@ -10,19 +10,19 @@ let DoEval, GetNamespace
 }
 {
     DoEval = function (code, player) {
-        server.tell(Text.gold('Code:').append(Text.white(code)).clickCopy(code))
+        global.server.tell(Text.gold('Code:').append(Text.white(code)).clickCopy(code))
         let ns = GetNamespace(player)
         try {
             let tmp
             with (ns) {
                 with (global) {
                     tmp = eval(code)
-                    server.tell(Text.green('Result:').append(Text.white(tmp)).clickCopy(tmp))
+                    global.server.tell(Text.green('Result:').append(Text.white(tmp)).clickCopy(tmp))
                 }
             }
             ns.res = tmp
         } catch (e) {
-            server.tell(Text.red('Error:').append(Text.white(e)).clickCopy(e))
+            global.server.tell(Text.red('Error:').append(Text.white(e)).clickCopy(e))
         }
     }
 }
@@ -32,6 +32,6 @@ PlayerEvents.chat(e => {
     let code = String(e.message)
     if (!code.startsWith('e@')) return
     code = code.substring(2)
-    server.scheduleInTicks(0, () => DoEval(code, e.player))
+    global.server.scheduleInTicks(0, () => DoEval(code, e.player))
     e.cancel()
 })

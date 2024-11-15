@@ -39,8 +39,8 @@
     for (; i <= 3; i++) {
         if (i >= 0) args.push('a' + i)
         Event.prototype[`fire${args.length}`] = eval(`function(${args.join(',')}){
-            for (let f of this.__set) f(${args})
-            for (let f of this.__onceSet) f(${args})
+            for (let f of this.__set) f(${args.join(',')})
+            for (let f of this.__onceSet) f(${args.join(',')})
             this.__onceSet.clear()
         }`)
     }

@@ -32,7 +32,7 @@ ServerEvents.commandRegistry(e => {
                 let type = arg.STRING.getResult(ctx, 'type')
                 if (type.indexOf(':') < 0) type = 'minecraft:' + type
                 let level = TryGetArg(ctx, arg.INTEGER, 'level') || 1
-                server.tell(`Enchanting ${type} Lv.${level}`)
+                global.server.tell(`Enchanting ${type} Lv.${level}`)
                 if (item.id == 'minecraft:enchanted_book') item.getOrCreateTag().StoredEnchantments.push({ id: type, lvl: level })
                 else item.enchantStack(type, level)
                 return 1
@@ -57,7 +57,7 @@ ServerEvents.commandRegistry(e => {
                     .executes(ctx => {
                         let pool = getEnchantPool(GetPlayerItem(ctx))
                         if (!pool) return 0
-                        server.tell(`Removing ${pool.length} enchantments`)
+                        global.server.tell(`Removing ${pool.length} enchantments`)
                         pool.clear()
                         return 1
                     })
@@ -69,7 +69,7 @@ ServerEvents.commandRegistry(e => {
                             let pool = tag[key]
                             if (!pool) return 0
                             let type = arg.STRING.getResult(ctx, 'type')
-                            server.tell(`Removing ${type} enchantments`)
+                            global.server.tell(`Removing ${type} enchantments`)
                             pool = pool.filter(x => x.id != type && x.id != `minecraft:${type}`)
                             tag[key] = pool
                             return 1
@@ -82,7 +82,7 @@ ServerEvents.commandRegistry(e => {
                     if (!player) return 0
                     let pool = getEnchantPool(player.getMainHandItem())
                     if (!pool) return 0
-                    server.tell(`Dumping ${pool.length} enchantment(s)`)
+                    global.server.tell(`Dumping ${pool.length} enchantment(s)`)
                     let book = Item.of('enchanted_book')
                     book.getOrCreateTag().merge({ StoredEnchantments: pool })
                     player.give(book)
@@ -94,7 +94,7 @@ ServerEvents.commandRegistry(e => {
                     if (!player) return 0
                     let pool = getEnchantPool(player.getMainHandItem()),
                         poolOffhand = getEnchantPool(player.getOffhandItem())
-                    if (!poolOffhand) return server.tell('No enchantments in offhand'), 0
+                    if (!poolOffhand) return global.server.tell('No enchantments in offhand'), 0
                     if (!pool) {
                         let item = player.getMainHandItem()
                         let key = item.id == 'minecraft:enchanted_book' ? 'StoredEnchantments' : 'Enchantments'
@@ -102,7 +102,7 @@ ServerEvents.commandRegistry(e => {
                         tag[key] = []
                         pool = tag[key]
                     }
-                    server.tell(`Merging ${poolOffhand.length} enchantment(s)`)
+                    global.server.tell(`Merging ${poolOffhand.length} enchantment(s)`)
 
                     let mapType = {}
                     for (let e of pool) {

@@ -46,7 +46,7 @@
                 if (e.type == 'minecraft:experience_orb') {
                     let { Count, Value } = e.nbt
                     if (theOrb) {
-                        theOrb.value += Count * Value
+                        theOrb.value += Count.asInt * Value.asInt // fuck you ShortTag
                         e.discard()
                         continue
                     } else {
@@ -75,13 +75,13 @@
         const { player } = source
         if (player?.mainHandItem?.id != 'yc:sword') return
         // drain max health
-        const before = entity.getAttributeBaseValue('generic.max_health')
+        let before = entity.getAttributeBaseValue('generic.max_health')
         entity.setAttributeBaseValue('generic.max_health', Math.ceil(before / 2))
         // less invulnerable
         entity.invulnerableTime = Math.min(entity.invulnerableTime, 3)
         // boost health
-        const delta = before / 2
-        player.absorptionAmount = Math.min(1000, player.absorptionAmount + delta)
+        let delta = before / 2
+        player.absorptionAmount = Math.min(1000, player.absorptionAmount + delta) // TODO 这里也寄了，不报错但是不可设置
         // fx
         let headPos = entity.eyePosition
         let posArr = [headPos.x(), headPos.y(), headPos.z()]

@@ -9,6 +9,12 @@
     let ParticlesCls = function () {
         // helpers
         {
+            // anti nbt
+            this.normList = list => {
+                if (list.toArray) return list.toArray().map(x => x.asDouble)
+                return list
+            }
+
             // vec <-> list
             this.vec2list = vec => [vec.x(), vec.y(), vec.z()]
             this.list2vec = list => new Vec3d(list[0], list[1], list[2])
@@ -35,6 +41,7 @@
             // spawner
             this.getSpawner = type => (x, y, z) => PE.createParticle(type, x, y, z, 0, 0, 0)
             this.wrapSpawner = function (spawner) {
+                if (spawner.asString) spawner = String(spawner.asString)
                 if (typeof spawner === 'string') return this.getSpawner(spawner)
                 return spawner
             }
@@ -97,6 +104,8 @@
                 }
             }
             this.lightning = function (spawner, posArr1, posArr2) {
+                posArr1 = this.normList(posArr1)
+                posArr2 = this.normList(posArr2)
                 spawner = this.wrapSpawner(spawner)
                 _lightning(spawner, posArr1[0], posArr1[1], posArr1[2], posArr2[0], posArr2[1], posArr2[2])
             }
