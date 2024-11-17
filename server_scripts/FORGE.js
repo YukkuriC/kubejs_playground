@@ -9,3 +9,7 @@ global.setter.SERVER_SCOPE = this
     ServerEvents.loaded(setServer)
     ServerEvents.command('reload', setServer)
 }
+
+ServerEvents.loaded(e => {
+    global.Nashorn.invokeFunction('unlockServer', e.server)
+})
