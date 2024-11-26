@@ -1,24 +1,28 @@
-let DoEval
+let DoEval, GetNamespace
 
 {
     let namespaces = {}
-    let GetNamespace = function (/**@type {Internal.ServerPlayer}*/ player) {
+    GetNamespace = function (/**@type {Internal.ServerPlayer}*/ player) {
         let key = player.stringUuid
         if (!namespaces[key]) namespaces[key] = {}
         return namespaces[key]
     }
+}
+{
     DoEval = function (code, player) {
-        Client.player.tell(Text.gold('Code:').append(Text.white(code)).clickCopy(code))
+        Utils.server.tell(Text.gold('Code:').append(Text.white(code)).clickCopy(code))
         let ns = GetNamespace(player)
         try {
             let tmp
-            with (global) {
-                tmp = eval(code)
-                Client.player.tell(Text.green('Result:').append(Text.white(tmp)).clickCopy(tmp))
+            with (ns) {
+                with (global) {
+                    tmp = eval(code)
+                    Utils.server.tell(Text.green('Result:').append(Text.white(tmp)).clickCopy(tmp))
+                }
             }
             ns.res = tmp
         } catch (e) {
-            Client.player.tell(Text.red('Error:').append(Text.white(e)).clickCopy(e))
+            Utils.server.tell(Text.red('Error:').append(Text.white(e)).clickCopy(e))
         }
     }
 }

@@ -1,3 +1,4 @@
+// priority:10
 /**@type {Events.PlayerTickEvents}*/
 const PlayerTickEvents = (() => {
     /**@type {Map<number,Events.Event>}*/
