@@ -1,3 +1,6 @@
+// requires: mekanism
+// requires: ad_astra
+
 ServerEvents.tags('block', e => {
     let ores = [
         // exceptions

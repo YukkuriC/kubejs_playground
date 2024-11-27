@@ -1,3 +1,6 @@
+// requires: mekanism
+// requires: ars_nouveau
+
 // inject on fibers edited
 EntityEvents.spawned('minecraft:item', e => {
     let item = e.entity.item

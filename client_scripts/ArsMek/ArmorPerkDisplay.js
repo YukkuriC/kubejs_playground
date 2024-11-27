@@ -1,3 +1,6 @@
+// requires: mekanism
+// requires: ars_nouveau
+
 ItemEvents.tooltip(reg => {
     for (const slot of ['helmet', 'bodyarmor', 'pants', 'boots'])
         reg.addAdvanced(`mekanism:mekasuit_${slot}`, (stack, _, tooltip) => {

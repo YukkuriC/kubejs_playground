@@ -1,3 +1,5 @@
+// requires: ars_nouveau
+
 ItemEvents.rightClicked('ars_nouveau:blank_parchment', e => {
     if (e.level.isClientSide()) return
     let { player, item } = e

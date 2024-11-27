@@ -1,3 +1,6 @@
+// requires: mekanism
+// requires: ars_nouveau
+
 {
     let Arrays = Java.loadClass('java.util.Arrays')
     let ResourceLocation = Java.loadClass('net.minecraft.resources.ResourceLocation')

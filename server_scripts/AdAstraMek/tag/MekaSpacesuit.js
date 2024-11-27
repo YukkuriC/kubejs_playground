@@ -1,3 +1,6 @@
+// requires: mekanism
+// requires: ad_astra
+
 // mekasuit当然是宇航服辣
 ServerEvents.tags('item', e => {
     let suits = ['helmet', 'bodyarmor', 'pants', 'boots'].map(x => `mekanism:mekasuit_${x}`)
