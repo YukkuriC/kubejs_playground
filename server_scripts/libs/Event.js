@@ -1,7 +1,7 @@
-/**@type {typeof Events.Event}*/
-const Event = (() => {
+// priority:11
+{
     /**@type {Events.Event}*/
-    function Event() {
+    let Event = function () {
         this.name = ''
         this.__set = new Set()
         this.__onceSet = new Set()
@@ -37,7 +37,7 @@ const Event = (() => {
     let i = -1
     for (; i <= 3; i++) {
         if (i >= 0) args.push('a' + i)
-        Event.prototype[`fire${args.length}`] = eval(`function(${args}){
+        Event.prototype[`fire${args.length}`] = eval(`function(${args.join(',')}){
             for (let f of this.__set) f(${args})
             for (let f of this.__onceSet) f(${args})
             this.__onceSet.clear()
@@ -54,7 +54,5 @@ const Event = (() => {
         return this.fireVar(argsHack)
     }`)
 
-    return Event
-})()
-
-global.Event = Event
+    this.Event = global.Event = Event
+}

@@ -7,12 +7,12 @@ ServerEvents.commandRegistry(e => {
         } catch (e) {}
     }
     const GetPlayer = ctx => {
-        /**@type {Internal.Player}*/
+        /**@type {Player}*/
         let player = ctx.source.entity
         if (player && player.isPlayer()) return player
     }
     const GetPlayerItem = ctx => {
-        /**@type {Internal.Player}*/
+        /**@type {Player}*/
         let player = GetPlayer(ctx)
         if (player) return player.getMainHandItem()
     }
@@ -32,7 +32,7 @@ ServerEvents.commandRegistry(e => {
                 let type = arg.STRING.getResult(ctx, 'type')
                 if (type.indexOf(':') < 0) type = 'minecraft:' + type
                 let level = TryGetArg(ctx, arg.INTEGER, 'level') || 1
-                Client.player.tell(`Enchanting ${type} Lv.${level}`)
+                Utils.server.tell(`Enchanting ${type} Lv.${level}`)
                 if (item.id == 'minecraft:enchanted_book') item.getOrCreateTag().StoredEnchantments.push({ id: type, lvl: level })
                 else item.enchantStack(type, level)
                 return 1
@@ -57,7 +57,7 @@ ServerEvents.commandRegistry(e => {
                     .executes(ctx => {
                         let pool = getEnchantPool(GetPlayerItem(ctx))
                         if (!pool) return 0
-                        Client.player.tell(`Removing ${pool.length} enchantments`)
+                        Utils.server.tell(`Removing ${pool.length} enchantments`)
                         pool.clear()
                         return 1
                     })
@@ -69,7 +69,7 @@ ServerEvents.commandRegistry(e => {
                             let pool = tag[key]
                             if (!pool) return 0
                             let type = arg.STRING.getResult(ctx, 'type')
-                            Client.player.tell(`Removing ${type} enchantments`)
+                            Utils.server.tell(`Removing ${type} enchantments`)
                             pool = pool.filter(x => x.id != type && x.id != `minecraft:${type}`)
                             tag[key] = pool
                             return 1
@@ -82,7 +82,7 @@ ServerEvents.commandRegistry(e => {
                     if (!player) return 0
                     let pool = getEnchantPool(player.getMainHandItem())
                     if (!pool) return 0
-                    Client.player.tell(`Dumping ${pool.length} enchantment(s)`)
+                    Utils.server.tell(`Dumping ${pool.length} enchantment(s)`)
                     let book = Item.of('enchanted_book')
                     book.getOrCreateTag().merge({ StoredEnchantments: pool })
                     player.give(book)
@@ -94,7 +94,7 @@ ServerEvents.commandRegistry(e => {
                     if (!player) return 0
                     let pool = getEnchantPool(player.getMainHandItem()),
                         poolOffhand = getEnchantPool(player.getOffhandItem())
-                    if (!poolOffhand) return Client.player.tell('No enchantments in offhand'), 0
+                    if (!poolOffhand) return Utils.server.tell('No enchantments in offhand'), 0
                     if (!pool) {
                         let item = player.getMainHandItem()
                         let key = item.id == 'minecraft:enchanted_book' ? 'StoredEnchantments' : 'Enchantments'
@@ -102,7 +102,7 @@ ServerEvents.commandRegistry(e => {
                         tag[key] = []
                         pool = tag[key]
                     }
-                    Client.player.tell(`Merging ${poolOffhand.length} enchantment(s)`)
+                    Utils.server.tell(`Merging ${poolOffhand.length} enchantment(s)`)
 
                     let mapType = {}
                     for (let e of pool) {
@@ -117,6 +117,37 @@ ServerEvents.commandRegistry(e => {
                         } else if (lvl == mapType[id].lvl) lvl++
                         mapType[id].lvl = Math.max(mapType[id].lvl, lvl)
                     }
+                    return 1
+                }),
+            )
+        }
+
+        // 重命名
+        {
+            F.then(
+                cmd.literal('rename').then(
+                    cmd.argument('name', arg.STRING.create(e)).executes(ctx => {
+                        let item = GetPlayerItem(ctx)
+                        if (!item || item.id == 'minecraft:air') return 0
+                        let newName = arg.STRING.getResult(ctx, 'name')
+                        newName = newName.replace('\\', '\\\\').replace('"', '\\"') // 这是Java String，不是js string
+                        item.orCreateTag.display = { Name: `{"text":"${newName}"}` }
+                        return 1
+                    }),
+                ),
+            )
+        }
+
+        // 袭击冷却
+        {
+            F.then(
+                cmd.literal('raidCD').executes(ctx => {
+                    let player = GetPlayer(ctx)
+                    if (!player) return 0
+                    let raid = player.level.getRaidAt(BlockPos(player.x, player.y, player.z))
+                    if (!raid) return
+                    global.setField(raid, 'f_37684_', Integer('1'))
+                    player.level.raids.setDirty()
                     return 1
                 }),
             )

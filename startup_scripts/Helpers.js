@@ -1,59 +1,65 @@
 // chain block breaking
 const MAX_CHAIN = 4096
+const DELTA_DIRS = []
+for (let d of [-1, 1]) {
+    DELTA_DIRS.push([d, 0, 0], [0, d, 0], [0, 0, d])
+    for (let d2 of [-1, 1]) {
+        DELTA_DIRS.push([d, d2, 0], [0, d, d2], [d2, 0, d])
+    }
+}
 
 /**
  * general helper
  * @param { Internal.Level } level
- * @param { {x:number; y:number; z:number} } blockPos
+ * @param { BlockPos } blockPos
  * @param { (block:Internal.BlockContainerJS) => boolean } predicate
  * @param { (block:Internal.BlockContainerJS) => void } callback
  */
-function FloodFillBlocks(level, blockPos, predicate, callback) {
-    const blockQueue = [blockPos]
-    const visited = new Set()
-    visited.add(`${blockPos.x},${blockPos.y},${blockPos.z}`)
+global.FloodFillBlocks = (level, blockPos, predicate, callback) => {
+    let blockQueue = [blockPos]
+    let visited = new Set()
+    visited.add(blockPos.hashCode())
     for (let _ = 0; _ < MAX_CHAIN && blockQueue.length > 0; ) {
-        let { x, y, z } = blockQueue.pop()
-        let bb = level.getBlock(x, y, z)
+        let pos = blockQueue.shift()
+        let { x, y, z } = pos
+        let bb = level.getBlock(pos)
         if (!predicate(bb)) continue
         callback(bb)
         _++
 
         // dfs
-        for (let i = -1; i <= 1; i++)
-            for (let j = -1; j <= 1; j++)
-                for (let k = -1; k <= 1; k++) {
-                    if (!i && !j && !k) continue
-                    let newPos = { x: x + i, y: y + j, z: z + k }
-                    let newKey = `${newPos.x},${newPos.y},${newPos.z}`
-                    if (!visited.has(newKey)) {
-                        visited.add(newKey)
-                        blockQueue.push(newPos)
-                    }
-                }
+        for (let delta of DELTA_DIRS) {
+            let [i, j, k] = delta
+            let newPos = new BlockPos(x + i, y + j, z + k)
+            let newKey = newPos.hashCode()
+            if (!visited.has(newKey)) {
+                visited.add(newKey)
+                blockQueue.push(newPos)
+            }
+        }
     }
 }
 /**
  * helper general break block
  * @param { Internal.Level } level
  * @param { Internal.BlockContainerJS } block
- * @param { Internal.Player } player
+ * @param { Player } player
  * @param { boolean } drop
  */
-function BreakBlock(level, block, player, noDrop) {
+global.BreakBlock = (level, block, player, noDrop) => {
     if (!block) return
-    let res = null
-    if (noDrop) res = block.getDrops()
+    if (!noDrop) {
+        for (let item of block.getDrops()) player.give(item)
+    }
     global.EVENT_BUS.post(new $BreakEvent(level, block.pos, block.blockState, player))
-    level.destroyBlock(block.pos, !noDrop, player)
-    return res
+    level.destroyBlock(block.pos, false, player)
 }
 /**
  * check crop age
  * @param { Internal.CropBlock } block
  * @param { Internal.BlockState } state
  */
-function CanHarvest(block, state) {
+global.CanHarvest = (block, state) => {
     if (block.isMaxAge && block.isMaxAge(state)) return true
     for (const prop of state.getProperties()) {
         if (!prop instanceof $IntegerProperty) continue
@@ -69,10 +75,12 @@ function CanHarvest(block, state) {
 
 global.dump = obj => {
     let lines = ['{']
-    for (let pair of Object.entries(obj)) {
-        lines.push(`    ${pair[0]}: ${pair[1]},`)
+    let hasInner = false
+    for (let k of Object.keys(obj).sort()) {
+        lines.push(`    ${k}: ${obj[k]},`)
+        hasInner = true
     }
-    lines.push('}')
+    lines.push(hasInner ? '}' : lines.pop() + '}')
     return lines.join('\n')
 }
 
@@ -85,12 +93,14 @@ global.dumpDeep = (obj, deltaIndent) => {
             if (used.has(obj)) return '{...}'
             used.add(obj)
             let lines = ['{']
-            for (let pair of Object.entries(obj)) {
-                let [k, v] = pair
+            let hasInner = false
+            for (let k of Object.keys(obj).sort()) {
+                let v = obj[k]
                 let vStr = v && typeof v === 'object' ? inner(v, indent + deltaIndent) : String(v)
                 lines.push(' '.repeat(indent + deltaIndent) + `${k}:${vStr},`)
+                hasInner = true
             }
-            lines.push(' '.repeat(indent) + '}')
+            lines.push(hasInner ? ' '.repeat(indent) + '}' : lines.pop() + '}')
             used.delete(obj)
             return lines.join(noNewLine ? '' : '\n')
         } catch (e) {
