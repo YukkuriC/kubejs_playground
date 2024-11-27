@@ -1,4 +1,5 @@
-if (Platform.isLoaded('create')) {
+// requires: create
+{
     ServerEvents.recipes(e => {
         let helper = (src, output) => {
             if (!Platform.isLoaded(src.split(':')[0])) return
