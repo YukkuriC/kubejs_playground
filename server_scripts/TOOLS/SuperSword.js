@@ -16,7 +16,7 @@
             pick = 0
         let theOrb = null
         for (let e of level.getEntitiesWithin(player.boundingBox.inflate(50))) {
-            let isLiving = e.isLiving() && e.isAlive() && e !== player,
+            let isLiving = e.isLiving() && e.isAlive() && e !== player && e.isMonster(),
                 isPickable = e.type == 'minecraft:item' || e.type == 'minecraft:experience_orb'
             if (!isLiving && !isPickable) continue
             // check range
@@ -94,7 +94,15 @@
             level.server.scheduleInTicks(Math.random() * 10 + 4, () => {
                 let cnt = 0
                 for (let sube of level.getEntitiesWithin(entity.boundingBox.inflate(10))) {
-                    if (!sube.isLiving() || !sube.isAlive() || sube === entity || sube === player || sube.invulnerableTime > 0) continue
+                    if (
+                        !sube.isLiving() ||
+                        !sube.isAlive() ||
+                        !sube.isMonster() ||
+                        sube === entity ||
+                        sube === player ||
+                        sube.invulnerableTime > 0
+                    )
+                        continue
                     let subPos = sube.eyePosition
                     sube.attack(source, e.damage)
                     broadcastLevel(player.level, 'yc:sword_line', {
