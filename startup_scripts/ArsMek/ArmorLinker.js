@@ -3,7 +3,6 @@
 
 {
     let Arrays = Java.loadClass('java.util.Arrays')
-    let ResourceLocation = Java.loadClass('net.minecraft.resources.ResourceLocation')
 
     let ARS = {
         SUIT_BASE: () => [
@@ -53,11 +52,28 @@
                     ),
             )
         }
+        ARS.SUIT = ARS.SUIT_BASE().map(x => x.get())
     })
 
-    // backup update
-    ForgeEvents.onEvent('net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent', e => {
-        const { slot, from, to } = e
-        if (slot.armor && from.id != to.id && to.id.startsWith('mekanism:mekasuit_')) global.InjectMekasuit(to, slot)
-    })
+    let target_slot = {
+        'mekanism:mekasuit_helmet': 3,
+        'mekanism:mekasuit_bodyarmor': 2,
+        'mekanism:mekasuit_pants': 1,
+        'mekanism:mekasuit_boots': 0,
+    }
+
+    ForgeEvents.onEvent('net.minecraftforge.event.ItemAttributeModifierEvent', e => global.InjectMekasuit(e))
+    global.InjectMekasuit = (/**@type {Internal.ItemAttributeModifierEvent}*/ e) => {
+        let { itemStack, slotType: slot } = e
+        if (target_slot[itemStack.id] !== slot.index) return
+
+        let attrMap = ARS.SUIT[slot.getIndex()].getAttributeModifiers(slot, itemStack)
+        for (let pair of attrMap.entries()) {
+            let { key, value } = pair
+            if (value.name.startsWith('Armor ')) {
+                continue
+            }
+            e.addModifier(key, value)
+        }
+    }
 }
