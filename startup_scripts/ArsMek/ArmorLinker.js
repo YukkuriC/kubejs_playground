@@ -52,7 +52,6 @@
                     ),
             )
         }
-        ARS.SUIT = ARS.SUIT_BASE().map(x => x.get())
     })
 
     let target_slot = {
@@ -66,6 +65,7 @@
     global.InjectMekasuit = (/**@type {Internal.ItemAttributeModifierEvent}*/ e) => {
         let { itemStack, slotType: slot } = e
         if (target_slot[itemStack.id] !== slot.index) return
+        if (!ARS.SUIT) ARS.SUIT = ARS.SUIT_BASE().map(x => x.get())
 
         let attrMap = ARS.SUIT[slot.getIndex()].getAttributeModifiers(slot, itemStack)
         for (let pair of attrMap.entries()) {
