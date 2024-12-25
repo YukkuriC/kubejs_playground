@@ -1,15 +1,11 @@
-let DoEval, GetNamespace
-
 {
     let namespaces = {}
-    GetNamespace = function (/**@type {Internal.ServerPlayer}*/ player) {
+    let GetNamespace = function (/**@type {Internal.ServerPlayer}*/ player) {
         let key = player.stringUuid
         if (!namespaces[key]) namespaces[key] = {}
         return namespaces[key]
     }
-}
-{
-    DoEval = function (code, player) {
+    let DoEval = function (code, player) {
         Utils.server.tell(Text.gold('Code:').append(Text.white(code)).clickCopy(code))
         let ns = GetNamespace(player)
         try {
@@ -25,13 +21,13 @@ let DoEval, GetNamespace
             Utils.server.tell(Text.red('Error:').append(Text.white(e)).clickCopy(e))
         }
     }
-}
 
-PlayerEvents.chat(e => {
-    if (e.level.isClientSide()) return
-    let code = String(e.message)
-    if (!code.startsWith('e@')) return
-    code = code.substring(2)
-    Utils.server.scheduleInTicks(0, () => DoEval(code, e.player))
-    e.cancel()
-})
+    PlayerEvents.chat(e => {
+        if (e.level.isClientSide()) return
+        let code = String(e.message)
+        if (!code.startsWith('e@')) return
+        code = code.substring(2)
+        Utils.server.scheduleInTicks(0, () => DoEval(code, e.player))
+        e.cancel()
+    })
+}
