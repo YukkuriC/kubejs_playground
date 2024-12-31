@@ -1,6 +1,8 @@
 {
     let BeaconBlockEntity = Java.loadClass('net.minecraft.world.level.block.entity.BeaconBlockEntity')
-    let AllEffects = Java.loadClass('net.minecraft.core.registries.BuiltInRegistries').MOB_EFFECT
+    let AllEffects = Java.loadClass(
+        'net.minecraft.core.' + (Platform.getMcVersion() >= '1.20' ? 'registries.BuiltInRegistries' : 'Registry'),
+    ).MOB_EFFECT
     let HashSet = Java.loadClass('java.util.HashSet')
 
     StartupEvents.postInit(e => {
