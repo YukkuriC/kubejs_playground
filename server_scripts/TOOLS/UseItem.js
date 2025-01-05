@@ -1,4 +1,5 @@
 const TARGETS = new Set(['yc:hoe', 'yc:pickaxe', 'yc:axe', 'yc:shovel'])
+const $CocoaBlock = Java.loadClass('net.minecraft.world.level.block.CocoaBlock')
 
 /**
  * @param { Internal.PlayerInteractEvent$RightClickBlock } e
