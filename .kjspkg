@@ -1,0 +1,8 @@
+{
+  "author": "YukkuriC",
+  "description": "Random stuff I made, including ClassFilter unlocker, OP tools, client-fly script, and random misc stuff.",
+  "versions": [9, 10],
+  "modloaders": ["forge"],
+  "dependencies": [],
+  "incompatibilities": []
+}
