@@ -47,7 +47,7 @@ var HackedPlugin = Java.extend(KJSPlugin, {
         var type = F_TW_T.get(wrapper)
         var sm = smMap[type.name]
         if (!sm) return
-        if (!fooFactory) fooFactory = new KJSFactory(sm)
+        if (!fooFactory) fooFactory = sm.contextFactory
         var wrapFactory = new HackedFactory(sm)
         type.console.contextFactory.refersTo(wrapFactory)
         sm.contextFactory = wrapFactory
