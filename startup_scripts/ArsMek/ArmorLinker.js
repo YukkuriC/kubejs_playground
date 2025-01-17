@@ -1,7 +1,7 @@
 // requires: mekanism
 // requires: ars_nouveau
 
-{
+if (Platform.getMcVersion() >= '1.20') {
     let Arrays = Java.loadClass('java.util.Arrays')
 
     let ARS = {
