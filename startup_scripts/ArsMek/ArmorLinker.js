@@ -1,7 +1,8 @@
 // requires: mekanism
 // requires: ars_nouveau
 
-if (Platform.getMcVersion() >= '1.20') {
+{
+    let is1_19 = Platform.getMcVersion() < '1.20'
     let Arrays = Java.loadClass('java.util.Arrays')
 
     let ARS = {
@@ -21,7 +22,21 @@ if (Platform.getMcVersion() >= '1.20') {
     ]) {
         let tmp = cls.split(/\./g)
         tmp = tmp.pop()
+        // 1.19 polyfill
+        if (is1_19) {
+            if (tmp == 'PerkRegistry') cls = 'com.hollingsworth.arsnouveau.api.ArsNouveauAPI'
+            else if (tmp == 'ItemsRegistry') cls = 'com.hollingsworth.arsnouveau.setup.ItemsRegistry'
+        }
         ARS[tmp] = Java.loadClass(cls)
+    }
+    if (is1_19) {
+        ARS.PerkRegistry = ARS.PerkRegistry.instance
+        ARS.SUIT_BASE = () => [
+            ARS.ItemsRegistry.ARCHMAGE_BOOTS,
+            ARS.ItemsRegistry.ARCHMAGE_LEGGINGS,
+            ARS.ItemsRegistry.ARCHMAGE_ROBES,
+            ARS.ItemsRegistry.ARCHMAGE_HOOD,
+        ]
     }
     global.ARS = ARS
 
