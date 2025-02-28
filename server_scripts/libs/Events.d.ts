@@ -9,16 +9,8 @@ namespace Events {
         off(onTrigger: F): void
         setName(name: string): this
 
-        /**
-         * 最多检测10个参数
-         * @deprecated 使用`eval`，可能有性能问题
-         */
         fire(...args: Parameters<F>): void
         fireVar(args: Parameters<F>): void
-        fire0(): void
-        fire1(arg0): void
-        fire2(arg0, arg1): void
-        fire3(arg0, arg1, arg2): void
     }
     declare type EventClass = ClassType<Event>
 

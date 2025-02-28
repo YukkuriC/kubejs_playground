@@ -1,4 +1,5 @@
-if (Platform.isLoaded('botania')) {
+// requires: botania
+{
     EntityEvents.spawned('tnt', e => {
         let { entity } = e
         e.server.scheduleInTicks(10, () => {

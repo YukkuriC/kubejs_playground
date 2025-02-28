@@ -8,7 +8,7 @@ ClientEvents.tick(e => {
         abilities.mayfly = true
         player.onUpdateAbilities()
     }
-    if (player.motionY < -1 && !abilities.flying && !player.isFallFlying()) {
-        player.startFallFlying()
-    }
+    // if (player.motionY < -1 && !abilities.flying && !player.isFallFlying()) {
+    //     player.startFallFlying()
+    // }
 })

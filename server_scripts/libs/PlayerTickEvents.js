@@ -1,3 +1,4 @@
+// priority:10
 /**@type {Events.PlayerTickEvents}*/
 const PlayerTickEvents = (() => {
     /**@type {Map<number,Events.Event>}*/
@@ -5,7 +6,7 @@ const PlayerTickEvents = (() => {
     PlayerEvents.tick(e => {
         for (let pair of cache.entries()) {
             if (e.player.age % pair[0]) return
-            pair[1].fire1(e)
+            pair[1].fire(e)
         }
     })
     return {
