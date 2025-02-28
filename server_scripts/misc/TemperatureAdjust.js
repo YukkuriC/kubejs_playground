@@ -1,3 +1,5 @@
+// requires: cold_sweat
+
 {
     let Temperature = Java.loadClass('com.momosoftworks.coldsweat.api.util.Temperature')
 
