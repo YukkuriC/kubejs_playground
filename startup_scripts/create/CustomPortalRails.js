@@ -1,14 +1,23 @@
-// priority: 10
 // requires: create
 
 if (!global.registerCreateTrackPortal) {
     let AllPortalTracks = Java.loadClass('com.simibubi.create.content.trains.track.AllPortalTracks')
-    let PortalTrackProvider = Java.loadClass('com.simibubi.create.api.contraption.train.PortalTrackProvider')
     let Registries = Java.loadClass('net.minecraft.core.registries.Registries')
     let ResourceKey = Java.loadClass('net.minecraft.resources.ResourceKey')
-    let registerIntegration = AllPortalTracks.tryRegisterIntegration
     let dimResourceKey = res => ResourceKey.create(Registries.DIMENSION, res)
     let usedKey = {}
+    let isOldAPI = false
+    let registerIntegration, PortalTrackProvider
+    try {
+        registerIntegration = AllPortalTracks.tryRegisterIntegration
+        PortalTrackProvider = Java.loadClass('com.simibubi.create.api.contraption.train.PortalTrackProvider')
+    } catch (e) {
+        registerIntegration =
+            AllPortalTracks[
+                'registerIntegration(net.minecraft.resources.ResourceLocation,com.simibubi.create.content.trains.track.AllPortalTracks$PortalTrackProvider)'
+            ]
+        isOldAPI = true
+    }
     global.registerCreateTrackPortal = (block, dim1, dim2, portalForcer) => {
         if (usedKey[block]) return
         usedKey[block] = 1
@@ -16,6 +25,8 @@ if (!global.registerCreateTrackPortal) {
         dim2 = dimResourceKey(dim2)
         registerIntegration(block, (level, face) => {
             try {
+                // this 'level' is pair<level, face>
+                if (isOldAPI) return AllPortalTracks.standardPortalProvider(level, dim1, dim2, portalForcer)
                 return PortalTrackProvider.fromTeleporter(level, face, dim1, dim2, portalForcer)
             } catch (e) {
                 if (Client.player) Client.player.tell(e)
