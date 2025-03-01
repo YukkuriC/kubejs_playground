@@ -36,4 +36,8 @@ StartupEvents.postInit(() => {
             )
         }
     }
+    if (Platform.isLoaded('undergarden')) {
+        let UGTeleporter = Java.loadClass('quek.undergarden.world.UGTeleporter')
+        global.registerCreateTrackPortal('undergarden:undergarden_portal', 'overworld', 'undergarden:undergarden', l => UGTeleporter(l))
+    }
 })
