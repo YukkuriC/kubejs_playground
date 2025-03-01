@@ -1,5 +1,6 @@
 // priority: 10
 // requires: create
+// ignored: true
 
 if (!global.registerCreateTrackPortal) {
     let AllPortalTracks = Java.loadClass('com.simibubi.create.content.trains.track.AllPortalTracks')
