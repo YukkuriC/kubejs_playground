@@ -12,7 +12,7 @@
         SpellRegistry.ACUPUNCTURE_SPELL,
     ]
 
-    let fightBackTargetInvalidCheckLive = (entity, actual) => actual.health <= 0 || actual.position().distanceTo(entity.position()) > 30
+    let fightBackTargetInvalidCheckLive = (entity, actual) => actual.health <= 0
     let fightBackTargetInvalidCheck = (entity, actual) =>
         actual == null ||
         actual.type === entity.type ||
