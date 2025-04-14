@@ -9,6 +9,7 @@
         SpellRegistry.FIREBOLT_SPELL,
         SpellRegistry.FIRECRACKER_SPELL,
         SpellRegistry.ELDRITCH_BLAST_SPELL,
+        SpellRegistry.BLOOD_NEEDLES_SPELL,
     ]
 
     EntityEvents.hurt('villager', ev => {
@@ -22,6 +23,7 @@
         let nowTick = server.tickCount
         if (nowTick - (lastAttackTick || 0) < 10) return
         entity.persistentData.lastAttackTick = nowTick
+        let anger = 10
 
         // modules
         let invalidCheck = () => {
@@ -29,7 +31,13 @@
         }
         let tryAttack = () => {
             if (invalidCheck()) return
-            if (actual == null || actual.type === entity.type || (actual.isPlayer() && (actual.creative || actual.spectator))) return
+            if (
+                actual == null ||
+                actual.type === entity.type ||
+                actual.health <= 0 ||
+                (actual.isPlayer() && (actual.creative || actual.spectator))
+            )
+                return
             entity.target = actual
             for (let i = 2; i <= 10; i += 2)
                 entity.server.scheduleInTicks(i, () => {
@@ -39,6 +47,13 @@
 
             // heal after attack
             server.scheduleInTicks(11, tryHeal)
+
+            // repeat attack
+            if (anger > 0) {
+                anger--
+                server.scheduleInTicks(20, tryAttack)
+            }
+
             return true
         }
         let tryHeal = () => {
