@@ -35,7 +35,8 @@
                 actual == null ||
                 actual.type === entity.type ||
                 actual.health <= 0 ||
-                (actual.isPlayer() && (actual.creative || actual.spectator))
+                (actual.isPlayer() && (actual.creative || actual.spectator)) ||
+                actual.pos.distanceTo(entity.pos) > 30
             )
                 return
             entity.target = actual
