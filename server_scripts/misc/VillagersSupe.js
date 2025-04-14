@@ -6,7 +6,7 @@
         // rand pool
         SpellRegistry.MAGIC_MISSILE_SPELL,
         // SpellRegistry.LOB_CREEPER_SPELL,
-        // SpellRegistry.FIREBOLT_SPELL,
+        SpellRegistry.FIREBOLT_SPELL,
         // SpellRegistry.FIRECRACKER_SPELL,
         SpellRegistry.ELDRITCH_BLAST_SPELL,
         SpellRegistry.ACUPUNCTURE_SPELL,
@@ -81,10 +81,14 @@
         } = ev
 
         villagerFightBack(entity, actual)
-        if (actual == null) return
+        if (fightBackTargetInvalidCheck(entity, actual)) return
         for (let nearby of level.getEntitiesWithin(actual.boundingBox.inflate(20))) {
             if (nearby.type !== entity.type) continue
             villagerFightBack(nearby, actual)
         }
+    })
+    EntityEvents.death('villager', ev => {
+        let { entity, source, level } = ev
+        level.tell(source.getLocalizedDeathMessage(entity))
     })
 }
