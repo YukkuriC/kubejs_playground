@@ -19,21 +19,6 @@
         (actual.isPlayer() && (actual.creative || actual.spectator)) ||
         fightBackTargetInvalidCheckLive(entity, actual)
 
-    EntityEvents.hurt('villager', ev => {
-        let {
-            entity,
-            level,
-            source: { actual },
-        } = ev
-
-        villagerFightBack(entity, actual)
-        if (actual == null) return
-        for (let nearby of level.getEntitiesWithin(actual.boundingBox.inflate(20))) {
-            if (nearby.type !== entity.type) continue
-            villagerFightBack(nearby, actual)
-        }
-    })
-
     /**
      * @param {Internal.Villager} entity
      * @param {Internal.Entity} actual
@@ -87,4 +72,19 @@
         // attack & heal
         if (!tryAttack()) server.scheduleInTicks(1, tryHeal)
     }
+
+    EntityEvents.hurt('villager', ev => {
+        let {
+            entity,
+            level,
+            source: { actual },
+        } = ev
+
+        villagerFightBack(entity, actual)
+        if (actual == null) return
+        for (let nearby of level.getEntitiesWithin(actual.boundingBox.inflate(20))) {
+            if (nearby.type !== entity.type) continue
+            villagerFightBack(nearby, actual)
+        }
+    })
 }
