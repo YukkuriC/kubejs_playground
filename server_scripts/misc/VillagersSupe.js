@@ -14,11 +14,12 @@
         SpellRegistry.CHAIN_LIGHTNING_SPELL,
         SpellRegistry.ROOT_SPELL,
     ]
+    let typeBlacklist = new Set(['minecraft:villager', 'minecraft:iron_golem', 'irons_spellbooks:priest'])
 
     let fightBackTargetInvalidCheckLive = (entity, actual) => actual.health <= 0
     let fightBackTargetInvalidCheck = (entity, actual) =>
         actual == null ||
-        actual.type === entity.type ||
+        typeBlacklist.has(String(actual.type)) ||
         (actual.isPlayer() && (actual.creative || actual.spectator)) ||
         fightBackTargetInvalidCheckLive(entity, actual)
     /**
@@ -111,6 +112,22 @@
             if (nearby.type !== entity.type) continue
             villagerFightBack(nearby, actual)
         }
+    })
+
+    // DLC: assassination contract
+    ItemEvents.rightClicked('emerald', e => {
+        let { player, level, item, hand } = e
+        if (!player.shiftKeyDown) return
+        player.swing(hand)
+        let { entity } = player.rayTrace(32, false)
+        if (entity && (entity.isPlayer() || fightBackTargetInvalidCheck(player, entity))) entity = null
+        let contractAccepted = false
+        for (let nearby of level.getEntitiesWithin(player.boundingBox.inflate(30))) {
+            if (nearby.type !== 'minecraft:villager') continue
+            villagerFightBack(nearby, entity)
+            contractAccepted = contractAccepted || Boolean(entity)
+        }
+        if (contractAccepted && !player.isCreative()) item.shrink(1)
     })
     EntityEvents.death('villager', ev => {
         let { entity, source, level } = ev
