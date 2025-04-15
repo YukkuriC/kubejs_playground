@@ -10,7 +10,9 @@
         // SpellRegistry.FIRECRACKER_SPELL,
         SpellRegistry.ELDRITCH_BLAST_SPELL,
         SpellRegistry.ACUPUNCTURE_SPELL,
-        SpellRegistry.TELEPORT_SPELL,
+        // SpellRegistry.TELEPORT_SPELL, // no, crashed once
+        SpellRegistry.CHAIN_LIGHTNING_SPELL,
+        SpellRegistry.ROOT_SPELL,
     ]
 
     let fightBackTargetInvalidCheckLive = (entity, actual) => actual.health <= 0
@@ -24,9 +26,8 @@
      * @param {Internal.RegistryObject<Internal.AbstractSpell>} spellHolder
      */
     let forceCast = (entity, spellHolder, target) => {
-        let canForceCast = spellHolder !== SpellRegistry.TELEPORT_SPELL // and blood step, etc.
         let spell = spellHolder.get()
-        canForceCast &= spell.castType != 'continuous'
+        let canForceCast = spell.castType != 'continuous'
 
         if (canForceCast) {
             let { magicData, level } = entity
@@ -50,8 +51,9 @@
 
         // no too frequent trigger
         let { lastAttackTick } = entity.persistentData
-        let nowTick = entity.age // tickCount clears after restart
-        if (nowTick - (lastAttackTick || 0) < 10) return
+        let nowTick = entity.age // well...
+        let delta = nowTick - (lastAttackTick || 0)
+        if (delta > 0 && delta < 10) return
         entity.persistentData.lastAttackTick = nowTick
         let anger = 10,
             targetInvalidChecker = fightBackTargetInvalidCheck
