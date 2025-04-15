@@ -11,7 +11,7 @@
         SpellRegistry.ELDRITCH_BLAST_SPELL,
         SpellRegistry.ACUPUNCTURE_SPELL,
         // SpellRegistry.TELEPORT_SPELL, // no, crashed once
-        SpellRegistry.CHAIN_LIGHTNING_SPELL,
+        // SpellRegistry.CHAIN_LIGHTNING_SPELL, // too dangerous for player
         SpellRegistry.ROOT_SPELL,
     ]
     let typeBlacklist = new Set(['minecraft:villager', 'minecraft:iron_golem', 'irons_spellbooks:priest'])
@@ -132,5 +132,35 @@
     EntityEvents.death('villager', ev => {
         let { entity, source, level } = ev
         level.tell(source.getLocalizedDeathMessage(entity))
+    })
+
+    if (Platform.isLoaded('entityjs')) {
+        // TODO
+        EntityJSEvents.buildBrain('villager', e => {
+            Utils.server.tell('test')
+        })
+    }
+
+    // DLC: fight back
+    let MeleeAttackGoal = Java.loadClass('net.minecraft.world.entity.ai.goal.MeleeAttackGoal')
+    let NearestAttackableTargetGoal = Java.loadClass('net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal')
+    let Monster = Java.loadClass('net.minecraft.world.entity.monster.Monster')
+    EntityEvents.spawned(e => {
+        let { entity } = e
+        if (entity.type != 'minecraft:villager') return
+        entity.targetSelector.addGoal(1, new NearestAttackableTargetGoal(entity, Monster, true))
+        const customAttacker = new JavaAdapter(
+            MeleeAttackGoal,
+            {
+                // checkAndPerformAttack
+                m_6739_() {
+                    // no, dont do anything for now
+                },
+            },
+            entity,
+            1,
+            true,
+        )
+        entity.goalSelector.addGoal(1, customAttacker)
     })
 }
