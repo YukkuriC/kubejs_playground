@@ -5,6 +5,7 @@
     let AttackSpells = [
         // rand pool
         SpellRegistry.MAGIC_MISSILE_SPELL,
+        SpellRegistry.GUIDING_BOLT_SPELL,
         // SpellRegistry.LOB_CREEPER_SPELL,
         SpellRegistry.FIREBOLT_SPELL,
         // SpellRegistry.FIRECRACKER_SPELL,
@@ -47,16 +48,17 @@
      * @param {Internal.Entity} actual
      * @param {number} angerLevel
      */
-    let villagerFightBack = (entity, actual) => {
+    let villagerFightBack = (entity, actual, ticksAfterLastAttack, angryLoop) => {
         let { server } = entity
 
         // no too frequent trigger
+        ticksAfterLastAttack = ticksAfterLastAttack || 10
         let { lastAttackTick } = entity.persistentData
         let nowTick = entity.age // well...
         let delta = nowTick - (lastAttackTick || 0)
-        if (delta > 0 && delta < 10) return
+        if (delta > 0 && delta < ticksAfterLastAttack) return
         entity.persistentData.lastAttackTick = nowTick
-        let anger = 10,
+        let anger = angryLoop || 10,
             targetInvalidChecker = fightBackTargetInvalidCheck
 
         // modules
@@ -141,20 +143,30 @@
         })
     }
 
-    // DLC: fight back
+    // DLC: actively fight back
     let MeleeAttackGoal = Java.loadClass('net.minecraft.world.entity.ai.goal.MeleeAttackGoal')
     let NearestAttackableTargetGoal = Java.loadClass('net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal')
-    let Monster = Java.loadClass('net.minecraft.world.entity.monster.Monster')
+    let Enemy = Java.loadClass('net.minecraft.world.entity.monster.Enemy')
+    let Mob = Java.loadClass('net.minecraft.world.entity.Mob')
+    let trackingDistSq = 1024
     EntityEvents.spawned(e => {
         let { entity } = e
         if (entity.type != 'minecraft:villager') return
-        entity.targetSelector.addGoal(1, new NearestAttackableTargetGoal(entity, Monster, true))
+        entity.targetSelector.addGoal(
+            4,
+            new NearestAttackableTargetGoal(entity, Mob, 100, true, false, t => {
+                if (!(t instanceof Enemy)) return false
+                return fightBackTargetInvalidCheck(entity, t) && entity.getPerceivedTargetDistanceSquareForMeleeAttack(t) <= trackingDistSq
+            }),
+        )
         const customAttacker = new JavaAdapter(
             MeleeAttackGoal,
             {
                 // checkAndPerformAttack
                 m_6739_() {
-                    // no, dont do anything for now
+                    let { target } = entity
+                    if (!target || entity.getPerceivedTargetDistanceSquareForMeleeAttack(target) > trackingDistSq) return
+                    villagerFightBack(entity, target, 100, 3)
                 },
             },
             entity,
