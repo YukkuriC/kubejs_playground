@@ -94,8 +94,9 @@
         }
 
         // buff
-        forceCast(entity, SpellRegistry.OAKSKIN_SPELL)
-        forceCast(entity, SpellRegistry.CHARGE_SPELL)
+        let potions = entity.potionEffects
+        if (potions.getDuration('irons_spellbooks:oakskin') < 200) forceCast(entity, SpellRegistry.OAKSKIN_SPELL)
+        if (potions.getDuration('irons_spellbooks:charged') < 200) forceCast(entity, SpellRegistry.CHARGE_SPELL)
 
         // attack & heal
         if (!tryAttack()) server.scheduleInTicks(1, tryHealAndEnd)
