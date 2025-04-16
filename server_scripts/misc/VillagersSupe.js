@@ -158,7 +158,7 @@
             new NearestAttackableTargetGoal(entity, Mob, 40, true, false, t => {
                 if (!(t instanceof Enemy)) return false
                 if (t.target === entity || t instanceof Raider) return true
-                return fightBackTargetInvalidCheck(entity, t) && entity.getPerceivedTargetDistanceSquareForMeleeAttack(t) <= trackingDistSq
+                return !fightBackTargetInvalidCheck(entity, t) && entity.getPerceivedTargetDistanceSquareForMeleeAttack(t) <= trackingDistSq
             }),
         )
         const customAttacker = new JavaAdapter(
