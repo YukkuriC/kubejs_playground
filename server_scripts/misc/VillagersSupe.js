@@ -147,6 +147,7 @@
     let MeleeAttackGoal = Java.loadClass('net.minecraft.world.entity.ai.goal.MeleeAttackGoal')
     let NearestAttackableTargetGoal = Java.loadClass('net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal')
     let Enemy = Java.loadClass('net.minecraft.world.entity.monster.Enemy')
+    let Raider = Java.loadClass('net.minecraft.world.entity.raid.Raider')
     let Mob = Java.loadClass('net.minecraft.world.entity.Mob')
     let trackingDistSq = 1024
     EntityEvents.spawned(e => {
@@ -154,8 +155,9 @@
         if (entity.type != 'minecraft:villager') return
         entity.targetSelector.addGoal(
             4,
-            new NearestAttackableTargetGoal(entity, Mob, 100, true, false, t => {
+            new NearestAttackableTargetGoal(entity, Mob, 40, true, false, t => {
                 if (!(t instanceof Enemy)) return false
+                if (t.target === entity || t instanceof Raider) return true
                 return fightBackTargetInvalidCheck(entity, t) && entity.getPerceivedTargetDistanceSquareForMeleeAttack(t) <= trackingDistSq
             }),
         )
@@ -165,8 +167,8 @@
                 // checkAndPerformAttack
                 m_6739_() {
                     let { target } = entity
-                    if (!target || entity.getPerceivedTargetDistanceSquareForMeleeAttack(target) > trackingDistSq) return
-                    villagerFightBack(entity, target, 100, 3)
+                    if (!target) return
+                    villagerFightBack(entity, target, 20, 3)
                 },
             },
             entity,
