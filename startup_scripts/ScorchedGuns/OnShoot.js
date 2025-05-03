@@ -9,6 +9,11 @@ ForgeEvents.onEvent('top.ribs.scguns.event.GunFireEvent$Post', e => {
         AmmoCount: gun.reloads.maxAmmo,
         Damage: 0,
     })
+    if (stack.nbt.Attachments) {
+        for (let part of Object.values(stack.nbt.Attachments)) {
+            part.tag.Damage = 0
+        }
+    }
 
     if (!client) {
         // reset fall distance
