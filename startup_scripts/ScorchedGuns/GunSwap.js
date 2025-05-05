@@ -13,6 +13,9 @@
 
     let ParticleTypes = Java.loadClass('net.minecraft.core.particles.ParticleTypes')
 
+    let Entity = Java.loadClass('net.minecraft.world.entity.Entity')
+    let PlayerButLoadClass = Java.loadClass('net.minecraft.world.entity.player.Player')
+
     // test: bullet swap
     /*
     let BloodNeedle = Java.loadClass('io.redspace.ironsspellbooks.entity.spells.blood_needle.BloodNeedle')
@@ -38,8 +41,14 @@
             let myPos = this.position()
             for (let sub of this.level.getEntitiesWithin(this.boundingBox.inflate(radius))) {
                 if (!sub.living || !sub.alive) continue
-                // if (sub === this.owner) continue // target all
-                if (!sub.monster) continue // without friendly
+                // instanceof not working here, why?
+                if (
+                    // monster
+                    sub.monster ||
+                    // shift down: attack all
+                    (this.altMode && sub !== this.owner && sub.owner !== this.owner)
+                );
+                else continue // without friendly
                 if (myPos.distanceTo(sub.position()) > radius) continue
                 res.push(sub)
             }
@@ -153,7 +162,7 @@
         ProjectileManager.getInstance().registerFactory(Items.SLIME_BLOCK, (worldIn, entity, weapon, item, modifiedGun) => {
             let bullet = new JavaAdapter(
                 ProjectileEntity,
-                adapterBFG,
+                Object.assign({ altMode: entity.shiftKeyDown }, adapterBFG),
                 ModEntities.PLASMA_PROJECTILE.get(),
                 worldIn,
                 entity,
