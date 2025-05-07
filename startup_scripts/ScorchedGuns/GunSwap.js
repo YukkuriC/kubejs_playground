@@ -121,7 +121,7 @@
                     0,
                     0,
                     0,
-                    0.1,
+                    0,
                 )
             }
             this.level.playSeededSound(null, this.x, this.y, this.z, 'scguns:item.plasma.fire', 'neutral', 5, 0, 0)
