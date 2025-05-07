@@ -138,8 +138,7 @@
                 offsetY += this.y
                 offsetZ += this.z
                 this.level.sendParticles(ModParticleTypes.PLASMA_EXPLOSION.get(), offsetX, offsetY, offsetZ, 1, 0, 0, 0, 0)
-                for (let j = 0; j < 3; j++)
-                    this.level.sendParticles(ModParticleTypes.GREEN_FLAME.get(), offsetX, offsetY, offsetZ, 1, 0, 0, 0, 0.2)
+                this.level.sendParticles(ModParticleTypes.GREEN_FLAME.get(), offsetX, offsetY, offsetZ, 3, 0, 0, 0, 0.2)
             }
         },
         onHitEntity(entity, hitPos, start, end, crit) {
