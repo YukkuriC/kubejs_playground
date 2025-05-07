@@ -172,7 +172,7 @@
         ProjectileManager.getInstance().registerFactory(Items.SLIME_BLOCK, (worldIn, entity, weapon, item, modifiedGun) => {
             let bullet = new JavaAdapter(
                 ProjectileEntity,
-                Object.assign({ altMode: entity.shiftKeyDown }, adapterBFG),
+                { altMode: entity.shiftKeyDown, __proto__: adapterBFG },
                 ModEntities.PLASMA_PROJECTILE.get(),
                 worldIn,
                 entity,
