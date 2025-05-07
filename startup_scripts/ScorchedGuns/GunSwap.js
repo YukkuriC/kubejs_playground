@@ -47,8 +47,8 @@
                     sub.monster ||
                     // shift down: attack all
                     (this.altMode && sub !== this.owner && sub.owner !== this.owner)
-                );
-                else continue // without friendly
+                ) {
+                } else continue // without friendly
                 if (myPos.distanceTo(sub.position()) > radius) continue
                 res.push(sub)
             }
