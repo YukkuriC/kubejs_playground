@@ -108,14 +108,24 @@
             this.exploded = true
             let myPos = this.position()
             for (let sub of this.everyTargetsWithin(15)) {
-                let targetPos = Vec3d(sub.x, sub.y + sub.boundingBox.ysize / 2, sub.z)
+                let targetPos = new Vec3d(sub.x, sub.y + sub.boundingBox.ysize / 2, sub.z)
                 sub.invulnerableTime = 0
                 this.super$onHitEntity(sub, targetPos, myPos, targetPos, false)
                 this.spawnLightningArc(myPos, targetPos, 1, true)
+                this.level.sendParticles(
+                    ModParticleTypes.PLASMA_EXPLOSION.get(),
+                    targetPos.x(),
+                    targetPos.y(),
+                    targetPos.z(),
+                    1,
+                    0,
+                    0,
+                    0,
+                    0.1,
+                )
             }
             this.level.playSeededSound(null, this.x, this.y, this.z, 'scguns:item.plasma.fire', 'neutral', 5, 0, 0)
 
-            this.level.sendParticles(ModParticleTypes.PLASMA_EXPLOSION.get(), this.x, this.y, this.z, 1, 0, 0, 0, 0.1)
             for (let i = 0; i < 50; i++) {
                 let offsetX = (Math.random() - 0.5) * 12
                 let offsetY = (Math.random() - 0.5) * 12
@@ -127,9 +137,9 @@
                 offsetX += this.x
                 offsetY += this.y
                 offsetZ += this.z
-                this.level.sendParticles(ModParticleTypes.GREEN_FLAME.get(), offsetX, offsetY, offsetZ, 1, 0, 0, 0, 0.2)
+                this.level.sendParticles(ModParticleTypes.PLASMA_EXPLOSION.get(), offsetX, offsetY, offsetZ, 1, 0, 0, 0)
                 for (let j = 0; j < 3; j++)
-                    this.level.sendParticles(ModParticleTypes.PLASMA_EXPLOSION.get(), offsetX, offsetY, offsetZ, 1, 0, 0, 0, 0)
+                    this.level.sendParticles(ModParticleTypes.GREEN_FLAME.get(), offsetX, offsetY, offsetZ, 1, 0, 0, 0, 0.2)
             }
         },
         onHitEntity(entity, hitPos, start, end, crit) {
