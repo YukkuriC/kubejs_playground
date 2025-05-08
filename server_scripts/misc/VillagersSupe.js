@@ -17,9 +17,10 @@
     ]
     let typeBlacklist = new Set(['minecraft:villager', 'minecraft:iron_golem', 'irons_spellbooks:priest'])
 
-    let fightBackTargetInvalidCheckLive = (entity, actual) => actual.health <= 0
+    let fightBackTargetInvalidCheckLive = (entity, actual) => !actual.alive
     let fightBackTargetInvalidCheck = (entity, actual) =>
         actual == null ||
+        !actual.living ||
         typeBlacklist.has(String(actual.type)) ||
         (actual.isPlayer() && (actual.creative || actual.spectator)) ||
         fightBackTargetInvalidCheckLive(entity, actual)
