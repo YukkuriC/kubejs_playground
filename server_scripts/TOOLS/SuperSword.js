@@ -14,7 +14,7 @@
         let source = null
         let hit = 0,
             pick = 0
-        let theOrb = null
+        let orbTotalExp = 0
         for (let e of level.getEntitiesWithin(player.boundingBox.inflate(50))) {
             let isLiving = e.isLiving() && e.isAlive() && e !== player && e.isMonster(),
                 isPickable = e.type == 'minecraft:item' || e.type == 'minecraft:experience_orb'
@@ -45,21 +45,12 @@
                 // merge exp orb
                 if (e.type == 'minecraft:experience_orb') {
                     let { Count, Value } = e.nbt
-                    if (theOrb) {
-                        theOrb.value += Count * Value
-                        e.discard()
-                        continue
-                    } else {
-                        theOrb = e
-                        e.mergeNbt({
-                            Count: 1,
-                            Value: Count * Value,
-                        })
-                    }
-                }
-                e.teleportTo.apply(e, posArr)
+                    orbTotalExp += Count * Value
+                    e.discard()
+                } else e.teleportTo.apply(e, posArr)
             }
         }
+        player.giveExperiencePoints(orbTotalExp)
         player.swing(hand, true)
         if (hit || pick) player.addItemCooldown(item, 20)
         broadcastLevel(player.level, 'yc:sword_cast', {
