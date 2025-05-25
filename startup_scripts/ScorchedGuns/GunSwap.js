@@ -111,7 +111,7 @@
                 let targetPos = new Vec3d(sub.x, sub.y + sub.boundingBox.ysize / 2, sub.z)
                 sub.invulnerableTime = 0
                 this.super$onHitEntity(sub, targetPos, myPos, targetPos, false)
-                this.spawnLightningArc(myPos, targetPos, 1, true)
+                this.spawnLightningArc(myPos, targetPos, 0.5, true)
                 this.level.sendParticles(
                     ModParticleTypes.PLASMA_EXPLOSION.get(),
                     targetPos.x(),
