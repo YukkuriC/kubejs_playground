@@ -6,16 +6,18 @@
                 General: { ProjectileAmount: 1, Spread: 0 },
                 Projectile: { Item: 'slime_block', Speed: 0.5, Life: 40, EjectsCasing: false },
             },
-            display: { Name: '{"text":"BFG 114514"}' },
         },
     }
     let ammoSwapNameMap = {
-        slime_block: Text.red('BFG 114514'),
+        slime_block: gun => Text.red('BFG 114514 (').append(gun.hoverName).append(Text.red(')')),
     }
 
     let modifyGun = (gun, ammo) => {
         gun.orCreateTag.merge(ammoSwapMap[ammo])
-        gun.setHoverName(ammoSwapNameMap[ammo])
+
+        let name = ammoSwapNameMap[ammo]
+        if (!(name.contains || name.includes)) name = name(gun)
+        gun.setHoverName(name)
     }
 
     ServerEvents.recipes(e => {
