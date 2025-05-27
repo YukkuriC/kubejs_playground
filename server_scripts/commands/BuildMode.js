@@ -100,13 +100,16 @@
                 let pool = player.persistentData.buildModeCounts || {}
                 let paid = {}
                 for (let item of inventory.items) {
-                    let { id, count } = item
-                    if (pool[id] > 0) {
-                        let sub = Math.min(pool[id], count)
-                        if (sub <= 0) continue
-                        item.shrink(sub)
-                        paid[id] = (paid[id] || 0) + sub
-                        addUsage(player, id, -sub)
+                    for (let id of [item.item.block?.id, item.id]) {
+                        if (!id) continue
+                        if (pool[id] > 0) {
+                            let sub = Math.min(pool[id], item.count)
+                            if (sub <= 0) continue
+                            item.shrink(sub)
+                            paid[id] = (paid[id] || 0) + sub
+                            addUsage(player, id, -sub)
+                            break
+                        }
                     }
                 }
 
