@@ -124,6 +124,7 @@
                     hasContent = true
                 }
                 if (!hasContent) player.tell(Text.gold('nothing!'))
+                player.runCommandSilent(`buildMode usages`)
 
                 return 1
             }),
