@@ -14,17 +14,17 @@
         }
     }
 
-    let doThrow = (ctx, text) => {
-        ctx.source.player.tell(Text.red(text))
+    let doThrow = (player, text) => {
+        player.tell(Text.red(text))
         throw text
     }
     let assertPlayer = player => {
-        if (!player) doThrow(ctx, 'not a player')
+        if (!player) doThrow(player, 'not a player')
     }
     let assertBuildMode = (player, needMode) => {
         assertPlayer(player)
-        if (needMode && !isBuildMode(player)) doThrow(ctx, 'not in build mode')
-        else if (!needMode && isBuildMode(player)) doThrow(ctx, 'already in build mode')
+        if (needMode && !isBuildMode(player)) doThrow(player, 'not in build mode')
+        else if (!needMode && isBuildMode(player)) doThrow(player, 'already in build mode')
     }
 
     ServerEvents.commandRegistry(e => {
