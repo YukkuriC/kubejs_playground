@@ -1,7 +1,7 @@
 ClientEvents.tick(e => {
     let {
         player,
-        player: { abilities },
+        player: { abilities, input },
     } = Client
     abilities.flyingSpeed = 0.15
     if (!abilities.mayfly) {
@@ -11,4 +11,7 @@ ClientEvents.tick(e => {
     // if (player.motionY < -1 && !abilities.flying && !player.isFallFlying()) {
     //     player.startFallFlying()
     // }
+    if (input.jumping) {
+        player.jumpFromGround()
+    }
 })
