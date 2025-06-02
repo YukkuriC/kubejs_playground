@@ -16,6 +16,7 @@
         SpellRegistry.ROOT_SPELL,
     ]
     let typeBlacklist = new Set(['minecraft:villager', 'minecraft:iron_golem', 'irons_spellbooks:priest'])
+    let UNDYING_CD = 60 * 20
 
     let fightBackTargetInvalidCheckLive = (entity, actual) => !actual.alive
     let fightBackTargetInvalidCheck = (entity, actual) =>
@@ -135,15 +136,22 @@
     })
     EntityEvents.death('villager', ev => {
         let { entity, source, level } = ev
-        level.tell(source.getLocalizedDeathMessage(entity))
-    })
+        let undyingInterval = entity.age - (entity.persistentData.undyingTick || -114514)
+        if (undyingInterval < UNDYING_CD) {
+            level.tell(source.getLocalizedDeathMessage(entity))
+            return
+        }
+        entity.persistentData.undyingTick = entity.age
 
-    if (Platform.isLoaded('entityjs')) {
-        // TODO
-        EntityJSEvents.buildBrain('villager', e => {
-            Utils.server.tell('test')
-        })
-    }
+        entity.health = 1
+        entity.removeAllEffects()
+        let potion = entity.potionEffects
+        potion.add('regeneration', 900, 1)
+        potion.add('absorption', 100, 1)
+        potion.add('fire_resistance', 800)
+        level.broadcastEntityEvent(entity, 35)
+        ev.cancel()
+    })
 
     // DLC: actively fight back
     let MeleeAttackGoal = Java.loadClass('net.minecraft.world.entity.ai.goal.MeleeAttackGoal')
@@ -155,6 +163,7 @@
     EntityEvents.spawned(e => {
         let { entity } = e
         if (entity.type != 'minecraft:villager') return
+        delete entity.persistentData.undyingTick
         entity.targetSelector.addGoal(
             4,
             new NearestAttackableTargetGoal(entity, Mob, 40, true, false, t => {
