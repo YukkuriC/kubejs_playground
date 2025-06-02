@@ -19,6 +19,9 @@
         if (Platform.isLoaded('ars_nouveau')) {
             mutable[2].push(AllEffects.get('ars_nouveau:mana_regen'))
         }
+        if (Platform.isLoaded('irons_spellbooks')) {
+            mutable[2].push(AllEffects.get('irons_spellbooks:echoing_strikes'))
+        }
 
         // update effects back
         for (let i = 0; i < 4; i++) original[i] = mutable[i]
