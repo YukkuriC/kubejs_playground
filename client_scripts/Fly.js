@@ -38,7 +38,6 @@ ClientEvents.tick(e => {
         let lastHitTime = inputCache[timeKey] || -114514
         if (player.age - lastHitTime < 5) {
             delete inputCache[timeKey]
-            player.tell('dash ' + dir)
             switch (dir) {
                 case 'up':
                     zz++
