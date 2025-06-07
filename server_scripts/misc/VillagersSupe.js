@@ -16,14 +16,14 @@
         SpellRegistry.ROOT_SPELL,
     ]
     let typeBlacklist = new Set(['minecraft:villager', 'minecraft:iron_golem', 'irons_spellbooks:priest'])
-    let UNDYING_CD = 60 * 20
+    let UNDYING_CD = 30 * 20
 
     let fightBackTargetInvalidCheckLive = (entity, actual) => !actual.alive
     let fightBackTargetInvalidCheck = (entity, actual) =>
         actual == null ||
         !actual.living ||
         typeBlacklist.has(String(actual.type)) ||
-        (actual.isPlayer() && (actual.creative || actual.spectator)) ||
+        (actual.isPlayer() && !actual.creative) ||
         fightBackTargetInvalidCheckLive(entity, actual)
     /**
      * @param {Internal.Villager} entity
@@ -143,13 +143,22 @@
         }
         entity.persistentData.undyingTick = entity.age
 
-        entity.health = 1
+        entity.health = entity.maxHealth / 3
         entity.removeAllEffects()
         let potion = entity.potionEffects
         potion.add('regeneration', 900, 1)
         potion.add('absorption', 100, 1)
         potion.add('fire_resistance', 800)
         level.broadcastEntityEvent(entity, 35)
+        entity.persistentData.reviveCount = (entity.persistentData.reviveCount || 0) + 1
+        level.tell(
+            Text.translate(
+                'villager_supe.revive_count',
+                entity.displayName,
+                String(entity.persistentData.reviveCount),
+                source.getLocalizedDeathMessage(entity),
+            ),
+        )
         ev.cancel()
     })
 
