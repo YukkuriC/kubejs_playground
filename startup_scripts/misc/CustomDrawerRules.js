@@ -1,6 +1,6 @@
 // requires: storagedrawers
 
-try {
+StartupEvents.postInit(() => {
     let Tiers
     try {
         Tiers = Java.loadClass('com.jaquadro.minecraft.storagedrawers.config.CompTierRegistry').INSTANCE
@@ -9,8 +9,6 @@ try {
     }
 
     Tiers.register('amethyst_block', 'amethyst_shard', 4)
-    Tiers.register('bedrock', 'dirt', 64)
-} catch (e) {
-    if (Utils.server) Utils.server.tell(e)
-    console.error(e)
-}
+    Tiers.register('packed_ice', 'ice', 9)
+    Tiers.register('blue_ice', 'packed_ice', 9)
+})
