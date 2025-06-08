@@ -6,19 +6,19 @@
         return namespaces[key]
     }
     let DoEval = function (code, player) {
-        Utils.server.tell(Text.gold('Code:').append(Text.white(code)).clickCopy(code))
+        Utils.server.tell(Text.gold('Code:').append(Text.white(code)).clickCopy(code).hover(Text.translate('chat.copy.click')))
         let ns = GetNamespace(player)
         try {
             let tmp
             with (ns) {
                 with (global) {
                     tmp = eval(code)
-                    Utils.server.tell(Text.green('Result:').append(Text.white(tmp)).clickCopy(tmp))
+                    Utils.server.tell(Text.green('Result:').append(Text.white(tmp)).clickCopy(tmp).hover(Text.translate('chat.copy.click')))
                 }
             }
             ns.res = tmp
         } catch (e) {
-            Utils.server.tell(Text.red('Error:').append(Text.white(e)).clickCopy(e))
+            Utils.server.tell(Text.red('Error:').append(Text.white(e)).clickCopy(e).hover(Text.translate('chat.copy.click')))
         }
     }
 
