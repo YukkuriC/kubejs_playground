@@ -158,6 +158,19 @@
                 return 1
             }),
         )
+        root.then(
+            cmd.literal('refresh').executes(ctx => {
+                let {
+                    player,
+                    player: { inventory },
+                } = ctx.source
+                assertBuildMode(player, true)
+                player.runCommandSilent(`buildMode off`)
+                player.runCommandSilent(`buildMode on`)
+                player.tell(Text.green('refreshed!'))
+                return 1
+            }),
+        )
 
         // dump to clipboard
         if (Platform.isLoaded('create')) {
