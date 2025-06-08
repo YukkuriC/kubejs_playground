@@ -57,8 +57,15 @@
 
         let root = cmd.literal('buildMode')
 
-        root.then(
-            cmd.literal('on').executes(ctx => {
+        /**@type Record<string, Internal.LiteralArgumentBuilder<Internal.CommandSourceStack>>*/
+        let subMap = {}
+        let makeSub = name => {
+            return (subMap[name] = cmd.literal(name))
+        }
+
+        // folded sub functions
+        let subs = [
+            makeSub('on').executes(ctx => {
                 let { player } = ctx.source
                 assertBuildMode(player, false)
 
@@ -77,9 +84,7 @@
                 player.tell('entered build mode')
                 return 1
             }),
-        )
-        root.then(
-            cmd.literal('off').executes(ctx => {
+            makeSub('off').executes(ctx => {
                 let { player } = ctx.source
                 assertBuildMode(player, true)
 
@@ -91,9 +96,7 @@
                 player.tell('quitted build mode')
                 return 1
             }),
-        )
-        root.then(
-            cmd.literal('usages').executes(ctx => {
+            makeSub('usages').executes(ctx => {
                 let { player } = ctx.source
                 assertPlayer(player)
 
@@ -103,34 +106,14 @@
 
                 return 1
             }),
-        )
-        root.then(
-            cmd
-                .literal('reset')
-                .requires(src => src.hasPermission(2))
-                .executes(ctx => {
-                    let { player } = ctx.source
-                    assertPlayer(player)
-                    player.persistentData.buildModeResetSure = true
-                    player.tell(Text.red('sure?'))
-                    return 1
-                })
-                .then(
-                    cmd
-                        .literal('sure')
-                        .requires(src => src.hasPermission(2) && !!src.player?.persistentData.buildModeResetSure)
-                        .executes(ctx => {
-                            let { player } = ctx.source
-                            assertPlayer(player)
-                            player.persistentData.buildModeCounts = {}
-                            delete player.persistentData.buildModeResetSure
-                            player.tell(Text.green('all clear!'))
-                            return 1
-                        }),
-                ),
-        )
-        root.then(
-            cmd.literal('pay').executes(ctx => {
+            makeSub('reset').executes(ctx => {
+                let { player } = ctx.source
+                assertPlayer(player)
+                player.persistentData.buildModeResetSure = true
+                player.tell(Text.red('sure?'))
+                return 1
+            }),
+            makeSub('pay').executes(ctx => {
                 let {
                     player,
                     player: { inventory },
@@ -157,9 +140,7 @@
 
                 return 1
             }),
-        )
-        root.then(
-            cmd.literal('refresh').executes(ctx => {
+            makeSub('refresh').executes(ctx => {
                 let {
                     player,
                     player: { inventory },
@@ -170,7 +151,25 @@
                 player.tell(Text.green('refreshed!'))
                 return 1
             }),
-        )
+        ]
+        for (let sub of subs) root.then(sub)
+
+        // denying debt requires permission
+        subMap.reset
+            .requires(src => src.hasPermission(2))
+            .then(
+                cmd
+                    .literal('sure')
+                    .requires(src => src.hasPermission(2) && !!src.player?.persistentData.buildModeResetSure)
+                    .executes(ctx => {
+                        let { player } = ctx.source
+                        assertPlayer(player)
+                        player.persistentData.buildModeCounts = {}
+                        delete player.persistentData.buildModeResetSure
+                        player.tell(Text.green('all clear!'))
+                        return 1
+                    }),
+            )
 
         // dump to clipboard
         if (Platform.isLoaded('create')) {
