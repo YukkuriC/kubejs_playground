@@ -22,6 +22,7 @@
         }
     }
 
+    /* 
     PlayerEvents.chat(e => {
         if (e.level.isClientSide()) return
         let code = String(e.message)
@@ -29,5 +30,26 @@
         code = code.substring(2)
         Utils.server.scheduleInTicks(0, () => DoEval(code, e.player))
         e.cancel()
+    })
+    */
+
+    ServerEvents.commandRegistry(e => {
+        const { commands: cmd, arguments: arg } = e
+
+        let eval = cmd
+            .literal('eval')
+            .requires(s => s.hasPermission(2))
+            .then(
+                cmd.argument('code', arg.GREEDY_STRING.create(e)).executes(ctx => {
+                    let {
+                        source: { player },
+                    } = ctx
+                    let code = String(arg.GREEDY_STRING.getResult(ctx, 'code'))
+                    Utils.server.scheduleInTicks(0, () => DoEval(code, player))
+                    return 1
+                }),
+            )
+
+        e.register(eval)
     })
 }
