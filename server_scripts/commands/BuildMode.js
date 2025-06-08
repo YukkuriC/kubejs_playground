@@ -39,7 +39,7 @@
     }
 
     let doThrow = (player, text) => {
-        player.tell(Text.red(text))
+        if (player) player.tell(Text.red(text))
         throw text
     }
     let assertPlayer = player => {
@@ -158,6 +158,43 @@
                 return 1
             }),
         )
+
+        // dump to clipboard
+        if (Platform.isLoaded('create')) {
+            let MaterialChecklist = Java.loadClass('com.simibubi.create.content.schematics.cannon.MaterialChecklist')
+            let ItemRequirement = Java.loadClass('com.simibubi.create.content.schematics.requirement.ItemRequirement')
+            let cRequirement = ItemRequirement.__javaObject__.getConstructor(
+                ItemRequirement.ItemUseType,
+                Java.loadClass('net.minecraft.world.item.ItemStack'),
+            )
+            // let ItemUseType = ItemRequirement.ItemUseType
+            // ItemRequirement.__javaObject__.getConstructor
+            cRequirement.newInstance(ItemRequirement.ItemUseType.CONSUME, Item.of('air'))
+
+            root.then(
+                cmd.literal('clipboard').executes(ctx => {
+                    let { player } = ctx.source
+                    assertPlayer(player)
+
+                    if (!MaterialChecklist) doThrow(player, 'clipboard logic load failed!')
+
+                    let board = player.mainHandItem
+                    if (board.id != 'create:clipboard') board = player.offHandItem
+                    if (board.id != 'create:clipboard') doThrow(player, 'clipboard not in hand!')
+
+                    let list = new MaterialChecklist()
+                    let pool = player.persistentData.buildModeCounts || {}
+                    for (let id in pool) {
+                        let item = Item.of(id, pool[id])
+                        list.require(cRequirement.newInstance(ItemRequirement.ItemUseType.CONSUME, item))
+                    }
+                    let newBoard = list.createWrittenClipboard()
+                    board.nbt = newBoard.nbt
+                    player.tell(Text.yellow('usages copied!'))
+                    return 0
+                }),
+            )
+        }
 
         e.register(root)
     })
