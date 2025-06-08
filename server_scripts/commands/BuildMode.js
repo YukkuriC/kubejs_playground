@@ -81,6 +81,14 @@
                 setBuildMode(player, true)
                 player.server.runCommandSilent(`gamemode creative ${player.name.string}`)
 
+                if (Platform.isLoaded('create')) {
+                    player.offHandItem = Item.of('create:extendo_grip', { Unbreakable: 1 }).enchant('unbreaking', 10)
+                    player.give('create:wrench')
+                }
+                if (Platform.isLoaded('botania')) {
+                    player.give('botania:astrolabe')
+                }
+
                 player.tell('entered build mode')
                 return 1
             }),
