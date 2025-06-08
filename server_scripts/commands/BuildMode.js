@@ -3,6 +3,7 @@
     let setBuildMode = (player, flag) => (player.persistentData.buildModeActive = flag)
 
     let addUsage = (player, blockId, count) => {
+        if (blockId == 'minecraft:air') return
         count = count || 1
         let pool = player.persistentData.buildModeCounts
         if (!pool) pool = player.persistentData.buildModeCounts = {}
