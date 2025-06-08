@@ -14,6 +14,29 @@
         }
     }
 
+    let getIdFromBlock = (/**@type {Internal.BlockContainerJS}*/ block) => {
+        let blockId = block.id
+        let itemId = block.item?.id
+        if (blockId == itemId) return blockId
+
+        // try get drops
+        let drops = block.getDrops()
+        if (drops.length == 1 && drops[0].count == 1) return drops[0].id
+
+        // you win
+        return 'minecraft:bedrock'
+    }
+
+    let displayItemPool = (player, pool) => {
+        let hasContent = false
+        for (let id in pool) {
+            let item = Item.of(id, pool[id])
+            player.tell(item.displayName.append(Text.white(`: ${pool[id]}`)))
+            hasContent = true
+        }
+        return hasContent
+    }
+
     let doThrow = (player, text) => {
         player.tell(Text.red(text))
         throw text
@@ -75,16 +98,7 @@
 
                 player.tell(Text.gold('blocks in debt:'))
                 let pool = player.persistentData.buildModeCounts || {}
-                let hasContent = false
-                for (let id in pool) {
-                    player.tell(
-                        Block.getBlock(id)
-                            .getName()
-                            .append(Text.white(`: ${pool[id]}`)),
-                    )
-                    hasContent = true
-                }
-                if (!hasContent) player.tell(Text.green('all clear!'))
+                if (!displayItemPool(player, pool)) player.tell(Text.green('all clear!'))
 
                 return 1
             }),
@@ -125,30 +139,19 @@
                 let pool = player.persistentData.buildModeCounts || {}
                 let paid = {}
                 for (let item of inventory.items) {
-                    for (let id of [item.item.block?.id, item.id]) {
-                        if (!id) continue
-                        if (pool[id] > 0) {
-                            let sub = Math.min(pool[id], item.count)
-                            if (sub <= 0) continue
-                            item.shrink(sub)
-                            paid[id] = (paid[id] || 0) + sub
-                            addUsage(player, id, -sub)
-                            break
-                        }
+                    let { id } = item
+                    if (pool[id] > 0) {
+                        let sub = Math.min(pool[id], item.count)
+                        if (sub <= 0) continue
+                        item.shrink(sub)
+                        paid[id] = (paid[id] || 0) + sub
+                        addUsage(player, id, -sub)
+                        break
                     }
                 }
 
                 player.tell(Text.gold('blocks paid:'))
-                let hasContent = false
-                for (let id in paid) {
-                    player.tell(
-                        Block.getBlock(id)
-                            .getName()
-                            .append(Text.white(`: ${paid[id]}`)),
-                    )
-                    hasContent = true
-                }
-                if (!hasContent) player.tell(Text.gold('nothing!'))
+                if (!displayItemPool(player, paid)) player.tell(Text.gold('nothing!'))
                 player.runCommandSilent(`buildMode usages`)
 
                 return 1
@@ -161,12 +164,12 @@
     BlockEvents.placed(e => {
         let { player, block } = e
         if (!isBuildMode(player)) return
-        addUsage(player, block.id)
+        addUsage(player, getIdFromBlock(block))
     })
 
     BlockEvents.broken(e => {
         let { player, block } = e
         if (!isBuildMode(player)) return
-        addUsage(player, block.id, -1)
+        addUsage(player, getIdFromBlock(block), -1)
     })
 }
