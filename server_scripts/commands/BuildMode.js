@@ -223,6 +223,7 @@
     BlockEvents.placed(e => {
         let { player, block } = e
         if (!isBuildMode(player)) return
+        if (Platform.isLoaded('create') && player.mainHandItem.id == 'create:wrench') return
         addUsage(player, getIdFromBlock(block))
     })
 
