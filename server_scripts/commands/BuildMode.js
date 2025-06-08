@@ -153,7 +153,6 @@
                         item.shrink(sub)
                         paid[id] = (paid[id] || 0) + sub
                         addUsage(player, id, -sub)
-                        break
                     }
                 }
 
