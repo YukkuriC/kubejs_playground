@@ -114,13 +114,28 @@
 
                 return 1
             }),
-            makeSub('reset').executes(ctx => {
-                let { player } = ctx.source
-                assertPlayer(player)
-                player.persistentData.buildModeResetSure = true
-                player.tell(Text.red('sure?'))
-                return 1
-            }),
+            makeSub('reset')
+                .requires(src => src.hasPermission(2))
+                .executes(ctx => {
+                    let { player } = ctx.source
+                    assertPlayer(player)
+                    player.persistentData.buildModeResetSure = true
+                    player.tell(Text.red('sure?'))
+                    return 1
+                })
+                .then(
+                    cmd
+                        .literal('sure')
+                        .requires(src => src.hasPermission(2) && !!src.player?.persistentData.buildModeResetSure)
+                        .executes(ctx => {
+                            let { player } = ctx.source
+                            assertPlayer(player)
+                            player.persistentData.buildModeCounts = {}
+                            delete player.persistentData.buildModeResetSure
+                            player.tell(Text.green('all clear!'))
+                            return 1
+                        }),
+                ),
             makeSub('pay').executes(ctx => {
                 let {
                     player,
@@ -164,20 +179,6 @@
 
         // denying debt requires permission
         subMap.reset
-            .requires(src => src.hasPermission(2))
-            .then(
-                cmd
-                    .literal('sure')
-                    .requires(src => src.hasPermission(2) && !!src.player?.persistentData.buildModeResetSure)
-                    .executes(ctx => {
-                        let { player } = ctx.source
-                        assertPlayer(player)
-                        player.persistentData.buildModeCounts = {}
-                        delete player.persistentData.buildModeResetSure
-                        player.tell(Text.green('all clear!'))
-                        return 1
-                    }),
-            )
 
         // dump to clipboard
         if (Platform.isLoaded('create')) {
