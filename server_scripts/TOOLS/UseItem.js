@@ -7,7 +7,7 @@ const $CocoaBlock = Java.loadClass('net.minecraft.world.level.block.CocoaBlock')
  */
 function OnUseTools(e) {
     const { level, itemStack } = e
-    if (level.clientSide || !TARGETS.has(String(itemStack.id))) return
+    if (!TARGETS.has(String(itemStack.id))) return
     const block = level.getBlock(e.pos)
     let { x, y, z } = e.pos
     /** @type Player */
