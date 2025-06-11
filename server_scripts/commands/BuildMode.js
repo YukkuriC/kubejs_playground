@@ -25,7 +25,8 @@
         if (drops.length == 1 && drops[0].count == 1) return drops[0].id
 
         // you win
-        return 'minecraft:bedrock'
+        Utils.server.tell(`unknown id: ${block.id}`)
+        return 'minecraft:barrier'
     }
 
     let displayItemPool = (player, pool) => {
