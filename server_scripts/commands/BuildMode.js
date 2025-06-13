@@ -15,7 +15,7 @@
         }
     }
 
-    let getIdFromBlock = (/**@type {Internal.BlockContainerJS}*/ block) => {
+    let getIdFromBlock = (/**@type {Internal.BlockContainerJS}*/ block, /**@type {Internal.ServerPlayer}*/ player) => {
         let blockId = block.id
         let itemId = block.item?.id
         if (blockId == itemId) return blockId
@@ -23,6 +23,12 @@
         // try get drops
         let drops = block.getDrops()
         if (drops.length == 1 && drops[0].count == 1) return drops[0].id
+
+        // try get from player hand
+        for (let key of ['mainHandItem', 'offHandItem']) {
+            let item = player[key]
+            if (item.item?.block.id == blockId) return item.id
+        }
 
         // you win
         Utils.server.tell(`unknown id: ${block.id}`)
