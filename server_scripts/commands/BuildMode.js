@@ -93,6 +93,7 @@
                     player.give('create:wrench')
                 }
                 if (Platform.isLoaded('botania')) {
+                    player.give('botania:dreamwood_wand')
                     player.give('botania:astrolabe')
                 }
 
@@ -230,12 +231,16 @@
         let { player, block } = e
         if (!isBuildMode(player)) return
         if (Platform.isLoaded('create') && player.mainHandItem.id == 'create:wrench') return
-        addUsage(player, getIdFromBlock(block))
+        if (Platform.isLoaded('botania') && !player.mainHandItem.block && player.crouching) {
+            let wandCls = 'vazkii.botania.common.item.WandOfTheForestItem'
+            if (player.mainHandItem.item.class.name == wandCls || player.offHandItem.item.class.name == wandCls) return
+        }
+        addUsage(player, getIdFromBlock(block, player))
     })
 
     BlockEvents.broken(e => {
         let { player, block } = e
         if (!isBuildMode(player)) return
-        addUsage(player, getIdFromBlock(block), -1)
+        addUsage(player, getIdFromBlock(block, player), -1)
     })
 }
