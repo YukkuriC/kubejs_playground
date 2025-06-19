@@ -7,10 +7,11 @@
     let MainConfig = Java.loadClass('com.Polarice3.Goety.config.MainConfig')
     let LazyOptional = Java.loadClass('net.minecraftforge.common.util.LazyOptional')
 
-    let RATE = 1000
+    let RATE = 200
     let RATE_EXTRACT_LOSS = 0.1
     let protoFE = {
         getSoul() {
+            if (!this.arca.player) return 0
             return SEHelper.getSESouls(this.arca.player)
         },
         getMaxSoul() {
@@ -18,6 +19,7 @@
             return MainConfig.MaxArcaSouls.get()
         },
         setSoul(newSoul) {
+            if (!this.arca.player) return
             SEHelper.setSESouls(this.arca.player, newSoul)
             SEHelper.sendSEUpdatePacket(this.arca.player)
         },
