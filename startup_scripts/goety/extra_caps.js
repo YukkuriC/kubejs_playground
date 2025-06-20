@@ -2,7 +2,7 @@
 {
     let ArcaBlockEntity = Java.loadClass('com.Polarice3.Goety.common.blocks.entities.ArcaBlockEntity')
     let IEnergyStorage = Java.loadClass('net.minecraftforge.energy.IEnergyStorage')
-    let FECap = Java.loadClass('net.minecraftforge.common.capabilities.ForgeCapabilities').ENERGY
+    let { ENERGY: FECap, ITEM_HANDLER: ItemCap } = Java.loadClass('net.minecraftforge.common.capabilities.ForgeCapabilities')
     let SEHelper = Java.loadClass('com.Polarice3.Goety.utils.SEHelper')
     let MainConfig = Java.loadClass('com.Polarice3.Goety.config.MainConfig')
     let LazyOptional = Java.loadClass('net.minecraftforge.common.util.LazyOptional')
@@ -54,6 +54,7 @@
             return true
         },
     }
+
     let doArcaInject = (/**@type {Internal.AttachCapabilitiesEvent<Internal.BlockEntity>}*/ event) => {
         let be = event.getObject()
         try {
@@ -74,13 +75,10 @@
 
     // load event
     if (Platform.isLoaded('eventjs')) {
-        // TODO: reversed until 1.4.1
         // https://github.com/ZZZank/EventJS/issues/1
-        ForgeEvents.onGenericEvent(
-            'net.minecraft.world.level.block.entity.BlockEntity',
-            'net.minecraftforge.event.AttachCapabilitiesEvent',
-            doArcaInject,
-        )
+        let [clsEvent, clsType] = ['net.minecraftforge.event.AttachCapabilitiesEvent', 'net.minecraft.world.level.block.entity.BlockEntity']
+        if (Platform.getInfo('eventjs').version < '1.4.1') [clsEvent, clsType] = [clsType, clsEvent]
+        ForgeEvents.onGenericEvent(clsEvent, clsType, doArcaInject)
     } else {
         global.doArcaInject = doArcaInject
         ForgeEvents.onGenericEvent(
