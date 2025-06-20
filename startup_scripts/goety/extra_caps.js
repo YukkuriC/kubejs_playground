@@ -115,19 +115,13 @@
     }
 
     // load event
+    let [clsEvent, clsType] = ['net.minecraftforge.event.AttachCapabilitiesEvent', 'net.minecraft.world.level.block.entity.BlockEntity']
     if (Platform.isLoaded('eventjs')) {
         // https://github.com/ZZZank/EventJS/issues/1
-        let [clsEvent, clsType] = ['net.minecraftforge.event.AttachCapabilitiesEvent', 'net.minecraft.world.level.block.entity.BlockEntity']
         if (Platform.getInfo('eventjs').version < '1.4.1') [clsEvent, clsType] = [clsType, clsEvent]
         ForgeEvents.onGenericEvent(clsEvent, clsType, doArcaInject)
     } else {
         global.doArcaInject = doArcaInject
-        ForgeEvents.onGenericEvent(
-            'net.minecraftforge.event.AttachCapabilitiesEvent',
-            'net.minecraft.world.level.block.entity.BlockEntity',
-            e => {
-                global.doArcaInject(e)
-            },
-        )
+        ForgeEvents.onGenericEvent(clsEvent, clsType, e => global.doArcaInject(e))
     }
 }
