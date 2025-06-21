@@ -137,6 +137,10 @@
     EntityEvents.death('villager', ev => {
         let { entity, source, level } = ev
         let undyingInterval = entity.age - (entity.persistentData.undyingTick || -114514)
+        if (undyingInterval < 10) {
+            entity.health = entity.maxHealth / 3
+            ev.cancel()
+        }
         if (undyingInterval < UNDYING_CD) {
             level.tell(source.getLocalizedDeathMessage(entity))
             return
@@ -144,7 +148,7 @@
         entity.persistentData.undyingTick = entity.age
 
         entity.health = entity.maxHealth / 3
-        entity.removeAllEffects()
+        // entity.removeAllEffects()
         let potion = entity.potionEffects
         potion.add('regeneration', 900, 1)
         potion.add('absorption', 100, 1)
