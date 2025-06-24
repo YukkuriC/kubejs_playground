@@ -1,4 +1,4 @@
 ServerEvents.tags('item', e => {
-    e.add('curios:hands', 'botania:mana_mirror')
-    e.add('curios:ring', 'botania:mana_mirror')
+    let targets = ['botania:mana_mirror', 'botania:mana_tablet']
+    for (let tag of ['curios:hands', 'curios:ring', 'curios:charm']) e.add(tag, targets)
 })
