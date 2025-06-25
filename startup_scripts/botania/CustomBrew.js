@@ -1,3 +1,4 @@
+// requires: botania
 {
     let Brew = Java.loadClass('vazkii.botania.api.brew.Brew')
     let MobEffectInstance = Java.loadClass('net.minecraft.world.effect.MobEffectInstance')

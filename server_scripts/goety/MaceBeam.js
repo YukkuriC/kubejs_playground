@@ -1,3 +1,4 @@
+// requires: goety
 {
     let CorruptedBeam = Java.loadClass('com.Polarice3.Goety.common.entities.projectiles.CorruptedBeam')
     let ModEntityType = Java.loadClass('com.Polarice3.Goety.common.entities.ModEntityType')
