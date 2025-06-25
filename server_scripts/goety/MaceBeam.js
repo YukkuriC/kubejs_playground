@@ -15,16 +15,19 @@
         let { player: caster } = e
         caster.swing(e.hand, true)
         if (clearBeams(caster)) return
-        let beam = new CorruptedBeam(ModEntityType.CORRUPTED_BEAM.get(), caster.level, caster)
-        let lookVec = caster.getViewVector(1)
-        beam.setPos(
-            //
-            caster.x + lookVec.x() / 2,
-            caster.eyeY - 0.2,
-            caster.z + lookVec.z() / 2,
+        let beam = new JavaAdapter(
+            CorruptedBeam,
+            {
+                damageEntities(entities) {
+                    this.super$damageEntities(entities)
+                    caster.health += entities.size()
+                },
+            },
+            ModEntityType.CORRUPTED_BEAM.get(),
+            caster.level,
+            caster,
         )
-        beam.yRotO = caster.yHeadRot
-        beam.xRotO = caster.xRotO
+        let lookVec = caster.getViewVector(1)
         beam.setOwner(caster)
         // beam.setItemBase(true)
         beam.spawn()
