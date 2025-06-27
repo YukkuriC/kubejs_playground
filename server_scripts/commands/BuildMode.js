@@ -119,7 +119,8 @@
                 player.tell(Text.gold('blocks in debt:'))
                 let pool = player.persistentData.buildModeCounts || {}
                 if (!displayItemPool(player, pool)) player.tell(Text.green('all clear!'))
-
+                else if (player.mainHandItem == 'create:clipboard' || player.offHandItem == 'create:clipboard')
+                    player.runCommandSilent('buildMode clipboard')
                 return 1
             }),
             makeSub('reset')
