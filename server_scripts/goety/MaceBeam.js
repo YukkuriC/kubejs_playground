@@ -11,18 +11,22 @@
         }
     }
 
+    let protoBeam = {
+        damageEntities(entities) {
+            this.super$damageEntities(entities)
+            this.owner.health += entities.size()
+            for (let e of entities) e.maxHealth--
+        },
+    }
+
     ItemEvents.rightClicked('goety:philosophers_mace', e => {
         let { player: caster } = e
         caster.swing(e.hand, true)
         if (clearBeams(caster)) return
         let beam = new JavaAdapter(
             CorruptedBeam,
-            {
-                damageEntities(entities) {
-                    this.super$damageEntities(entities)
-                    caster.health += entities.size()
-                },
-            },
+            // no, don't collapse
+            protoBeam,
             ModEntityType.CORRUPTED_BEAM.get(),
             caster.level,
             caster,
