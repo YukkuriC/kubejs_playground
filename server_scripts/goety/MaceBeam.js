@@ -15,7 +15,6 @@
         damageEntities(entities) {
             this.super$damageEntities(entities)
             this.owner.health += entities.size()
-            for (let e of entities) e.maxHealth--
         },
     }
 
