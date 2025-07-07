@@ -49,7 +49,8 @@ global.FloodFillBlocks = (level, blockPos, predicate, callback) => {
 global.BreakBlock = (level, block, player, noDrop) => {
     if (!block) return
     if (!noDrop) {
-        for (let item of block.getDrops()) player.give(item)
+        let drops = block.getDrops()
+        if (drops) for (let item of drops) player.give(item)
     }
     global.EVENT_BUS.post(new $BreakEvent(level, block.pos, block.blockState, player))
     level.destroyBlock(block.pos, false, player)
