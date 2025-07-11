@@ -3,12 +3,10 @@
     // batch import
     // search: import (.+\.(.+));
     // replace: $2: Java.loadClass('$1'),
-    let VillagerComfort = Java.loadClass('dev.ghen.villagercomfort.VillagerComfort')
     let ModCapabilities = Java.loadClass('dev.ghen.villagercomfort.common.capabilty.ModCapabilities')
     let CommonConfig = Java.loadClass('dev.ghen.villagercomfort.core.config.CommonConfig')
     let MathHelper = Java.loadClass('dev.ghen.villagercomfort.core.math.MathHelper')
     let MemoryModuleType = Java.loadClass('net.minecraft.world.entity.ai.memory.MemoryModuleType')
-    let Villager = Java.loadClass('net.minecraft.world.entity.npc.Villager')
 
     // do comfort check
     // https://gitlab.com/leahx_y2k/villager-comfort-updated/-/blob/main/src/main/java/dev/ghen/villagercomfort/comfort/ComfortHelper.java
@@ -215,6 +213,7 @@
     ItemEvents.rightClicked('poppy', e => {
         let { player } = e
         let { entity } = player.rayTrace(32, false)
+        if (!entity) return
         try {
             checkComfort(entity, player)
         } catch (e) {
