@@ -3,15 +3,17 @@
     let ArcaBlockEntity = Java.loadClass('com.Polarice3.Goety.common.blocks.entities.ArcaBlockEntity')
     let IEnergyStorage = Java.loadClass('net.minecraftforge.energy.IEnergyStorage')
     let IItemHandler = Java.loadClass('net.minecraftforge.items.IItemHandler')
-    let { ENERGY: FECap, ITEM_HANDLER: ItemCap } = Java.loadClass('net.minecraftforge.common.capabilities.ForgeCapabilities')
+    let IFluidHandler = Java.loadClass('net.minecraftforge.fluids.capability.IFluidHandler')
+    let {
+        ENERGY: FECap,
+        ITEM_HANDLER: ItemCap,
+        FLUID_HANDLER: FluidCap,
+    } = Java.loadClass('net.minecraftforge.common.capabilities.ForgeCapabilities')
     let SEHelper = Java.loadClass('com.Polarice3.Goety.utils.SEHelper')
     let MainConfig = Java.loadClass('com.Polarice3.Goety.config.MainConfig')
     let LazyOptional = Java.loadClass('net.minecraftforge.common.util.LazyOptional')
 
-    let RATE = 200
-    let RATE_EXTRACT_LOSS = 0.1
-    /**@type {Internal.IEnergyStorage & {arca:Internal.ArcaBlockEntity}}*/
-    let protoFE = {
+    let protoSoul = {
         getSoul() {
             if (!this.arca.player) return 0
             return SEHelper.getSESouls(this.arca.player)
@@ -25,6 +27,13 @@
             SEHelper.setSESouls(this.arca.player, newSoul)
             SEHelper.sendSEUpdatePacket(this.arca.player)
         },
+    }
+
+    let RATE = 200
+    let RATE_EXTRACT_LOSS = 0.1
+    /**@type {Internal.IEnergyStorage & {arca:Internal.ArcaBlockEntity}}*/
+    let protoFE = {
+        __proto__: protoSoul,
 
         receiveEnergy(maxReceive, simulate) {
             let receiveSoul = maxReceive / RATE
@@ -86,11 +95,50 @@
         },
     }
 
+    let protoFluid = null
+    if (Platform.isLoaded('create_enchantment_industry')) {
+        let FluidStack = Java.loadClass('net.minecraftforge.fluids.FluidStack')
+        let CeiFluids = Java.loadClass('plus.dragons.createenchantmentindustry.entry.CeiFluids')
+        let RATE_EXP = 1
+
+        /**@type {Internal.IFluidHandler & {arca:Internal.ArcaBlockEntity}}*/
+        protoFluid = {
+            __proto__: protoSoul,
+
+            getTanks() {
+                return 1
+            },
+            getFluidInTank(tank) {
+                // if (tank > 0) return FluidStack.EMPTY
+                return new FluidStack(CeiFluids.HYPER_EXPERIENCE.get(), RATE_EXP * this.getSoul(), { foo: 'bar' })
+            },
+            getTankCapacity(tank) {
+                return RATE_EXP * this.getMaxSoul()
+            },
+            isFluidValid(tank, stack) {
+                return true
+            },
+            fill(resource, action) {
+                return 0
+            },
+            drain(resource, action) {
+                if (resource.amount) resource = resource.amount
+                let oldSoul = this.getSoul()
+                let soulDrained = Math.min(resource / RATE_EXP, oldSoul)
+                let fluidDrained = soulDrained * RATE_EXP
+                if (action == 'EXECUTE') {
+                    this.setSoul(oldSoul - soulDrained)
+                } 
+                return fluidDrained
+            },
+        }
+    }
+
     let doArcaInject = (/**@type {Internal.AttachCapabilitiesEvent<Internal.BlockEntity>}*/ event) => {
         let be = event.getObject()
         try {
             if (!(be instanceof ArcaBlockEntity)) return
-            event.addCapability('kubejs:arca_fe', (cap, side) => {
+            event.addCapability('kubejs:arca', (cap, side) => {
                 if (cap == FECap)
                     return LazyOptional.of(
                         () =>
@@ -105,6 +153,14 @@
                             new JavaAdapter(IItemHandler, {
                                 arca: be,
                                 __proto__: protoItem,
+                            }),
+                    )
+                else if (protoFluid && cap == FluidCap)
+                    return LazyOptional.of(
+                        () =>
+                            new JavaAdapter(IFluidHandler, {
+                                arca: be,
+                                __proto__: protoFluid,
                             }),
                     )
                 return LazyOptional.empty()
