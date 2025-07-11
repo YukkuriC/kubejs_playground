@@ -16,8 +16,9 @@
             pick = 0
         let orbTotalExp = 0
         for (let e of level.getEntitiesWithin(player.boundingBox.inflate(50))) {
+            let type = e.getType()
             let isLiving = e.isLiving() && e.isAlive() && e !== player && e.isMonster(),
-                isPickable = e.type == 'minecraft:item' || e.type == 'minecraft:experience_orb'
+                isPickable = type == 'minecraft:item' || type == 'minecraft:experience_orb'
             if (!isLiving && !isPickable) continue
             // check range
             let pos = e.eyePosition

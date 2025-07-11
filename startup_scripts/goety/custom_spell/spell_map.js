@@ -1,10 +1,11 @@
 // requires: goety
 {
     let Spell = Java.loadClass('com.Polarice3.Goety.common.magic.Spell')
-    let ModParticleTypes = Java.loadClass('top.ribs.scguns.init.ModParticleTypes')
 
-    let spellFuncMap = {
-        avada: {
+    let spellFuncMap = {}
+    if (Platform.isLoaded('scguns')) {
+        let ModParticleTypes = Java.loadClass('top.ribs.scguns.init.ModParticleTypes')
+        spellFuncMap.avada = {
             doHit(caster, entity) {
                 caster.health += entity.health
                 caster.maxHealth += entity.maxHealth
@@ -69,8 +70,9 @@
                 } else worldIn.playSeededSound(null, caster.x, caster.y, caster.z, 'scguns:item.plasma.fire', 'neutral', 0.2, 0, 0)
                 if (entity && entity.living && entity.alive) this.doHit(caster, entity)
             },
-        },
+        }
     }
+
     let buildSpell = (key, cost, duration, cd) => {
         let spellProto = {
             defaultSoulCost: () => cost,
