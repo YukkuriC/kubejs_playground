@@ -73,7 +73,7 @@
         entity.invulnerableTime = Math.min(entity.invulnerableTime, 3)
         // boost health
         const delta = before / 2
-        player.absorptionAmount = Math.min(1000, player.absorptionAmount + delta)
+        player.setAbsorptionAmount(Math.min(1000, player.getAbsorptionAmount() + delta))
         // fx
         let headPos = entity.eyePosition
         let posArr = [headPos.x(), headPos.y(), headPos.z()]
@@ -110,7 +110,7 @@
 
 PlayerTickEvents.every(40).on(e => {
     let { player } = e
-    let val = player.absorptionAmount - 20
+    let val = player.getAbsorptionAmount() - 20
     if (val > 0) {
         if (val > 80) val /= 2
         else if (val > 40) val -= 10
