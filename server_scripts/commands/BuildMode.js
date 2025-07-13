@@ -1,5 +1,5 @@
 {
-    let isBuildMode = player => player.persistentData.buildModeActive
+    let isBuildMode = player => player?.persistentData.buildModeActive
     let setBuildMode = (player, flag) => (player.persistentData.buildModeActive = flag)
 
     let addUsage = (player, blockId, count) => {
