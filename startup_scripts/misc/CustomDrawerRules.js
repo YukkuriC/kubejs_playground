@@ -12,4 +12,5 @@ StartupEvents.postInit(() => {
     Tiers.register('packed_ice', 'ice', 9)
     Tiers.register('blue_ice', 'packed_ice', 9)
     Tiers.register('white_wool', 'string', 4)
+    Tiers.register('magma_block', 'magma_cream', 4)
 })
