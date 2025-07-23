@@ -12,7 +12,7 @@ BlockEvents.rightClicked('mna:runic_anvil', e => {
             pos,
         },
     } = e
-    if (activeStack.id != 'mna:runesmith_hammer') return
+    if (activeStack.id != 'mna:runesmith_hammer' && activeStack.id != 'mna:runic_malus') return
     player.cooldowns.removeCooldown(item)
 
     // 11111, 5!
