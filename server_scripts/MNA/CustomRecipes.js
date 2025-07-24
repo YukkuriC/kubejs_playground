@@ -7,6 +7,6 @@ ServerEvents.recipes(e => {
             Item.of('mna:runescribing_recipe_paper', { runescribe_recipe_id: String(recipe.id) }).strongNBT(),
             'blaze_rod',
             'mna:rune_pattern',
-        ])
+        ]).keepIngredient('mna:runescribing_recipe_paper')
     })
 })
