@@ -1,3 +1,4 @@
+// requires: magichem
 ItemEvents.rightClicked('magichem:power_spike', e => {
     try {
         let {
