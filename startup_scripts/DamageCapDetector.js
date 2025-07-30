@@ -2,22 +2,25 @@
     let WeakHashMap = Java.loadClass('java.util.WeakHashMap')
     let DamageTracker = new WeakHashMap()
     let DEBUG = true
+    let MIN_AMOUNT = 10
     let TOLERANCE = 0.5
+    let TOLERANCE_COUNT = 3
 
     let getDmgTracker = e => {
         return DamageTracker.computeIfAbsent(e, () => {
             return {
                 amount: 0,
+                count: 0,
             }
         })
     }
 
-    ForgeEvents.onEvent(Java.loadClass('net.minecraftforge.event.entity.living.LivingAttackEvent'), e => {
-        if (e.entity.level.clientSide || !e.source?.player || e.amount <= 1) return
+    ForgeEvents.onEvent('net.minecraftforge.event.entity.living.LivingAttackEvent', e => {
+        if (e.entity.level.clientSide || !e.source?.player || e.amount <= MIN_AMOUNT) return
         let tracker = getDmgTracker(e.entity)
         tracker.amount = e.amount
     })
-    ForgeEvents.onEvent(Java.loadClass('net.minecraftforge.event.entity.living.LivingHurtEvent'), e => {
+    ForgeEvents.onEvent('net.minecraftforge.event.entity.living.LivingHurtEvent', e => {
         if (e.entity.level.clientSide || !e.source?.player) return
         let tracker = getDmgTracker(e.entity)
         if (tracker.amount <= 0) return
@@ -26,9 +29,13 @@
                 e.source.player.tell(
                     `Damage diff for ${e.entity.displayName.string}: ${Math.floor(e.amount * 100) / 100} should be ${
                         Math.floor(tracker.amount * 100) / 100
-                    }`,
+                    }, count=${tracker.count}`,
                 )
-            e.amount = tracker.amount
+            if (tracker.count < TOLERANCE_COUNT) {
+                tracker.count++
+            } else {
+                e.amount = tracker.amount
+            }
         }
         tracker.amount = 0
     })
