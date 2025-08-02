@@ -196,9 +196,6 @@
                 ItemRequirement.ItemUseType,
                 Java.loadClass('net.minecraft.world.item.ItemStack'),
             )
-            // let ItemUseType = ItemRequirement.ItemUseType
-            // ItemRequirement.__javaObject__.getConstructor
-            cRequirement.newInstance(ItemRequirement.ItemUseType.CONSUME, Item.of('air'))
 
             root.then(
                 cmd.literal('clipboard').executes(ctx => {
