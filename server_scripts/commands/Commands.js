@@ -153,6 +153,40 @@ ServerEvents.commandRegistry(e => {
             )
         }
 
+        // 原油储量
+        if (Platform.isLoaded('createdieselgenerators')) {
+            let ChunkPos = Java.loadClass('net.minecraft.world.level.ChunkPos')
+            let OilChunksSavedData = Java.loadClass('com.jesz.createdieselgenerators.world.OilChunksSavedData')
+
+            let GetOilData = ctx => {
+                let ret = {
+                    player: GetPlayer(ctx),
+                    save: OilChunksSavedData.load(ctx.source.level),
+                }
+                ret.cp = new ChunkPos(ret.player.blockPosition())
+                return ret
+            }
+
+            F.then(
+                cmd
+                    .literal('cdg_oil_amount')
+                    .then(
+                        cmd.argument('amount', arg.INTEGER.create(e)).executes(ctx => {
+                            let { player, cp, save } = GetOilData(ctx)
+                            let newValue = arg.INTEGER.getResult(ctx, 'amount')
+                            save.setChunkAmount(cp, newValue)
+                            player.tell(`new amount: ${newValue}`)
+                            return 1
+                        }),
+                    )
+                    .executes(ctx => {
+                        let { player, cp, save } = GetOilData(ctx)
+                        player.tell(`amount: ${save.getChunkOilAmount(cp)}`)
+                        return 1
+                    }),
+            )
+        }
+
         e.register(F)
     }
 })

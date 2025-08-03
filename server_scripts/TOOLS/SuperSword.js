@@ -14,10 +14,11 @@
         let source = null
         let hit = 0,
             pick = 0
-        let theOrb = null
+        let orbTotalExp = 0
         for (let e of level.getEntitiesWithin(player.boundingBox.inflate(50))) {
+            let type = e.getType()
             let isLiving = e.isLiving() && e.isAlive() && e !== player && e.isMonster(),
-                isPickable = e.type == 'minecraft:item' || e.type == 'minecraft:experience_orb'
+                isPickable = type == 'minecraft:item' || type == 'minecraft:experience_orb'
             if (!isLiving && !isPickable) continue
             // check range
             let pos = e.eyePosition
@@ -45,21 +46,12 @@
                 // merge exp orb
                 if (e.type == 'minecraft:experience_orb') {
                     let { Count, Value } = e.nbt
-                    if (theOrb) {
-                        theOrb.value += Count * Value
-                        e.discard()
-                        continue
-                    } else {
-                        theOrb = e
-                        e.mergeNbt({
-                            Count: 1,
-                            Value: Count * Value,
-                        })
-                    }
-                }
-                e.teleportTo.apply(e, posArr)
+                    orbTotalExp += Count * Value
+                    e.discard()
+                } else e.teleportTo.apply(e, posArr)
             }
         }
+        player.giveExperiencePoints(orbTotalExp)
         player.swing(hand, true)
         if (hit || pick) player.addItemCooldown(item, 20)
         broadcastLevel(player.level, 'yc:sword_cast', {
@@ -81,7 +73,7 @@
         entity.invulnerableTime = Math.min(entity.invulnerableTime, 3)
         // boost health
         const delta = before / 2
-        player.absorptionAmount = Math.min(1000, player.absorptionAmount + delta)
+        player.setAbsorptionAmount(Math.min(1000, player.getAbsorptionAmount() + delta))
         // fx
         let headPos = entity.eyePosition
         let posArr = [headPos.x(), headPos.y(), headPos.z()]
@@ -118,7 +110,7 @@
 
 PlayerTickEvents.every(40).on(e => {
     let { player } = e
-    let val = player.absorptionAmount - 20
+    let val = player.getAbsorptionAmount() - 20
     if (val > 0) {
         if (val > 80) val /= 2
         else if (val > 40) val -= 10

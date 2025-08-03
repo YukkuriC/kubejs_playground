@@ -113,6 +113,6 @@ ItemEvents.firstRightClicked('yc:stick', e => {
             if (i.id === block.id) return player.give(i)
         }
         let trueBlock = level.getBlockState(block.pos).getBlock()
-        player.give(ItemStack(trueBlock))
+        player.give(Item.of(trueBlock))
     }
 })
