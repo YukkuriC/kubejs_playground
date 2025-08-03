@@ -2,7 +2,7 @@
 // requires: mna
 
 ServerEvents.recipes(e => {
-    let SCROLL_DATA_TYPES = ['component', 'shape']
+    let SCROLL_DATA_TYPES = ['component', 'shape', 'modifier_0', 'modifier_1', 'modifier_2']
     let MaterialChecklist = Java.loadClass('com.simibubi.create.content.schematics.cannon.MaterialChecklist')
     let ItemRequirement = Java.loadClass('com.simibubi.create.content.schematics.requirement.ItemRequirement')
     let cRequirement = ItemRequirement.__javaObject__.getConstructor(
