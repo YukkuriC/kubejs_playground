@@ -32,4 +32,25 @@ ServerEvents.recipes(e => {
                 results: res,
             })
         })
+
+    // contents
+    e.custom({
+        type: 'mna:manaweaving-recipe',
+        output: {
+            item: 'yc:mna/alt_mana_crystal',
+        },
+        tier: 2,
+        items: [
+            'mna:mana_crystal_fragment',
+            'mna:mana_crystal_fragment',
+            'mna:mana_crystal_fragment',
+            'mna:mana_crystal_fragment',
+            'nether_star',
+            'mna:mana_crystal_fragment',
+            'mna:mana_crystal_fragment',
+            'mna:mana_crystal_fragment',
+            'mna:mana_crystal_fragment',
+        ],
+        patterns: ['mna:circle', 'mna:diamond', 'mna:square', 'mna:diamond', 'mna:circle', 'mna:square'],
+    })
 })
