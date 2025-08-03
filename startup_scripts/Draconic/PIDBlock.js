@@ -1,3 +1,5 @@
+// requires: draconicevolution
+
 StartupEvents.registry('block', e => {
     e.create('yc:de_reactor_ctrl')
         .blockEntity(be => {

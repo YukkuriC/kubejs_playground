@@ -1,3 +1,4 @@
+// requires: apotheosis
 ServerEvents.recipes(e => {
     let rarity = ['common', 'uncommon', 'rare', 'epic', 'mythic', 'ancient']
     let materials = rarity.map(x => `apotheosis:${x}_material`)
