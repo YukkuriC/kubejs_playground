@@ -6,7 +6,7 @@ StartupEvents.registry('item', e => {
             .rarity('epic')
             .glow(true)
             .texture(`minecraft:item/golden_${item}`)
-            .displayName(`YC's ${item}`),
+            .displayName(`YukkuriC's ${item}`),
     )
     const items_armor = ['helmet', 'chestplate', 'leggings', 'boots'].map(item =>
         e
@@ -16,17 +16,21 @@ StartupEvents.registry('item', e => {
             .maxDamage(114514)
             .glow(true)
             .texture(`minecraft:item/golden_${item}`)
-            .modelJson({
-                parent: `minecraft:item/golden_${item}`,
-            })
-            .displayName(`YC's ${item}`),
+            .displayName(`YukkuriC's ${item}`),
     )
     // misc
-    e.create(`yc:stick`, 'basic').maxStackSize(1).rarity('epic').glow(true).texture(`minecraft:item/stick`).displayName(`YC's Stick`)
+    e.create(`yc:stick`, 'basic').maxStackSize(1).rarity('epic').glow(true).texture(`minecraft:item/stick`).displayName(`YukkuriC's Stick`)
     e.create(`yc:duper`, 'basic')
         // .texture(`yc:item/duper`)
         .rarity('epic')
         .maxStackSize(1)
         .glow(true)
-        .displayName(`YC's Duper`)
+        .tag('yc:duper')
+        .displayName(`YukkuriC's Duper`)
+    e.create(`yc:duper_2`, 'basic')
+        .rarity('epic') // no don't collapse
+        .maxStackSize(64)
+        .glow(true)
+        .tag('yc:duper')
+        .displayName(`YukkuriC's Duper (alt)`)
 })

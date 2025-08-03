@@ -122,6 +122,71 @@ ServerEvents.commandRegistry(e => {
             )
         }
 
+        // 重命名
+        {
+            F.then(
+                cmd.literal('rename').then(
+                    cmd.argument('name', arg.STRING.create(e)).executes(ctx => {
+                        let item = GetPlayerItem(ctx)
+                        if (!item || item.id == 'minecraft:air') return 0
+                        let newName = arg.STRING.getResult(ctx, 'name')
+                        newName = newName.replace('\\', '\\\\').replace('"', '\\"') // 这是Java String，不是js string
+                        item.orCreateTag.display = { Name: `{"text":"${newName}"}` }
+                        return 1
+                    }),
+                ),
+            )
+        }
+
+        // 袭击冷却
+        {
+            F.then(
+                cmd.literal('raidCD').executes(ctx => {
+                    let player = GetPlayer(ctx)
+                    if (!player) return 0
+                    let raid = player.level.getRaidAt(BlockPos(player.x, player.y, player.z))
+                    if (!raid) return
+                    global.setField(raid, 'f_37684_', Integer('1'))
+                    player.level.raids.setDirty()
+                    return 1
+                }),
+            )
+        }
+
+        // 原油储量
+        if (Platform.isLoaded('createdieselgenerators')) {
+            let ChunkPos = Java.loadClass('net.minecraft.world.level.ChunkPos')
+            let OilChunksSavedData = Java.loadClass('com.jesz.createdieselgenerators.world.OilChunksSavedData')
+
+            let GetOilData = ctx => {
+                let ret = {
+                    player: GetPlayer(ctx),
+                    save: OilChunksSavedData.load(ctx.source.level),
+                }
+                ret.cp = new ChunkPos(ret.player.blockPosition())
+                return ret
+            }
+
+            F.then(
+                cmd
+                    .literal('cdg_oil_amount')
+                    .then(
+                        cmd.argument('amount', arg.INTEGER.create(e)).executes(ctx => {
+                            let { player, cp, save } = GetOilData(ctx)
+                            let newValue = arg.INTEGER.getResult(ctx, 'amount')
+                            save.setChunkAmount(cp, newValue)
+                            player.tell(`new amount: ${newValue}`)
+                            return 1
+                        }),
+                    )
+                    .executes(ctx => {
+                        let { player, cp, save } = GetOilData(ctx)
+                        player.tell(`amount: ${save.getChunkOilAmount(cp)}`)
+                        return 1
+                    }),
+            )
+        }
+
         e.register(F)
     }
 })

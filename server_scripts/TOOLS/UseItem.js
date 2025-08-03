@@ -1,4 +1,5 @@
 const TARGETS = new Set(['yc:hoe', 'yc:pickaxe', 'yc:axe', 'yc:shovel'])
+const $CocoaBlock = Java.loadClass('net.minecraft.world.level.block.CocoaBlock')
 
 /**
  * @param { Internal.PlayerInteractEvent$RightClickBlock } e
@@ -6,7 +7,8 @@ const TARGETS = new Set(['yc:hoe', 'yc:pickaxe', 'yc:axe', 'yc:shovel'])
  */
 function OnUseTools(e) {
     const { level, itemStack } = e
-    if (level.clientSide || !TARGETS.has(String(itemStack.id))) return
+    if (level.clientSide) return
+    if (!TARGETS.has(String(itemStack.id))) return
     const block = level.getBlock(e.pos)
     let { x, y, z } = e.pos
     /** @type Player */
@@ -47,9 +49,9 @@ function OnUseTools(e) {
                         }
                         if (
                             (state.getCollisionShape(level, newPos).isEmpty() || bbb instanceof $CocoaBlock) &&
-                            CanHarvest(bbb, state, level)
+                            global.CanHarvest(bbb, state, level)
                         ) {
-                            BreakBlock(level, bb, player)
+                            global.BreakBlock(level, bb, player)
                         }
                     }
 
@@ -90,7 +92,7 @@ function OnUseTools(e) {
         if (!block) return
         let hasLeaves = false
         let hasLogs = false
-        FloodFillBlocks(
+        global.FloodFillBlocks(
             level,
             block.pos,
             bb => {
@@ -104,7 +106,7 @@ function OnUseTools(e) {
             },
             bb => blockTargets.push(bb),
         )
-        if (hasLogs && hasLeaves) for (const bb of blockTargets) BreakBlock(level, bb, player)
+        if (hasLogs && hasLeaves) for (const bb of blockTargets) global.BreakBlock(level, bb, player)
     } else if (itemStack.id == 'yc:shovel') {
         for (let i = x - 1; i <= x + 1; i++)
             for (let j = y - 1; j <= y + 1; j++)
@@ -116,7 +118,7 @@ function OnUseTools(e) {
                     }
                     blockTargets.push(bb)
                 }
-        for (const bb of blockTargets) BreakBlock(level, bb, player)
+        for (const bb of blockTargets) global.BreakBlock(level, bb, player)
     }
 }
 

@@ -15,7 +15,7 @@ for (let d of [-1, 1]) {
  * @param { (block:Internal.BlockContainerJS) => boolean } predicate
  * @param { (block:Internal.BlockContainerJS) => void } callback
  */
-function FloodFillBlocks(level, blockPos, predicate, callback) {
+global.FloodFillBlocks = (level, blockPos, predicate, callback) => {
     let blockQueue = [blockPos]
     let visited = new Set()
     visited.add(blockPos.hashCode())
@@ -46,10 +46,11 @@ function FloodFillBlocks(level, blockPos, predicate, callback) {
  * @param { Player } player
  * @param { boolean } drop
  */
-function BreakBlock(level, block, player, noDrop) {
+global.BreakBlock = (level, block, player, noDrop) => {
     if (!block) return
     if (!noDrop) {
-        for (let item of block.getDrops()) player.give(item)
+        let drops = block.getDrops()
+        if (drops) for (let item of drops) player.give(item)
     }
     global.EVENT_BUS.post(new $BreakEvent(level, block.pos, block.blockState, player))
     level.destroyBlock(block.pos, false, player)
@@ -59,7 +60,7 @@ function BreakBlock(level, block, player, noDrop) {
  * @param { Internal.CropBlock } block
  * @param { Internal.BlockState } state
  */
-function CanHarvest(block, state) {
+global.CanHarvest = (block, state) => {
     if (block.isMaxAge && block.isMaxAge(state)) return true
     for (const prop of state.getProperties()) {
         if (!prop instanceof $IntegerProperty) continue
@@ -75,10 +76,12 @@ function CanHarvest(block, state) {
 
 global.dump = obj => {
     let lines = ['{']
-    for (let pair of Object.entries(obj)) {
-        lines.push(`    ${pair[0]}: ${pair[1]},`)
+    let hasInner = false
+    for (let k of Object.keys(obj).sort()) {
+        lines.push(`    ${k}: ${obj[k]},`)
+        hasInner = true
     }
-    lines.push('}')
+    lines.push(hasInner ? '}' : lines.pop() + '}')
     return lines.join('\n')
 }
 
@@ -91,12 +94,14 @@ global.dumpDeep = (obj, deltaIndent) => {
             if (used.has(obj)) return '{...}'
             used.add(obj)
             let lines = ['{']
-            for (let pair of Object.entries(obj)) {
-                let [k, v] = pair
+            let hasInner = false
+            for (let k of Object.keys(obj).sort()) {
+                let v = obj[k]
                 let vStr = v && typeof v === 'object' ? inner(v, indent + deltaIndent) : String(v)
                 lines.push(' '.repeat(indent + deltaIndent) + `${k}:${vStr},`)
+                hasInner = true
             }
-            lines.push(' '.repeat(indent) + '}')
+            lines.push(hasInner ? ' '.repeat(indent) + '}' : lines.pop() + '}')
             used.delete(obj)
             return lines.join(noNewLine ? '' : '\n')
         } catch (e) {
