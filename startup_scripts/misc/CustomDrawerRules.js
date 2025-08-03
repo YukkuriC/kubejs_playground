@@ -13,4 +13,7 @@ StartupEvents.postInit(() => {
     Tiers.register('blue_ice', 'packed_ice', 9)
     Tiers.register('white_wool', 'string', 4)
     Tiers.register('magma_block', 'magma_cream', 4)
+    if (Platform.isLoaded('hexcasting')) {
+        Tiers.register('hexcasting:quenched_allay', 'hexcasting:quenched_allay_shard', 4)
+    }
 })
