@@ -56,5 +56,17 @@ ServerEvents.commandRegistry(e => {
     }
 
     // locate spring
-    e.register(cmd.literal('locate').then(cmd.literal('wellspring').executes(ctx => searcher(ctx))))
+    e.register(
+        cmd.literal('locate').then(
+            cmd
+                .literal('wellspring')
+                .executes(ctx => searcher(ctx))
+                .then(
+                    cmd.argument('type', arg.STRING.create(e)).executes(ctx => {
+                        let type = arg.STRING.getResult(ctx, 'type')
+                        return searcher(ctx, spring => spring.affinity == type, 9)
+                    }),
+                ),
+        ),
+    )
 })
