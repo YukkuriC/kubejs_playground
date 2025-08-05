@@ -4,6 +4,7 @@ ServerEvents.commandRegistry(e => {
     let LocateCommand = Java.loadClass('net.minecraft.server.commands.LocateCommand')
     let WorldMagicProvider = Java.loadClass('com.mna.capabilities.worlddata.WorldMagicProvider')
     let GeneralConfigValues = Java.loadClass('com.mna.api.config.GeneralConfigValues')
+    let AffinityArgument = Java.loadClass('com.mna.api.commands.AffinityArgument')
 
     const { commands: cmd, arguments: arg } = e
 
@@ -62,8 +63,8 @@ ServerEvents.commandRegistry(e => {
                 .literal('wellspring')
                 .executes(ctx => searcher(ctx))
                 .then(
-                    cmd.argument('type', arg.STRING.create(e)).executes(ctx => {
-                        let type = arg.STRING.getResult(ctx, 'type')
+                    cmd.argument('type', AffinityArgument.affinity()).executes(ctx => {
+                        let type = AffinityArgument.getAffinity(ctx, 'type')
                         return searcher(ctx, spring => spring.affinity == type, 9)
                     }),
                 ),
