@@ -4,7 +4,7 @@
     let Integer = Java.loadClass('java.lang.Integer')
     let CFG
     try {
-        CFG = Java.tryLoadClass('com.jaquadro.minecraft.storagedrawers.config.ModCommonConfig')
+        CFG = Java.loadClass('com.jaquadro.minecraft.storagedrawers.config.ModCommonConfig')
     } catch (e) {
         CFG = { INSTANCE: Java.loadClass('com.jaquadro.minecraft.storagedrawers.config.CommonConfig') }
     }
