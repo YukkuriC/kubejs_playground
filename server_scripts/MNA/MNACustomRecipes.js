@@ -10,7 +10,7 @@ ServerEvents.recipes(e => {
         ]).keepIngredient('mna:runescribing_recipe_paper')
     })
     // auto crushing
-    if (Platform.isLoaded('create'))
+    if (Platform.isLoaded('create')) {
         e.forEachRecipe({ type: 'mna:crushing' }, recipe => {
             let raw = recipe.json
             let res = [
@@ -32,6 +32,32 @@ ServerEvents.recipes(e => {
                 results: res,
             })
         })
+        e.forEachRecipe({ type: 'mna:runeforging' }, recipe => {
+            let raw = recipe.json
+
+            let res = [
+                {
+                    item: raw.get('output').asString,
+                },
+            ]
+            let byproducts = raw.get('byproducts')
+            if (byproducts) byproducts.asJsonArray.forEach(e => res.push(e))
+
+            let inputs = [
+                {
+                    item: raw.get('pattern').asString,
+                },
+            ]
+            let material = raw.get('material')
+            if (material) inputs.push({ item: material.asString })
+
+            e.custom({
+                type: 'create:compacting',
+                ingredients: inputs,
+                results: res,
+            })
+        })
+    }
 
     // contents
     e.custom({
