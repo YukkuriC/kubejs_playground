@@ -38,6 +38,7 @@ ServerEvents.recipes(e => {
             let res = [
                 {
                     item: raw.get('output').asString,
+                    count: raw.get('output_quantity') || 1,
                 },
             ]
             let byproducts = raw.get('byproducts')
