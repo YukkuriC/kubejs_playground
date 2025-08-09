@@ -1,20 +1,4 @@
 // requires: magichem
-ItemEvents.rightClicked('magichem:power_spike', e => {
-    try {
-        let {
-            item,
-            target: { block },
-            player,
-        } = e
-        if (!block || player.crouching) return
-        item.orCreateTag.putLong('magichem.powerspike.targetpos', pos.asLong())
-        player.tell(`force bound to (${pos.x}, ${pos.y}, ${pos.z})`)
-        e.cancel()
-    } catch (e) {
-        Utils.server.tell(e)
-    }
-})
-
 ServerEvents.recipes(e => {
     e.shapeless('magichem:power_spike', ['magichem:power_spike', 'mna:rune_marking'])
         .keepIngredient('mna:rune_marking')
