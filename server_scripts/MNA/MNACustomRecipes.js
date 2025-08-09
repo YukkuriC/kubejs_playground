@@ -49,8 +49,8 @@ ServerEvents.recipes(e => {
                     item: raw.get('pattern').asString,
                 },
             ]
-            let material = raw.get('material')
-            if (material) inputs.push({ item: material.asString })
+            let material = raw.get('material')?.asString || 'mna:superheated_vinteum_ingot'
+            inputs.push({ item: material })
 
             e.custom({
                 type: 'create:compacting',
