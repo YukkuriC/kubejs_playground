@@ -20,7 +20,11 @@ ServerEvents.recipes(e => {
                 },
             ]
             let byproducts = raw.get('byproducts')
-            if (byproducts) byproducts.asJsonArray.forEach(e => res.push(e))
+            if (byproducts)
+                byproducts.asJsonArray.forEach(e => {
+                    let repeat = e.get('rolls') || 1
+                    for (let i = 0; i < repeat; i++) res.push(e)
+                })
             e.custom({
                 type: 'create:crushing',
                 ingredients: [
