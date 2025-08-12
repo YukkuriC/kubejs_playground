@@ -9,8 +9,8 @@ ServerEvents.recipes(e => {
             'mna:rune_pattern',
         ]).keepIngredient('mna:runescribing_recipe_paper')
     })
-    // auto crushing
     if (Platform.isLoaded('create')) {
+        // auto crushing
         e.forEachRecipe({ type: 'mna:crushing' }, recipe => {
             let raw = recipe.json
             let res = [
@@ -36,6 +36,7 @@ ServerEvents.recipes(e => {
                 results: res,
             })
         })
+        // auto forging
         e.forEachRecipe({ type: 'mna:runeforging' }, recipe => {
             let raw = recipe.json
 
@@ -58,6 +59,28 @@ ServerEvents.recipes(e => {
 
             e.custom({
                 type: 'create:compacting',
+                ingredients: inputs,
+                results: res,
+            })
+        })
+        // auto manaweaving
+        e.forEachRecipe({ type: 'mna:manaweaving-recipe' }, recipe => {
+            let raw = recipe.json
+
+            let res = [
+                {
+                    item: raw.get('output').asString,
+                    count: raw.get('quantity') || 1,
+                },
+            ]
+            let byproducts = raw.get('byproducts')
+            if (byproducts) byproducts.forEach(e => res.push(e))
+
+            let inputs = []
+            raw.get('items').forEach(x => inputs.push({ item: x.asString }))
+
+            e.custom({
+                type: 'create:mixing',
                 ingredients: inputs,
                 results: res,
             })
