@@ -1,5 +1,17 @@
 // requires: mna
 ServerEvents.recipes(e => {
+    let tryTag = (item, count) => {
+        // already json obj, give up
+        if (item.get) return item
+        if (item.getAsString) item = item.asString
+
+        let test = Item.of(item)
+        let res = {}
+        res[test.empty ? 'tag' : 'item'] = item
+        if (count) res.count = count
+        return res
+    }
+
     // auto rune patterns
     e.forEachRecipe({ type: 'mna:runescribing' }, recipe => {
         let target = recipe.json.get('output').asString
@@ -13,25 +25,15 @@ ServerEvents.recipes(e => {
         // auto crushing
         e.forEachRecipe({ type: 'mna:crushing' }, recipe => {
             let raw = recipe.json
-            let res = [
-                {
-                    count: raw.get('output_quantity').asDouble,
-                    item: raw.get('output').asString,
-                },
-            ]
+            let res = [tryTag(raw.get('output'), raw.get('output_quantity'))]
             let byproducts = raw.get('byproducts')
             if (byproducts)
                 byproducts.asJsonArray.forEach(e => {
-                    let repeat = e.get('rolls') || 1
-                    for (let i = 0; i < repeat; i++) res.push(e)
+                    res.push(tryTag(e, e.get('rolls')))
                 })
             e.custom({
                 type: 'create:crushing',
-                ingredients: [
-                    {
-                        item: raw.get('input').asString,
-                    },
-                ],
+                ingredients: [tryTag(raw.get('input'))],
                 processingTime: 150,
                 results: res,
             })
@@ -40,22 +42,13 @@ ServerEvents.recipes(e => {
         e.forEachRecipe({ type: 'mna:runeforging' }, recipe => {
             let raw = recipe.json
 
-            let res = [
-                {
-                    item: raw.get('output').asString,
-                    count: raw.get('output_quantity') || 1,
-                },
-            ]
+            let res = [tryTag(raw.get('output'), raw.get('output_quantity'))]
             let byproducts = raw.get('byproducts')
-            if (byproducts) byproducts.asJsonArray.forEach(e => res.push(e))
+            if (byproducts) byproducts.asJsonArray.forEach(e => res.push(tryTag(e)))
 
-            let inputs = [
-                {
-                    item: raw.get('pattern').asString,
-                },
-            ]
+            let inputs = [tryTag(raw.get('pattern'))]
             let material = raw.get('material')?.asString || 'mna:superheated_vinteum_ingot'
-            inputs.push({ item: material })
+            inputs.push(tryTag(material))
 
             e.custom({
                 type: 'create:compacting',
@@ -67,17 +60,12 @@ ServerEvents.recipes(e => {
         e.forEachRecipe({ type: 'mna:manaweaving-recipe' }, recipe => {
             let raw = recipe.json
 
-            let res = [
-                {
-                    item: raw.get('output').asString,
-                    count: raw.get('quantity') || 1,
-                },
-            ]
+            let res = [tryTag(raw.get('output'), raw.get('quantity'))]
             let byproducts = raw.get('byproducts')
-            if (byproducts) byproducts.forEach(e => res.push(e))
+            if (byproducts) byproducts.forEach(e => res.push(tryTag(e)))
 
             let inputs = []
-            raw.get('items').forEach(x => inputs.push({ item: x.asString }))
+            raw.get('items').forEach(x => inputs.push(tryTag(x)))
 
             e.custom({
                 type: 'create:mixing',
