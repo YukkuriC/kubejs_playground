@@ -18,7 +18,6 @@ BlockEvents.rightClicked('mna:runic_anvil', e => {
     // 11111, 5!
     let hitsLeft = 5
     let doHit = () => {
-        global.test = block
         block.use(blockState, player.level, pos, player, hand, null)
         player.cooldowns.removeCooldown(item)
         if (hitsLeft > 0) player.server.scheduleInTicks(1, doHit)
