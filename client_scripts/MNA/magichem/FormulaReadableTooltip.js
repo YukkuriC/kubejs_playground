@@ -8,7 +8,7 @@ ItemEvents.tooltip(e => {
         let key = e.get('name').asString
         let data = []
         e.get('components').forEach(comp => {
-            data.push([comp.get('admixture')?.asString, comp.get('essentia')?.asString, comp.get('count')])
+            data.push([comp.get('admixture')?.asString, comp.get('essentia')?.asString, Number(comp.get('count'))])
         })
         admixtureRaw[key] = data
     })
@@ -17,12 +17,15 @@ ItemEvents.tooltip(e => {
     // cache tooltip
     let cachedFormula = {}
     let cachedFormulaDeep = {}
+    let cachedAdmixtureCounts = {}
+    let cachedAdmixtureCountsDisplay = {}
     let getFormula = (name, deep) => {
         let cacheMap = deep ? cachedFormulaDeep : cachedFormula
         if (!(name in cacheMap)) {
             let raw = admixtureRaw[name]
             if (!raw) return 'NOPE'
             let output = Text.darkAqua('')
+            cacheMap[name] = output
             let first = true
             for (let [adm, ess, count] of raw) {
                 if (!first) output.append(' ')
@@ -43,9 +46,42 @@ ItemEvents.tooltip(e => {
 
                 first = false
             }
-            cacheMap[name] = output
         }
         return cacheMap[name]
+    }
+    let getEssentiaCounts = name => {
+        let raw = admixtureRaw[name]
+        if (!raw) return 'NOPE'
+        if (!(name in cachedAdmixtureCounts)) {
+            let res = {}
+            cachedAdmixtureCounts[name] = res
+            for (let [adm, ess, count] of raw) {
+                if (adm) {
+                    for (let [ee, cc] of Object.entries(getEssentiaCounts(adm))) {
+                        res[ee] = (res[ee] || 0) + cc * count
+                    }
+                } else if (ess) {
+                    res[ess] = (res[ess] || 0) + count
+                }
+            }
+        }
+        return cachedAdmixtureCounts[name]
+    }
+    let getEssentiaCountsDisplay = name => {
+        let raw = admixtureRaw[name]
+        if (!raw) return 'NOPE'
+        if (!(name in cachedAdmixtureCountsDisplay)) {
+            let output = Text.darkAqua('')
+            let first = true
+            for (let [ess, count] of Object.entries(getEssentiaCounts(name))) {
+                if (!first) output.append(' ')
+                output.append(Text.translate(`item.magichem.essentia_${ess}.short`))
+                if (count > 1) output.append(Text.gold(toSmallNum(count)))
+                first = false
+            }
+            cachedAdmixtureCountsDisplay[name] = output
+        }
+        return cachedAdmixtureCountsDisplay[name]
     }
     let toSmallNum = num => {
         if (num < 10) return SMALL_NUMS[num]
@@ -59,6 +95,10 @@ ItemEvents.tooltip(e => {
         try {
             let formula = getFormula(name, e.shift)
             tooltips.add(Text.translate('tooltip.magichem.admixture_formula').darkGray().append(' [ ').append(formula).append(' ]'))
+            if (e.shift) {
+                let counts = getEssentiaCountsDisplay(name)
+                tooltips.add(Text.darkGray('= [ ').append(counts).append(' ]'))
+            }
         } catch (e) {
             tooltips.add(e)
         }
