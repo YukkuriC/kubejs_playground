@@ -1,3 +1,4 @@
+// requires: mna
 ServerEvents.recipes(e => {
     let TagParser = Java.loadClass('net.minecraft.nbt.TagParser')
     let UUIDCls = Java.loadClass('java.util.UUID')

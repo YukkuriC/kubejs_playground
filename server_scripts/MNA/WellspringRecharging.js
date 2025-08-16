@@ -1,3 +1,4 @@
+// requires: mna
 {
     let WorldMagicProvider = Java.loadClass('com.mna.capabilities.worlddata.WorldMagicProvider')
 
