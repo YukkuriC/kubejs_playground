@@ -25,6 +25,7 @@
             if (construct.manaPct < 1 && construct.getConstructData().isCapabilityEnabled(ConstructCapability.STORE_MANA)) {
                 let distNorm = myPos.distanceTo(construct.position()) / CHECK_RADIUS
                 let mana = 200 * (1 - distNorm)
+                if (mana <= 0) return
                 construct.adjustMana(mana)
                 ServerMessageDispatcher.sendParticleSpawn(
                     // src
