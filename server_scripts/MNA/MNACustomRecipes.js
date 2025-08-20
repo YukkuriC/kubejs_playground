@@ -54,6 +54,7 @@ ServerEvents.recipes(e => {
                 type: 'create:compacting',
                 ingredients: inputs,
                 results: res,
+                heatRequirement: 'superheated',
             })
         })
         // auto manaweaving
@@ -71,6 +72,7 @@ ServerEvents.recipes(e => {
                 type: 'create:mixing',
                 ingredients: inputs,
                 results: res,
+                heatRequirement: 'superheated',
             })
         })
     }
