@@ -35,10 +35,10 @@ ItemEvents.tooltip(e => {
                         output.append(getFormula(adm, deep))
                         output.append(')')
                     } else {
-                        output.append(Text.translate(`item.magichem.admixture_${adm}.short`))
+                        output.append(Text.translate(`item.magichem.admixture_${adm}.truncated`))
                     }
                 } else if (ess) {
-                    output.append(Text.translate(`item.magichem.essentia_${ess}.short`))
+                    output.append(Text.translate(`item.magichem.essentia_${ess}.truncated`))
                 }
                 if (deep || count > 1) {
                     output.append(Text[ess ? 'gold' : 'lightPurple'](toSmallNum(count)))
@@ -75,7 +75,7 @@ ItemEvents.tooltip(e => {
             let first = true
             for (let [ess, count] of Object.entries(getEssentiaCounts(name))) {
                 if (!first) output.append(' ')
-                output.append(Text.translate(`item.magichem.essentia_${ess}.short`))
+                output.append(Text.translate(`item.magichem.essentia_${ess}.truncated`))
                 if (count > 1) output.append(Text.gold(toSmallNum(count)))
                 first = false
             }
