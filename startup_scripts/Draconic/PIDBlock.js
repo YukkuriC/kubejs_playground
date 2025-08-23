@@ -5,6 +5,7 @@ StartupEvents.registry('block', e => {
         .blockEntity(be => {
             be.serverTick(20, 0, x => global.tickPID(x))
         })
+        .opaque(false)
         .resistance(114514)
         .displayName('DE Reactor Controller')
 })

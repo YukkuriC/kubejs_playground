@@ -12,6 +12,7 @@
             .blockEntity(be => {
                 be.serverTick(80, 0, x => global.rechargeConstructs(x))
             })
+            .opaque(false)
             .resistance(114514)
             .displayName('Alt Mana Crystal')
             .defaultTranslucent()
