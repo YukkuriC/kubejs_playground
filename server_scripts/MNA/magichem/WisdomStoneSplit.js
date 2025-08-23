@@ -10,7 +10,7 @@ ServerEvents.recipes(e => {
     ]) {
         let raw = Item.of(id).strongNBT()
         let splitted = Item.of(id, { CustomModelData: 1 }).strongNBT()
-        e.shapeless(splitted, [raw])
+        e.shapeless(splitted, [raw, 'mna:animus_dust'])
         e.shapeless(raw, [splitted])
     }
 })
