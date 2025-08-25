@@ -30,12 +30,12 @@
     })
 
     // register media
-    let MEDIA_ENDER_DISK = new MountMedia('ender_disk', GetDiskId, SetDiskId, GetSize)
+    let MEDIA_ENDER_DISK = new MountMedia('ender_disk', GetDiskId, /* SetDiskId */ null, GetSize)
 
     // register item
     StartupEvents.registry('item', e => {
         let theDiskItem = new JavaAdapter(DiskItem, {}, new Item.Properties())
-        e.createCustom('yc:ender_disk2', () => theDiskItem)
+        e.createCustom('yc:ender_disk', () => theDiskItem)
 
         // link item & media
         MEDIA_MAP.put(
