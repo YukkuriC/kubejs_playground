@@ -12,7 +12,6 @@ ItemEvents.tooltip(e => {
         })
         admixtureRaw[key] = data
     })
-    let SMALL_NUMS = ['\u2080', '\u2081', '\u2082', '\u2083', '\u2084', '\u2085', '\u2086', '\u2087', '\u2088', '\u2089']
 
     // cache tooltip
     let cachedFormula = {}
@@ -41,7 +40,7 @@ ItemEvents.tooltip(e => {
                     output.append(Text.translate(`item.magichem.essentia_${ess}.truncated`))
                 }
                 if (deep || count > 1) {
-                    output.append(Text[ess ? 'gold' : 'lightPurple'](toSmallNum(count)))
+                    output.append(Text[ess ? 'gold' : 'lightPurple'](MagiChemLib.toSmallNum(count)))
                 }
 
                 first = false
@@ -76,16 +75,12 @@ ItemEvents.tooltip(e => {
             for (let [ess, count] of Object.entries(getEssentiaCounts(name))) {
                 if (!first) output.append(' ')
                 output.append(Text.translate(`item.magichem.essentia_${ess}.truncated`))
-                if (count > 1) output.append(Text.gold(toSmallNum(count)))
+                if (count > 1) output.append(Text.gold(MagiChemLib.toSmallNum(count)))
                 first = false
             }
             cachedAdmixtureCountsDisplay[name] = output
         }
         return cachedAdmixtureCountsDisplay[name]
-    }
-    let toSmallNum = num => {
-        if (num < 10) return SMALL_NUMS[num]
-        return toSmallNum(Math.floor(num / 10)) + SMALL_NUMS[num % 10]
     }
 
     e.addAdvancedToAll((stack, advanced, tooltips) => {
