@@ -1,3 +1,4 @@
+// requires: magichem
 ServerEvents.recipes(e => {
     let helper = (id, count) =>
         e.custom({

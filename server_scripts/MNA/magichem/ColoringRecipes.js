@@ -1,3 +1,4 @@
+// requires: magichem
 {
     let ALL_COLORS = [
         'red',
