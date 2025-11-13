@@ -39,12 +39,13 @@ ServerEvents.commandRegistry(e => {
         if (nearest) {
             nearestDist = Math.sqrt(nearestDist)
             let { x, z } = nearest.key
+            let spring = nearest.value
             let msg = Text.translate(
                 'commands.locate.biome.success',
                 // name
                 nearest.value.affinity.name(),
                 // tp text
-                Text.green(`[${x}, ~, ${z}]`).hover(Text.translate('chat.coordinates.tooltip')).clickRunCommand(`tp @s ${x} ~ ${z}`),
+                Text.green(`[${x}, ~, ${z}] (strength=${spring.strength})`).hover(Text.translate('chat.coordinates.tooltip')).clickRunCommand(`tp @s ${x} ~ ${z}`),
                 // dist
                 String(Math.floor(nearestDist)),
             )
