@@ -1,4 +1,6 @@
 // requires: mna
+// ignored: true
+// moved to MNAOP
 ServerEvents.commandRegistry(e => {
     // imports
     let LocateCommand = Java.loadClass('net.minecraft.server.commands.LocateCommand')
@@ -29,7 +31,7 @@ ServerEvents.commandRegistry(e => {
             for (let node of nodes) {
                 let { key, value } = node
                 if (predicate && !predicate(value)) continue
-                let newDist = src.distSqr(node.key)
+                let newDist = src.distSqr(key)
                 if (newDist < nearestDist) {
                     nearestDist = newDist
                     nearest = node
@@ -45,7 +47,9 @@ ServerEvents.commandRegistry(e => {
                 // name
                 nearest.value.affinity.name(),
                 // tp text
-                Text.green(`[${x}, ~, ${z}] (strength=${spring.strength})`).hover(Text.translate('chat.coordinates.tooltip')).clickRunCommand(`tp @s ${x} ~ ${z}`),
+                Text.green(`[${x}, ~, ${z}] (strength=${spring.strength})`)
+                    .hover(Text.translate('chat.coordinates.tooltip'))
+                    .clickRunCommand(`tp @s ${x} ~ ${z}`),
                 // dist
                 String(Math.floor(nearestDist)),
             )
