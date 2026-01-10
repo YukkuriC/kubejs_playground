@@ -1,3 +1,5 @@
+// ignored: true
+
 {
     let WeakHashMap = Java.loadClass('java.util.WeakHashMap')
     let DamageTracker = new WeakHashMap()
