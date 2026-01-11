@@ -1,4 +1,6 @@
 // requires: magichem
+// ignored: true
+// moved to MNAOverpowered
 
 ItemEvents.tooltip(e => {
     // imports

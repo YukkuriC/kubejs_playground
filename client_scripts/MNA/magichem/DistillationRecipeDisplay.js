@@ -1,4 +1,6 @@
 // requires: magichem
+// ignored: true
+// moved to MNAOverpowered
 
 {
     let DistillationFabricationRecipe = Java.loadClass('com.aranaira.magichem.recipe.DistillationFabricationRecipe')
