@@ -23,11 +23,17 @@ let CommandUtils = {
             return argType.getResult(ctx, name)
         } catch (e) {}
     },
+    /**
+     * @returns {Internal.ServerPlayer}
+     */
     getPlayer(ctx) {
         /**@type {Player}*/
         let player = ctx.source.entity
         if (player && player.isPlayer()) return player
     },
+    /**
+     * @returns {Internal.ItemStack}
+     */
     getPlayerItem(ctx) {
         /**@type {Player}*/
         let player = CommandUtils.getPlayer(ctx)
