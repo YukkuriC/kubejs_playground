@@ -1,7 +1,7 @@
 let CommandUtils = {
     /**
      * @param {Internal.ArgumentBuilder<Internal.CommandSourceStack,any>[]} seq
-     * @param {((ctx:CommandSourceStack)=>number)|(((ctx:CommandSourceStack)=>number)[])} callback
+     * @param {((ctx:Internal.CommandContext<Internal.CommandSourceStack>)=>number)|(((ctx:Internal.CommandContext<Internal.CommandSourceStack>)=>number)[])} callback
      * @param {number} callbackToLastN
      */
     chain(seq, callback, callbackToLastN) {
