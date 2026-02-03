@@ -71,8 +71,14 @@ ServerEvents.commandRegistry(e => {
                 ],
             }
 
+            let folder = `kubejs/data/magichem/recipes/distillation_fabrication/${modid}`
+            let filename = `${handItem.idLocation.path}.json`
             ctx.source.sendSuccess(Text.literal(`recipe for ${handItem.id} generated`), true)
-            JsonIO.write(`kubejs/data/magichem/recipes/distillation_fabrication/${modid}/${handItem.idLocation.path}.json`, wrapped)
+            ctx.source.sendSuccess(
+                Text.literal(`output folder: ${folder}; filename: ${filename}`).clickCopy(folder).hover('click to copy folder path'),
+                true,
+            )
+            JsonIO.write(`${folder}/${filename}`, wrapped)
 
             return 0
         },
