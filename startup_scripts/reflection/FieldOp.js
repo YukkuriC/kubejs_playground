@@ -2,12 +2,25 @@
 
 if (!global.getDeclaredField) {
     global.getDeclaredField = (obj, name, isStatic, superCount) => {
-        superCount = superCount || 0
+        superCount = superCount || -1
         let cls = obj
         if (!isStatic) cls = obj.getClass()
         else cls = global.toRawClass(obj)
-        for (let i = 0; i < superCount; i++) cls = cls.getSuperclass()
-        let field = cls.getDeclaredField(name)
+        let field
+        if (superCount >= 0) {
+            for (let i = 0; i < superCount; i++) cls = cls.getSuperclass()
+            field = cls.getDeclaredField(name)
+        } else {
+            while (1) {
+                try {
+                    field = cls.getDeclaredField(name)
+                    break
+                } catch (e) {
+                    cls = cls.getSuperclass()
+                    if (!cls) throw e
+                }
+            }
+        }
         field.setAccessible(true)
         return field
     }
