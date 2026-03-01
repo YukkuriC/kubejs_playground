@@ -10,12 +10,13 @@
         global.createPatchouliMultiBlockSupplier(
             [
                 // up->down, left->right, front->back
-                ['   ', ' 0 ', '   '],
-                ['BBB', 'BBB', 'BBB'],
+                ['   ', ' P ', '   '],
+                ['BBB', 'B0B', 'BBB'],
             ],
-            'botania:terra_plate',
+            'create:brass_casing',
             {
                 B: 'create:brass_casing',
+                P: 'botania:terra_plate',
             },
         ),
         true,
