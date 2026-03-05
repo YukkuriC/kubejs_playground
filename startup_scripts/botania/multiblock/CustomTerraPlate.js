@@ -10,7 +10,7 @@
         global.createPatchouliMultiBlockSupplier(
             [
                 // up->down, left->right, front->back
-                ['   ', ' P ', '   '],
+                ['___', '_P_', '___'],
                 ['BBB', 'B0B', 'BBB'],
             ],
             'create:brass_casing',
