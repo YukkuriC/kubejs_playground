@@ -22,15 +22,17 @@ ServerEvents.recipes(e => {
     // dupe by recipe
     let all_except_duper = Ingredient.all.subtract(Ingredient.of('yc:duper'))
     let all_except_duper_all = Ingredient.all.subtract(Ingredient.of('#yc:duper'))
-    e.shapeless('yc:duper', [all_except_duper, 'yc:duper']).keepIngredient(all_except_duper)
-    e.shapeless('yc:duper_2', [all_except_duper_all, 'yc:duper_2']).modifyResult((grid, item) => {
-        let total = grid.width * grid.height
-        for (let i = 0; i < total; i++) {
-            let item = grid.get(i)
-            if (item.empty || item.hasTag('yc:duper')) continue
-            return item.withCount(2)
-        }
-    })
+    e.shapeless('yc:duper', [all_except_duper, 'yc:duper']).keepIngredient(all_except_duper).id('yc:duper_worker/1')
+    e.shapeless('yc:duper_2', [all_except_duper_all, 'yc:duper_2'])
+        .modifyResult((grid, item) => {
+            let total = grid.width * grid.height
+            for (let i = 0; i < total; i++) {
+                let item = grid.get(i)
+                if (item.empty || item.hasTag('yc:duper')) continue
+                return item.withCount(2)
+            }
+        })
+        .id('yc:duper_worker/2')
     e.shapeless('yc:duper_2', ['yc:duper'])
 })
 
