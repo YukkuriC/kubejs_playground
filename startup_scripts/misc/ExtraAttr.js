@@ -41,7 +41,7 @@
         },
     }
 
-    ForgeEvents.onEvent('net.minecraftforge.event.ItemAttributeModifierEvent', e => {
+    NativeEvents.onEvent('net.neoforged.neoforge.event.ItemAttributeModifierEvent', e => {
         let {
             itemStack: { id, item },
             slotType: slot,

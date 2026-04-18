@@ -1,4 +1,4 @@
-ForgeEvents.onEvent('net.minecraftforge.client.event.ViewportEvent$RenderFog', e => {
+NativeEvents.onEvent('net.neoforged.neoforge.client.event.ViewportEvent$RenderFog', e => {
     if (e.type == 'none') return
     e.farPlaneDistance *= 100
     e.nearPlaneDistance *= 100

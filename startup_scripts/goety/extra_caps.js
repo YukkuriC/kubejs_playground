@@ -1,12 +1,12 @@
 // requires: goety
 {
     let ArcaBlockEntity = Java.loadClass('com.Polarice3.Goety.common.blocks.entities.ArcaBlockEntity')
-    let IEnergyStorage = Java.loadClass('net.minecraftforge.energy.IEnergyStorage')
-    let IItemHandler = Java.loadClass('net.minecraftforge.items.IItemHandler')
-    let { ENERGY: FECap, ITEM_HANDLER: ItemCap } = Java.loadClass('net.minecraftforge.common.capabilities.ForgeCapabilities')
+    let IEnergyStorage = Java.loadClass('net.neoforged.neoforge.energy.IEnergyStorage')
+    let IItemHandler = Java.loadClass('net.neoforged.neoforge.items.IItemHandler')
+    let { ENERGY: FECap, ITEM_HANDLER: ItemCap } = Java.loadClass('net.neoforged.neoforge.common.capabilities.ForgeCapabilities')
     let SEHelper = Java.loadClass('com.Polarice3.Goety.utils.SEHelper')
     let MainConfig = Java.loadClass('com.Polarice3.Goety.config.MainConfig')
-    let LazyOptional = Java.loadClass('net.minecraftforge.common.util.LazyOptional')
+    let LazyOptional = Java.loadClass('net.neoforged.neoforge.common.util.LazyOptional')
 
     let RATE = 200
     let RATE_EXTRACT_LOSS = 0.1
@@ -115,13 +115,13 @@
     }
 
     // load event
-    let [clsEvent, clsType] = ['net.minecraftforge.event.AttachCapabilitiesEvent', 'net.minecraft.world.level.block.entity.BlockEntity']
+    let [clsEvent, clsType] = ['net.neoforged.neoforge.event.AttachCapabilitiesEvent', 'net.minecraft.world.level.block.entity.BlockEntity']
     if (Platform.isLoaded('eventjs')) {
         // https://github.com/ZZZank/EventJS/issues/1
         if (Platform.getInfo('eventjs').version < '1.4.1') [clsEvent, clsType] = [clsType, clsEvent]
-        ForgeEvents.onGenericEvent(clsEvent, clsType, doArcaInject)
+        NativeEvents.onGenericEvent(clsEvent, clsType, doArcaInject)
     } else {
         global.doArcaInject = doArcaInject
-        ForgeEvents.onGenericEvent(clsEvent, clsType, e => global.doArcaInject(e))
+        NativeEvents.onGenericEvent(clsEvent, clsType, e => global.doArcaInject(e))
     }
 }

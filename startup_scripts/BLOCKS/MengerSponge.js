@@ -1,9 +1,9 @@
 {
     let BLOCK_ID = 'yc:menger_sponge'
 
-    let IItemHandler = Java.loadClass('net.minecraftforge.items.IItemHandler')
-    let { ITEM_HANDLER: ItemCap } = Java.loadClass('net.minecraftforge.common.capabilities.ForgeCapabilities')
-    let LazyOptional = Java.loadClass('net.minecraftforge.common.util.LazyOptional')
+    let IItemHandler = Java.loadClass('net.neoforged.neoforge.items.IItemHandler')
+    let { ITEM_HANDLER: ItemCap } = Java.loadClass('net.neoforged.neoforge.common.capabilities.ForgeCapabilities')
+    let LazyOptional = Java.loadClass('net.neoforged.neoforge.common.util.LazyOptional')
 
     StartupEvents.registry('block', e => {
         e.create(BLOCK_ID)
@@ -62,13 +62,13 @@
     }
 
     // load event
-    let [clsEvent, clsType] = ['net.minecraftforge.event.AttachCapabilitiesEvent', 'net.minecraft.world.level.block.entity.BlockEntity']
+    let [clsEvent, clsType] = ['net.neoforged.neoforge.event.AttachCapabilitiesEvent', 'net.minecraft.world.level.block.entity.BlockEntity']
     if (Platform.isLoaded('eventjs')) {
         // https://github.com/ZZZank/EventJS/issues/1
         if (Platform.getInfo('eventjs').version < '1.4.1') [clsEvent, clsType] = [clsType, clsEvent]
-        ForgeEvents.onGenericEvent(clsEvent, clsType, doSpongeInject)
+        NativeEvents.onGenericEvent(clsEvent, clsType, doSpongeInject)
     } else {
         global.doSpongeInject = doSpongeInject
-        ForgeEvents.onGenericEvent(clsEvent, clsType, e => global.doSpongeInject(e))
+        NativeEvents.onGenericEvent(clsEvent, clsType, e => global.doSpongeInject(e))
     }
 }

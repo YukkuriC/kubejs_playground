@@ -1,6 +1,6 @@
 // requires: scguns
 
-ForgeEvents.onEvent('top.ribs.scguns.event.GunFireEvent$Post', e => {
+NativeEvents.onEvent('top.ribs.scguns.event.GunFireEvent$Post', e => {
     let { shooter, stack, client } = e
 
     // no ammo & durability

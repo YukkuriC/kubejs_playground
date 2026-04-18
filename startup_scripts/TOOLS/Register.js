@@ -19,15 +19,15 @@ StartupEvents.registry('item', e => {
             .displayName(`YukkuriC's ${item}`),
     )
     // misc
-    e.create(`yc:stick`, 'basic').maxStackSize(1).rarity('epic').glow(true).texture(`minecraft:item/stick`).displayName(`YukkuriC's Stick`)
-    e.create(`yc:duper`, 'basic')
+    e.create(`yc:stick`).maxStackSize(1).rarity('epic').glow(true).texture(`minecraft:item/stick`).displayName(`YukkuriC's Stick`)
+    e.create(`yc:duper`)
         // .texture(`yc:item/duper`)
         .rarity('epic')
         .maxStackSize(1)
         .glow(true)
         .tag('yc:duper')
         .displayName(`YukkuriC's Duper`)
-    e.create(`yc:duper_2`, 'basic')
+    e.create(`yc:duper_2`)
         .rarity('epic') // no don't collapse
         .maxStackSize(64)
         .glow(true)

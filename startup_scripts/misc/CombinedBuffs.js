@@ -4,7 +4,7 @@ const buffsToAdd = [
     // ['cold_sweat:grace', 5],
 ]
 
-ForgeEvents.onEvent('net.minecraftforge.event.entity.living.MobEffectEvent$Added', e => {
+NativeEvents.onEvent('net.neoforged.neoforge.event.entity.living.MobEffectEvent$Added', e => {
     const self = e.getEntity()
     const effect = e.getEffectInstance()
     if (!self.isPlayer()) return

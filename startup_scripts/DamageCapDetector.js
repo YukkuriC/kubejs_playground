@@ -17,12 +17,12 @@
         })
     }
 
-    ForgeEvents.onEvent('net.minecraftforge.event.entity.living.LivingAttackEvent', e => {
+    NativeEvents.onEvent('net.neoforged.neoforge.event.entity.living.LivingAttackEvent', e => {
         if (e.entity.level.clientSide || !e.source?.player || e.amount <= MIN_AMOUNT) return
         let tracker = getDmgTracker(e.entity)
         tracker.amount = e.amount
     })
-    ForgeEvents.onEvent('net.minecraftforge.event.entity.living.LivingHurtEvent', e => {
+    NativeEvents.onEvent('net.neoforged.neoforge.event.entity.living.LivingHurtEvent', e => {
         if (e.entity.level.clientSide || !e.source?.player) return
         let tracker = getDmgTracker(e.entity)
         if (tracker.amount <= 0) return

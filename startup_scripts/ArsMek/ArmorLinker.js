@@ -76,7 +76,7 @@
         'mekanism:mekasuit_boots': 0,
     }
 
-    ForgeEvents.onEvent('net.minecraftforge.event.ItemAttributeModifierEvent', e => global.InjectMekasuit(e))
+    NativeEvents.onEvent('net.neoforged.neoforge.event.ItemAttributeModifierEvent', e => global.InjectMekasuit(e))
     global.InjectMekasuit = (/**@type {Internal.ItemAttributeModifierEvent}*/ e) => {
         let { itemStack, slotType: slot } = e
         if (target_slot[itemStack.id] !== slot.index) return

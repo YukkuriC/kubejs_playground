@@ -1,6 +1,6 @@
 // requires: scguns
 
-ForgeEvents.onEvent('net.minecraftforge.event.entity.living.LivingHurtEvent', e => {
+NativeEvents.onEvent('net.neoforged.neoforge.event.entity.living.LivingHurtEvent', e => {
     let { entity, source, amount } = e
     if (source.type().msgId() != 'scguns.bullet') return
     let { player } = source

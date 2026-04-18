@@ -4,7 +4,7 @@
     let Creeper = Java.loadClass('net.minecraft.world.entity.monster.Creeper')
     let fSwell = Creeper.__javaObject__.getDeclaredField('f_32270_')
     fSwell.setAccessible(true)
-    ForgeEvents.onEvent('net.minecraftforge.event.entity.living.LivingEvent$LivingTickEvent', ev => {
+    NativeEvents.onEvent('net.neoforged.neoforge.event.entity.living.LivingEvent$LivingTickEvent', ev => {
         let { entity } = ev
         if (!(entity instanceof Creeper)) return
         let swell = fSwell.get(entity)
