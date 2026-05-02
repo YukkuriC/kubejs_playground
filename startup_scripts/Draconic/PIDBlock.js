@@ -39,7 +39,7 @@ global.tickPID = be => {
 
             nbt.cachedPos = _cached
         } catch (e) {
-            Utils.server.tell(e)
+            global.server.tell(e)
             return doReset()
         }
     }
@@ -71,7 +71,7 @@ global.tickPID = be => {
     let error = nbt.TARGET - Y
     let delta_error = error - nbt.old_error || 0
     nbt.cum_error = (nbt.cum_error || 0) + error
-    // Utils.server.tell(`P:${nbt.P * error} I:${nbt.I * nbt.cum_error} D:${nbt.D * delta_error}`)
+    // global.server.tell(`P:${nbt.P * error} I:${nbt.I * nbt.cum_error} D:${nbt.D * delta_error}`)
     let delta_X = nbt.P * error + nbt.I * nbt.cum_error + nbt.D * delta_error
     delta_X = Math.max(0, delta_X)
 

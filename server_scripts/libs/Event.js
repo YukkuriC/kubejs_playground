@@ -35,5 +35,5 @@
         },
     }
 
-    this.Event = global.Event = Event
+    this.Event = global.setter.Event = Event
 }

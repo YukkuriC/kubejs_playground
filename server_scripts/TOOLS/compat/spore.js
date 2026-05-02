@@ -55,8 +55,8 @@
                     if (unit(PURGE_QUEUE.shift())) i -= 0.1
                 } else break
             }
-            if (PURGE_QUEUE.length) Utils.server.scheduleInTicks(1, epoch)
-            else if (PURGE_COUNT > 0) Utils.server.tell(`Purged ${PURGE_COUNT} blocks`)
+            if (PURGE_QUEUE.length) global.server.scheduleInTicks(1, epoch)
+            else if (PURGE_COUNT > 0) global.server.tell(`Purged ${PURGE_COUNT} blocks`)
         }
         for (let x = -2; x <= 2; x++)
             for (let y = -2; y <= 2; y++)

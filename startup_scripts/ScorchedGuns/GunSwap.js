@@ -151,10 +151,10 @@
 
     global.replaceGunAmmos = noRecursion => {
         // auto reload
-        if (!noRecursion && Utils.server) {
-            Utils.server.tell('auto reload')
-            Utils.server.runCommand('kjs reload startup_scripts')
-            Utils.server.scheduleInTicks(1, () => global.replaceGunAmmos(true))
+        if (!noRecursion && global.server) {
+            global.server.tell('auto reload')
+            global.server.runCommand('kjs reload startup_scripts')
+            global.server.scheduleInTicks(1, () => global.replaceGunAmmos(true))
         }
 
         ProjectileManager.getInstance().registerFactory(ModItems.SHOTGUN_SHELL.get(), (worldIn, entity, weapon, item, modifiedGun) => {

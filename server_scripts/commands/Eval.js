@@ -6,19 +6,19 @@
         return namespaces[key]
     }
     let DoEval = function (code, player) {
-        Utils.server.tell(Text.gold('Code:').append(Text.white(code)).clickCopy(code).hover(Text.translate('chat.copy.click')))
+        global.server.tell(Text.gold('Code:').append(Text.white(code)).clickCopy(code).hover(Text.translate('chat.copy.click')))
         let ns = GetNamespace(player)
         try {
             let tmp
             with (ns) {
                 with (global) {
                     tmp = eval(code)
-                    Utils.server.tell(Text.green('Result:').append(Text.white(tmp)).clickCopy(tmp).hover(Text.translate('chat.copy.click')))
+                    global.server.tell(Text.green('Result:').append(Text.white(tmp)).clickCopy(tmp).hover(Text.translate('chat.copy.click')))
                 }
             }
             ns.res = tmp
         } catch (e) {
-            Utils.server.tell(Text.red('Error:').append(Text.white(e)).clickCopy(e).hover(Text.translate('chat.copy.click')))
+            global.server.tell(Text.red('Error:').append(Text.white(e)).clickCopy(e).hover(Text.translate('chat.copy.click')))
         }
     }
 
@@ -28,7 +28,7 @@
         let code = String(e.message)
         if (!code.startsWith('e@')) return
         code = code.substring(2)
-        Utils.server.scheduleInTicks(0, () => DoEval(code, e.player))
+        global.server.scheduleInTicks(0, () => DoEval(code, e.player))
         e.cancel()
     })
     */
@@ -45,7 +45,7 @@
                         source: { player },
                     } = ctx
                     let code = String(arg.GREEDY_STRING.getResult(ctx, 'code'))
-                    Utils.server.scheduleInTicks(0, () => DoEval(code, player))
+                    global.server.scheduleInTicks(0, () => DoEval(code, player))
                     return 1
                 }),
             )

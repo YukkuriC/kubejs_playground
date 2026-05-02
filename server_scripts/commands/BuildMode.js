@@ -31,7 +31,7 @@
         }
 
         // you win
-        Utils.server.tell(`unknown id: ${block.id}`)
+        global.server.tell(`unknown id: ${block.id}`)
         return 'minecraft:barrier'
     }
 

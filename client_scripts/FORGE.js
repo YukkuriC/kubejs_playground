@@ -1,2 +1,1 @@
-global.CLIENT_SCOPE = this
-global.unlockClassFilter(Java)
+global.setter.CLIENT_SCOPE = this

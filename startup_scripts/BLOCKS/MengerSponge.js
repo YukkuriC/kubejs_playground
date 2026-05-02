@@ -57,7 +57,7 @@
                 return LazyOptional.empty()
             })
         } catch (e) {
-            if (Utils.server) Utils.server.tell(e)
+            if (global.server) global.server.tell(e)
         }
     }
 
