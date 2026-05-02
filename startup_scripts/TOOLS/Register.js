@@ -11,7 +11,7 @@ StartupEvents.registry('item', e => {
     const items_armor = ['helmet', 'chestplate', 'leggings', 'boots'].map(item =>
         e
             .create(`yc:${item}`, item)
-            .tier('yc')
+            .material('yc:armor')
             .rarity('epic')
             .maxDamage(114514)
             .glow(true)
