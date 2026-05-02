@@ -141,7 +141,7 @@ ServerEvents.commandRegistry(e => {
         }
 
         // 袭击冷却
-        {
+        if (Platform.isLoaded('unsafejs')) {
             CommandUtils.chain(
                 [
                     F, // /F
@@ -152,7 +152,7 @@ ServerEvents.commandRegistry(e => {
                     if (!player) return 0
                     let raid = player.level.getRaidAt(BlockPos(player.x, player.y, player.z))
                     if (!raid) return 0
-                    global.setField(raid, 'f_37684_', Integer('1'))
+                    Reflection.setField(raid, 'f_37684_', Integer('1'))
                     player.level.raids.setDirty()
                     return 1
                 },

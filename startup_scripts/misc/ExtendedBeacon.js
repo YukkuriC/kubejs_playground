@@ -1,3 +1,4 @@
+// requires: unsafejs
 {
     let BeaconBlockEntity = Java.loadClass('net.minecraft.world.level.block.entity.BeaconBlockEntity')
     let AllEffects = Java.loadClass(
@@ -30,6 +31,6 @@
         let flattened = []
         for (let sub of mutable) flattened.push.apply(flattened, sub)
         flattened = new HashSet(flattened)
-        global.unsafeSetField(BeaconBlockEntity, /*VALID_EFFECTS*/ 'f_58647_', flattened, 1)
+        Unsafe.setField(BeaconBlockEntity, /*VALID_EFFECTS*/ 'f_58647_', flattened, 1)
     })
 }

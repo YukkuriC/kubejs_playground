@@ -1,8 +1,9 @@
 // requires: botania
 // requires: create
+// requires: unsafejs
 {
     let AlfheimPortalBlockEntity = Java.loadClass('vazkii.botania.common.block.block_entity.AlfheimPortalBlockEntity')
-    global.unsafeSetField(
+    Unsafe.setField(
         AlfheimPortalBlockEntity,
         'MULTIBLOCK',
         global.createPatchouliMultiBlockSupplier(

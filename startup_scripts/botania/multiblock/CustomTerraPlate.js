@@ -1,10 +1,11 @@
 // requires: botania
 // requires: create
+// requires: unsafejs
 {
     let TerrestrialAgglomerationPlateBlockEntity = Java.loadClass(
         'vazkii.botania.common.block.block_entity.TerrestrialAgglomerationPlateBlockEntity',
     )
-    global.unsafeSetField(
+    Unsafe.setField(
         TerrestrialAgglomerationPlateBlockEntity,
         'MULTIBLOCK',
         global.createPatchouliMultiBlockSupplier(

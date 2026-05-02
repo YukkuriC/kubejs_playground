@@ -1,9 +1,10 @@
 // requires: create
+// requires: unsafejs
 {
     let Random = Java.loadClass('java.util.Random')
     let ProcessingOutput = Java.loadClass('com.simibubi.create.content.processing.recipe.ProcessingOutput')
 
-    global.unsafeSetField(
+    Unsafe.setField(
         ProcessingOutput,
         'r',
         new JavaAdapter(Random, {
@@ -11,6 +12,5 @@
                 return 0
             },
         }),
-        true,
     )
 }

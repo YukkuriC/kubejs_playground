@@ -1,4 +1,5 @@
 // requires: computercraft
+// requires: unsafejs
 {
     let MountMedia = Java.loadClass('dan200.computercraft.shared.media.MountMedia')
     let MediaProvider = Java.loadClass('dan200.computercraft.api.media.MediaProvider')
@@ -8,7 +9,7 @@
     let DiskItem = Java.loadClass('dan200.computercraft.shared.media.items.DiskItem')
     let Item = Java.loadClass('net.minecraft.world.item.Item')
     // let MediaProviders = Java.loadClass('dan200.computercraft.impl.MediaProviders')
-    let MEDIA_MAP = global.getField('dan200.computercraft.impl.MediaProviders', 'itemProviders', 1)
+    let MEDIA_MAP = Reflection.getField('dan200.computercraft.impl.MediaProviders', 'itemProviders')
 
     let TAG_ID = 'DiskId'
     let GetDiskId = new JavaAdapter(ToIntFunction, {
