@@ -9,7 +9,7 @@
         itemId: 'foo',
         slot: 'bar',
         event: null,
-        OP_ADD: AttributeModifier.Operation.ADDITION,
+        OP_ADD: AttributeModifier.Operation.ADD_VALUE,
         /**
          * @param {Internal.ItemAttributeModifierEvent & Internal.CurioAttributeModifierEvent} e
          * @param {boolean} multiCurios

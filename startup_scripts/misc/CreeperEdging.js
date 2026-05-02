@@ -1,10 +1,10 @@
+// requires: unsafejs
 {
     let Integer = Java.loadClass('java.lang.Integer')
     let Int0 = Integer('0')
     let Creeper = Java.loadClass('net.minecraft.world.entity.monster.Creeper')
-    let fSwell = Creeper.__javaObject__.getDeclaredField('f_32270_')
-    fSwell.setAccessible(true)
-    NativeEvents.onEvent('net.neoforged.neoforge.event.entity.living.LivingEvent$LivingTickEvent', ev => {
+    let fSwell = Reflection.getField(Creeper, 'swell')
+    NativeEvents.onEvent('net.neoforged.neoforge.event.tick.EntityTickEvent$Post', ev => {
         let { entity } = ev
         if (!(entity instanceof Creeper)) return
         let swell = fSwell.get(entity)
