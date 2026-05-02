@@ -1,14 +1,17 @@
+// ignored: true
+// because: https://discord.com/channels/303440391124942858/303440391124942858/1278759803879166076
 {
     let BLOCK_ID = 'yc:menger_sponge'
 
     let IItemHandler = Java.loadClass('net.neoforged.neoforge.items.IItemHandler')
-    let { ITEM_HANDLER: ItemCap } = Java.loadClass('net.neoforged.neoforge.common.capabilities.ForgeCapabilities')
-    let LazyOptional = Java.loadClass('net.neoforged.neoforge.common.util.LazyOptional')
+    let {
+        ItemHandler: { BLOCK: ItemCap },
+    } = Java.loadClass('net.neoforged.neoforge.capabilities.Capabilities')
 
     StartupEvents.registry('block', e => {
         e.create(BLOCK_ID)
             .blockEntity(beInfo => {
-                beInfo.inventory(1, 1)
+                beInfo.inventory(1, 1) // damn
             })
             .opaque(false)
             .resistance(114514)
@@ -41,34 +44,18 @@
         },
     }
 
-    let doSpongeInject = (/**@type {Internal.AttachCapabilitiesEvent<Internal.BlockEntity>}*/ event) => {
-        let be = event.getObject()
+    let doSpongeInject = (/**@type {Internal.RegisterCapabilitiesEvent}*/ event) => {
         try {
-            if (be.blockState.block.id != BLOCK_ID) return
-            event.addCapability('yc:sponge_duper', (cap, side) => {
-                if (cap == ItemCap)
-                    return LazyOptional.of(
-                        () =>
-                            new JavaAdapter(IItemHandler, {
-                                inv: be.inventory,
-                                __proto__: protoItem,
-                            }),
-                    )
-                return LazyOptional.empty()
+            e.registerBlockEntity(ItemCap, BLOCK_ID, (be, side) => {
+                return new JavaAdapter(IItemHandler, {
+                    inv: be.inventory,
+                    __proto__: protoItem,
+                })
             })
         } catch (e) {
             if (global.server) global.server.tell(e)
         }
     }
 
-    // load event
-    let [clsEvent, clsType] = ['net.neoforged.neoforge.event.AttachCapabilitiesEvent', 'net.minecraft.world.level.block.entity.BlockEntity']
-    if (Platform.isLoaded('eventjs')) {
-        // https://github.com/ZZZank/EventJS/issues/1
-        if (Platform.getInfo('eventjs').version < '1.4.1') [clsEvent, clsType] = [clsType, clsEvent]
-        NativeEvents.onGenericEvent(clsEvent, clsType, doSpongeInject)
-    } else {
-        global.doSpongeInject = doSpongeInject
-        NativeEvents.onGenericEvent(clsEvent, clsType, e => global.doSpongeInject(e))
-    }
+    NativeEvents.onEvent('net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent', doSpongeInject)
 }
