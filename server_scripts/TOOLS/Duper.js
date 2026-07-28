@@ -20,8 +20,8 @@ ServerEvents.recipes(e => {
     for (let i = 2; i <= 6; i++) e.shapeless('yc:duper', Array(i).fill('#minecraft:logs')).modifyResult(codeMatcher)
 
     // dupe by recipe
-    let all_except_duper = Ingredient.all.subtract(Ingredient.of('yc:duper'))
-    let all_except_duper_all = Ingredient.all.subtract(Ingredient.of('#yc:duper'))
+    let all_except_duper = Ingredient.all.except(Ingredient.of('yc:duper'))
+    let all_except_duper_all = Ingredient.all.except(Ingredient.of('#yc:duper'))
     e.shapeless('yc:duper', [all_except_duper, 'yc:duper']).keepIngredient(all_except_duper).id('yc:duper_worker/1')
     e.shapeless('yc:duper_2', [all_except_duper_all, 'yc:duper_2'])
         .modifyResult((grid, item) => {

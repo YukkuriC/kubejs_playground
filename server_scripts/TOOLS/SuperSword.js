@@ -62,7 +62,7 @@
         })
     })
 
-    EntityEvents.hurt(e => {
+    EntityEvents.afterHurt(e => {
         const { entity, source, level } = e
         const { player } = source
         if (player?.mainHandItem?.id != 'yc:sword') return
