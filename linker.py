@@ -14,10 +14,10 @@ def linkFolder(link: str, src: str):
 SRC_ROOT = os.path.dirname(__file__)
 SRC_TARGETS = ['server_scripts', 'startup_scripts', 'client_scripts']
 SRC_TARGETS_SEP = ['assets/yc', 'assets/villagercomfort', 'assets/minecraft']
-TYPE_TARGETS = ['probe']
+TYPE_TARGETS = ['.probe', '.vscode', '.github']
 MC_ROOT = r'C:/Minecraft/.minecraft/versions'
-BASE_DIR_INPUT = sys.argv[1] if len(sys.argv) > 1 else None
-BASE_DIR = BASE_DIR_INPUT or 'playground'
+BASE_DIR_INPUT = sys.argv[1] if len(sys.argv) > 1 else '1.21.1-Aeronautics'
+BASE_DIR = BASE_DIR_INPUT or '1.21.1-Aeronautics'
 LINK_NAME = 'YkrC'
 
 for sub in [BASE_DIR_INPUT] if BASE_DIR_INPUT else os.listdir(MC_ROOT):
@@ -28,7 +28,7 @@ for sub in [BASE_DIR_INPUT] if BASE_DIR_INPUT else os.listdir(MC_ROOT):
         for t in TYPE_TARGETS:
             linkFolder(
                 os.path.join(SRC_ROOT, t),
-                os.path.join(kjsPath, t),
+                os.path.join(MC_ROOT, sub, t),
             )
     for t in SRC_TARGETS:
         linkFolder(

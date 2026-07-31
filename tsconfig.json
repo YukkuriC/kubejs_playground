@@ -1,0 +1,36 @@
+{
+    "compilerOptions": {
+        "baseUrl": ".",
+        "paths": {
+            "@package/*": [
+                ".probe/@package/*"
+            ],
+            "@side-only/*": [
+                ".probe/@side-only/*"
+            ],
+            "@special/*": [
+                ".probe/@special/*"
+            ]
+        },
+        "checkJs": false,
+        "lib": [
+            "ES5",
+            "ES2015"
+        ],
+        "module": "ES2015",
+        "moduleResolution": "node",
+        "noEmit": true,
+        "rootDirs": [
+            ".probe",
+            "server_scripts",
+            "startup_scripts",
+            "client_scripts"
+        ],
+        "target": "ES2015"
+    },
+    "include": [
+        ".probe/@package",
+        ".probe/@special",
+        "global.d.ts"
+    ]
+}
