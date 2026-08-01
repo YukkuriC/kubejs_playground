@@ -152,7 +152,7 @@ ServerEvents.commandRegistry(e => {
                     if (!player) return 0
                     let raid = player.level.getRaidAt(BlockPos(player.x, player.y, player.z))
                     if (!raid) return 0
-                    Reflection.setField(raid, 'f_37684_', Integer('1'))
+                    Reflection.fastSet(raid, 'f_37684_', Integer('1'))
                     player.level.raids.setDirty()
                     return 1
                 },
