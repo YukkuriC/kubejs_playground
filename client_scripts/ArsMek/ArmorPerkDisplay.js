@@ -1,9 +1,12 @@
 // requires: mekanism
 // requires: ars_nouveau
 
-ItemEvents.tooltip(reg => {
-    for (const slot of ['helmet', 'bodyarmor', 'pants', 'boots'])
-        reg.addAdvanced(`mekanism:mekasuit_${slot}`, (stack, _, tooltip) => {
+for (const slot of ['helmet', 'bodyarmor', 'pants', 'boots']) {
+    let id = `mekanism:mekasuit_${slot}`
+    ItemEvents.dynamicTooltips(id, e => {
+        let stack = e.item
+        let tooltip = e.lines
+        {
             try {
                 // global.ARS.ItemsRegistry.BATTLEMAGE_HOOD.get().appendHoverText(item, Client.player.level, tooltip, flag)
                 let perkProvider = global.ARS.PerkRegistry.getPerkProvider(stack.getItem())
@@ -24,5 +27,6 @@ ItemEvents.tooltip(reg => {
             } catch (e) {
                 Client.player.tell(e)
             }
-        })
-})
+        }
+    })
+}
