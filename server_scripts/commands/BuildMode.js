@@ -189,7 +189,7 @@
         subMap.reset
 
         // dump to clipboard
-        if (Platform.isLoaded('create')) {
+        if (Platform.isLoaded('create') && Platform.isLoaded('unsafejs')) {
             let MaterialChecklist = Java.loadClass('com.simibubi.create.content.schematics.cannon.MaterialChecklist')
             let ItemRequirement = Java.loadClass('com.simibubi.create.content.schematics.requirement.ItemRequirement')
             let cRequirement = ItemRequirement.__javaObject__.getConstructor(
