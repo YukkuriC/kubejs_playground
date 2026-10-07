@@ -1,5 +1,5 @@
 {
-    let isBuildMode = player => player?.persistentData?.buildModeActive
+    let isBuildMode = player => player?.persistentData?.getBoolean('buildModeActive')
     let setBuildMode = (player, flag) => (player.persistentData.buildModeActive = flag)
 
     let addUsage = (player, blockId, count) => {
@@ -7,7 +7,7 @@
         count = count || 1
         let pool = player.persistentData.buildModeCounts
         if (!pool) pool = player.persistentData.buildModeCounts = {}
-        let newCount = (pool[blockId] || 0) + count
+        let newCount = pool.getInt(blockId) + count
         if (newCount > 0) {
             pool[blockId] = newCount
         } else {
@@ -38,8 +38,9 @@
     let displayItemPool = (player, pool) => {
         let hasContent = false
         for (let id in pool) {
-            let item = Item.of(id, pool[id])
-            player.tell(item.displayName.append(Text.white(`: ${pool[id]}`)))
+            let cnt = pool.getInt(id)
+            let item = Item.of(id, cnt)
+            player.tell(item.displayName.append(Text.white(`: ${cnt}`)))
             hasContent = true
         }
         return hasContent
@@ -89,7 +90,10 @@
                 player.server.runCommandSilent(`gamemode creative ${player.name.string}`)
 
                 if (Platform.isLoaded('create')) {
-                    player.offHandItem = Item.of('create:extendo_grip', { Unbreakable: 1 }).enchant('unbreaking', 10)
+                    player.offHandItem = Item.of('create:extendo_grip', 1, { unbreakable: { showInTooltip: true } }).enchant(
+                        'unbreaking',
+                        10,
+                    )
                     player.give('create:wrench')
                 }
                 if (Platform.isLoaded('botania')) {
@@ -157,7 +161,8 @@
                 for (let item of inventory.items) {
                     let { id } = item
                     if (pool[id] > 0) {
-                        let sub = Math.min(pool[id], item.count)
+                        let cnt = pool.getInt(id)
+                        let sub = Math.min(cnt, item.count)
                         if (sub <= 0) continue
                         item.shrink(sub)
                         paid[id] = (paid[id] || 0) + sub
