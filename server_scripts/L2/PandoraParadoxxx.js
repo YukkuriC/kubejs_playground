@@ -7,10 +7,12 @@ ServerEvents.tags('item', e => {
     ])
     // 创造栏重复添加会崩
     if (Platform.isLoaded('yukkuric_bundle')) {
-        e.add('curios:pandora', [
+        let nestedTargets = [
             // nested
             'pandora:pandora_necklace',
             'pandora:pandora_bracelet',
-        ])
+        ]
+        e.add('curios:pandora', nestedTargets)
+        e.add('pandora:allow_duplicates', nestedTargets)
     }
 })
